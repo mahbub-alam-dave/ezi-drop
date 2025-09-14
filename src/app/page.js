@@ -7,6 +7,7 @@ export default function Home() {
       <div>
       <h1>Hello , My name is Abdul Halim. Welcome our project!</h1>
       </div>
+      <p>hello</p>
     </div>
   );
 }
