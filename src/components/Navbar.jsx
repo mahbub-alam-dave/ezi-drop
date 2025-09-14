@@ -5,6 +5,7 @@ export default function Navbar() {
     <div>
       <h1>i am Navbar </h1>
       <p> Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum necessitatibus quia numquam blanditiis dolores quidem?</p>
+      <button>click me </button>
     </div>
   )
 }
