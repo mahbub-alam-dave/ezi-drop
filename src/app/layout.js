@@ -1,11 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/sharedComponents/navbar/Navbar";
+import Footer from "@/components/sharedComponents/Footer/Footer";
 
-
-
-import Footer from "@/components/Footer/Footer";
-import Navbar from "./components/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,14 +26,10 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Navbar></Navbar>
-        <div className="min-h-[calc(100vh-278px)]">
-        {children}
-        </div>
-        <Footer></Footer>
         <div className="bg-gray-50 dark:bg-black text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
         <Navbar/>
         {children}
+        <Footer></Footer>
         </div>
       </body>
     </html>
