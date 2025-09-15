@@ -15,11 +15,7 @@ export default function Footer() {
               <FaTruckFast className="text-3xl text-indigo-600" />
               <h1 className="text-xl font-bold text-gray-800">Ezi Drop</h1>
             </div>
-            <p className="mt-4 text-sm leading-relaxed">
-              Modern, reliable, and efficient delivery services.  
-              Ezi Drop ensures your parcels arrive safely and on time,  
-              making delivery simpler than ever.
-            </p>
+            
           </div>
 
           {/* Company Links */}
