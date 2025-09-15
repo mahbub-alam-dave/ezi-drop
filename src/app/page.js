@@ -1,3 +1,4 @@
+import HowItWorks from "@/components/feature/HowItWorks";
 import Image from "next/image";
 
 export default function Home() {
@@ -7,6 +8,9 @@ export default function Home() {
       <div>
       <h1>Hello , My name is Abdul Halim. Welcome our project!</h1>
       </div>
+      <main>
+        <HowItWorks />
+      </main>
     </div>
   );
 }
