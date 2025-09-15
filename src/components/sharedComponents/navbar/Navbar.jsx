@@ -19,7 +19,7 @@ const [dark, setDark] = useState(false);
       localStorage.setItem("theme", "light");
     } else {
       document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");J
+      localStorage.setItem("theme", "dark");
     }
     setDark(!dark);
   };
