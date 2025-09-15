@@ -1,1 +1,21 @@
 @import "tailwindcss";
+@plugin "daisyui";
+@custom-variant dark (&:where(.dark, .dark *));
+:root {
+
+  /* use for header, footer, card  */
+  --color-bg: #ffffff;
+  --color-bg-dark: #10182e;
+
+  /* use as a primary text color */
+  --color-text: #000000;
+  --color-text-dark: #e5e7eb;
+
+  /* use for secondary text color */
+  --color-text-soft: #3a3a3a;
+  --color-text-soft-dark: #c0c0c0;
+
+  /* use for button logo and other place that highlight our project theme */
+  --color-primary:#3469fc; 
+  --color-primary-dark: #1f5aff;
+}
