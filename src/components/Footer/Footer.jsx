@@ -7,7 +7,7 @@ import { FaTruckFast } from "react-icons/fa6";
 export default function Footer() {
   return (
     <div>
-      <footer className="px-6 md:px-16 lg:px-24 xl:px-32 pt-8 w-full text-gray-500 bg-gray-50">
+      <footer className="px-6 md:px-16 lg:px-24 xl:px-32 pt-8 w-full text-gray-500 bg-base-100 shadow-inner">
         <div className="flex flex-col md:flex-row justify-between w-full gap-10 border-b border-gray-500/30 pb-6">
           {/* Logo + About */}
           <div className="md:max-w-96">
