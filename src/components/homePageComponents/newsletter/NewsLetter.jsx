@@ -12,8 +12,8 @@ const NewsLetter = () => {
     if (!emailRegex.test(email)) {
       Swal.fire({
         icon: "error",
-        title: "Subscription Successful!",
-        text: "Thank you for subscribing to our newsletter. Stay tuned for the latest updates!",
+        title: "Worng Email!",
+        text: "Try again to another!",
         showConfirmButton: false,
         timer: 2500,
       });
