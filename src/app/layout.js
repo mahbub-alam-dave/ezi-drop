@@ -1,6 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/navbar/Navbar";
+import Navbar from "@/components/sharedComponents/navbar/Navbar";
+import Footer from "@/components/sharedComponents/footer/Footer";
+
 
 
 const geistSans = Geist({
@@ -28,6 +30,7 @@ export default function RootLayout({ children }) {
         <div className="bg-gray-50 dark:bg-black text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
         <Navbar/>
         {children}
+        <Footer/>
         </div>
       </body>
     </html>

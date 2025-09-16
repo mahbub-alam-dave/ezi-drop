@@ -1,4 +1,6 @@
 import HowItWorks from "@/components/feature/HowItWorks";
+import BannerSection from "@/components/homePageComponents/BannerSection";
+import Overview from "@/components/homePageComponents/newsletter/Overview";
 import Image from "next/image";
 
 export default function Home() {
@@ -9,8 +11,11 @@ export default function Home() {
       <h1>Hello , My name is Abdul Halim. Welcome our project!</h1>
       </div>
       <main>
+        <BannerSection/>
+        <Overview />
         <HowItWorks />
       </main>
+      
     </div>
   );
 }
