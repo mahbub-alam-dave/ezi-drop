@@ -54,6 +54,7 @@ export default function AboutSection({ children }) {
                         >
                             <FaPlayCircle className="w-5 h-5" />
                             <span>Watch Video</span>
+                            <span>Watch Video</span>
                         </button>
                     </div>
                 </div>
