@@ -37,6 +37,7 @@ export default function Navbar() {
       <Link href={"send-parcel"}>Send Parcel</Link>
       <Link href={"dashboard"}>Dashboard</Link>
       <Link href={"/abouts"}>About</Link>
+      <Link href={"/Abouts"}>About</Link>
     </>
   );
 
