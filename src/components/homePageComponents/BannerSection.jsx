@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import AOS from "aos";
+import Aos from "aos";
+
 
 const slides = [
   {
@@ -33,7 +34,7 @@ const slides = [
 export default function BannerSection() {
   const [index, setIndex] = useState(0);
  useEffect(() => {
-    AOS.init({
+    Aos.init({
       duration: 1000,   
       once: false,
       offset: 100,         

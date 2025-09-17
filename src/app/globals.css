@@ -18,4 +18,8 @@
   /* use for button logo and other place that highlight our project theme */
   --color-primary:#3469fc; 
   --color-primary-dark: #1f5aff;
+
+  /* secondary color */
+  --color-secondary: #fb2c36;
+  --color-secondary-dark: #e7000b;
 }
