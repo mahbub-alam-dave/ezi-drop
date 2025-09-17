@@ -1,4 +1,5 @@
 import BannerSection from "@/components/homePageComponents/BannerSection";
+import Faq from "@/components/homePageComponents/faqSection/Faq";
 import NewsLetter from "@/components/homePageComponents/newsletter/NewsLetter";
 import Overview from "@/components/homePageComponents/newsletter/Overview";
 import Review from "@/components/homePageComponents/reviewSection/Review";
@@ -11,6 +12,7 @@ export default function Home() {
       <Overview />
       <Review/>
       <NewsLetter />
+      <Faq></Faq>
     </div>
   );
 }
