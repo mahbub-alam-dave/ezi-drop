@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
+
 const slides = [
   {
     title: "Fast & Secure Courier Service Across Bangladesh",

@@ -22,4 +22,9 @@
   /* secondary color */
   --color-secondary: #fb2c36;
   --color-secondary-dark: #e7000b;
+
+  /* border color */
+  --border-color: #d1d5dc;  /* white border */
+  --border-color-two: #6a7282;  /* black border */
+
 }
