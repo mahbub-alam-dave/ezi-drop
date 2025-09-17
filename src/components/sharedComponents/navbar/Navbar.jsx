@@ -36,7 +36,7 @@ export default function Navbar() {
       <Link href={'/'}>Home</Link>
       <Link href={"send-parcel"}>Send Parcel</Link>
       <Link href={"dashboard"}>Dashboard</Link>
-      <Link href={"/Abouts"}>About</Link>
+      <Link href={"/abouts"}>About</Link>
     </>
   );
 

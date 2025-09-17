@@ -5,7 +5,7 @@ export default function AboutFeatures() {
         {
             tag: "Delivery",
             title: "Globally Connected by Large Network",
-            desc: "At Logistics, we leverage our far-reaching network with multiple transport modes to provide fast, efficient and cost-effective logistics solutions across the industry.",
+            desc: "Steadfast courier is a leading courier service company in Bangladesh dedicated to delivering reliable and efficient e- commerce logistics solutions in time.",
             img: "https://i.ibb.co/S4h5JHtN/img-about-2-1.png",
             bullets: ["Affordable Cost", "Real-Time Delivery"],
             buttons: [
