@@ -31,13 +31,13 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className=" px-4 py-16 
+    <section className="py-16 md:py-24 
       bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] 
-      text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
-
+      text-[var(--color-text)] dark:text-[var(--color-text-dark)] px-6 md:px-8">
+        <div className="max-w-[1440px] mx-auto">
       {/* Header */}
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold mb-2">How It Works</h2>
+      <div className=" text-center mb-12">
+        <h2 className="text-3xl font-bold mb-2">How We Works</h2>
         <p className="text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)]">
           Learn how we process and deliver your goods step by step
         </p>
@@ -80,6 +80,7 @@ export default function HowItWorks() {
           {/* Connector line */}
           <div className="absolute top-5 left-6 w-0.5 bg-yellow-300 h-[90%] -z-10"></div>
         </div>
+      </div>
       </div>
     </section>
   );
