@@ -35,7 +35,7 @@ export default function HowItWorks() {
       bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] 
       text-[var(--color-text)] dark:text-[var(--color-text-dark)] px-6 md:px-8">
         <div className="max-w-[1440px] mx-auto">
-      {/* Header */}
+   
       <div className=" text-center mb-12 ">
         <h2 className="text-3xl font-bold mb-2">How We Works</h2>
         <p className="text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)]">
@@ -45,7 +45,7 @@ export default function HowItWorks() {
       </div>
 
       <div className="grid md:grid-cols-2 gap-10 items-center">
-        {/* Left Image */}
+       
         <div className="relative">
           <img
             src="https://i.ibb.co.com/WvQ38NJf/how-it-work.png"
