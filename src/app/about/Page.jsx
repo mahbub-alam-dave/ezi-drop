@@ -1,11 +1,22 @@
-import React from 'react';
+import AboutFeatures from "@/components/AboutSection/AboutFeatures";
+import AboutSection from "@/components/AboutSection/AboutSection";
 
-const Page = () => {
+
+export default function AboutsPage() {
     return (
-        <div>
-            This is about page
-        </div>
-    );
-};
+        <main className=" px-6 md:px-8 py-18">
+            <div className="max-w-[1440px] mx-auto">
+            <div className="space-y-4">
+                <h1 className="text-3xl text-[#51aca4] dark:text-[#25524e] font-bold text-center">About Us</h1>
+                <p className="text-center font-semibold">
+                    We have been pioneering the industry in Europe for 20 years, <br /> and delivering value
+                    products within given timeframe, every single time.
+                </p>
+            </div>
 
-export default Page;
+            <AboutSection />
+            <AboutFeatures />
+            </div>
+        </main>
+    );
+}

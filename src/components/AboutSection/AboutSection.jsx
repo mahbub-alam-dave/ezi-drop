@@ -3,11 +3,11 @@ import { FaPlayCircle } from "react-icons/fa";
 
 export default function AboutSection({ children }) {
     return (
-        <section id="about" className="max-w-6xl mx-auto px-6 py-16">
+        <section id="about" className="w-full py-16">
             <div className="grid md:grid-cols-2 gap-10 items-center">
 
                 <div className="relative w-full flex justify-center">
-                    <div className="relative w-72 h-72 md:w-96 md:h-96 rounded-2xl overflow-hidden shadow-lg">
+                    <div className="relative w-72 h-72 md:w-full md:h-96 rounded-2xl overflow-hidden shadow-lg">
                         <Image
                             src="https://i.ibb.co/YF41TV2N/img-about-1-3.png"
                             alt="Main about photo"

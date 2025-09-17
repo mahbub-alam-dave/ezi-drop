@@ -39,11 +39,11 @@ export default function AboutFeatures() {
 
 
     return (
-        <section className="px-6 py-16 space-y-24">
+        <section className="w-full py-16 space-y-24">
             {features.map((f, i) => (
                 <div
                     key={i}
-                    className="grid md:grid-cols-2 gap-10 items-center"
+                    className="w-full grid md:grid-cols-2 gap-10 items-center"
                 >
                     {/* Image */}
                     <div
