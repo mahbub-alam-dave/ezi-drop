@@ -9,7 +9,7 @@ export default function AboutsPage() {
             <div className="space-y-4">
                 <h1 className="text-3xl text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)] font-bold text-center">About Us</h1>
                 <p className="text-center font-semibold">
-                    We have been pioneering the industry in Europe for 20 years, <br /> and delivering value
+                    We have been pioneering the industry in Europe for 20 years, and delivering value
                     products within given timeframe, every single time.
                 </p>
             </div>

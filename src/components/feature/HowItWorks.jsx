@@ -36,11 +36,12 @@ export default function HowItWorks() {
       text-[var(--color-text)] dark:text-[var(--color-text-dark)] px-6 md:px-8">
         <div className="max-w-[1440px] mx-auto">
       {/* Header */}
-      <div className=" text-center mb-12">
+      <div className=" text-center mb-12 ">
         <h2 className="text-3xl font-bold mb-2">How We Works</h2>
         <p className="text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)]">
-          Learn how we process and deliver your goods step by step
+          That cares about customers and keen to meet their needs with very enhanced means that meet their expectations guaranteeing the highest satisfaction standard through its unique service
         </p>
+        <div className="mt-3 sm:mt-4 w-14 sm:w-20 md:w-28 h-1 bg-[var(--color-primary)] dark:bg-[var(--color-primary-dark)] mx-auto rounded-full"></div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-10 items-center">
@@ -59,6 +60,7 @@ export default function HowItWorks() {
               There are many variations of passages of Lorem Ipsum available,
               but the majority have suffered alteration.
             </p>
+            
           </div>
         </div>
 
@@ -78,7 +80,7 @@ export default function HowItWorks() {
             </div>
           ))}
           {/* Connector line */}
-          <div className="absolute top-5 left-6 w-0.5 bg-yellow-300 h-[90%] -z-10"></div>
+          <div className="absolute top-5 left-6 w-0.5 bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] h-[90%] -z-10"></div>
         </div>
       </div>
       </div>

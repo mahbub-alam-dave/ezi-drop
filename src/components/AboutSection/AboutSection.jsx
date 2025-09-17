@@ -7,7 +7,7 @@ export default function AboutSection({ children }) {
             <div className="grid md:grid-cols-2 gap-10 items-center">
 
                 <div className="relative w-full flex justify-center">
-                    <div className="relative w-72 h-72 md:w-full md:h-96 rounded-2xl overflow-hidden shadow-lg">
+                    <div className="relative w-60 h-60 md:w-full md:h-96 rounded-2xl overflow-hidden shadow-lg">
                         <Image
                             src="https://i.ibb.co/YF41TV2N/img-about-1-3.png"
                             alt="Main about photo"
@@ -16,7 +16,7 @@ export default function AboutSection({ children }) {
                         />
                     </div>
 
-                    <div className="absolute bottom-0 left-0 w-40 h-40 rounded-xl overflow-hidden shadow-md border-4 border-white">
+                    <div className="absolute -bottom-6 -left-6 w-40 h-40 rounded-xl overflow-hidden shadow-md border-4 border-white p-4 md:p-4">
                         <Image
                             src="https://i.ibb.co/wZzP1pmV/img-about-1-1.png"
                             alt="Secondary about photo"
