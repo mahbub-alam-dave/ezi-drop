@@ -13,7 +13,6 @@ export default function AboutsPage() {
                     products within given timeframe, every single time.
                 </p>
             </div>
-
             <AboutSection />
             <AboutFeatures />
             </div>
