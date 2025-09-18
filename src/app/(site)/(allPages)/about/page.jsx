@@ -1,5 +1,5 @@
-import AboutFeatures from "@/components/AboutSection/AboutFeatures";
-import AboutSection from "@/components/AboutSection/AboutSection";
+import AboutFeatures from "@/components/aboutPageComponents/AboutFeatures";
+import AboutSection from "@/components/aboutPageComponents/AboutSection";
 
 
 export default function AboutPage() {
@@ -7,8 +7,8 @@ export default function AboutPage() {
         <main className=" px-6 md:px-8 py-18">
             <div className="max-w-[1440px] mx-auto">
             <div className="space-y-4">
-                <h1 className="text-3xl text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)] font-bold text-center">About Us</h1>
-                <p className="text-center font-semibold">
+                <h1 className="text-3xl lg:text-4xl text-color font-bold text-center">About Us</h1>
+                <p className="text-center text-color-soft text-lg">
                     We have been pioneering the industry in Europe for 20 years, and delivering value
                     products within given timeframe, every single time.
                 </p>
