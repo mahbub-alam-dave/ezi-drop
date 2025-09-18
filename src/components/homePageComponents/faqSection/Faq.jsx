@@ -27,21 +27,21 @@ export default function Faq() {
       answer:
         "We offer comprehensive delivery solutions including same-day city delivery, next-day domestic service, inter-district delivery, international shipping to 50+ countries, specialized temperature-controlled deliveries, and express document services. We also provide specialized logistics for businesses with bulk shipping discounts.",
     },
-    {
+/*     {
       question: "How is the delivery cost calculated?",
       answer:
         "Our pricing is transparent and based on: 1) Parcel dimensions (weight and volume), 2) Delivery distance, 3) Service speed (standard vs express), 4) Package value (insurance considerations), and 5) Special handling requirements. Use our online calculator for instant quotes before booking. Businesses eligible for volume discounts can contact our corporate team.",
-    },
+    }, */
     {
       question: "Is my parcel safe during delivery?",
       answer:
         "Absolutely! We employ multiple security measures: verified background-checked delivery personnel, tamper-evident packaging options, real-time GPS tracking, secure handling protocols, and optional insurance coverage up to $5,000. High-value items receive special handling and signature-required delivery confirmation.",
     },
-    {
+ /*    {
       question: "What are your delivery hours and days?",
       answer:
         "We offer extended delivery hours from 8:00 AM to 9:00 PM, Monday through Saturday. Sunday deliveries available in select metropolitan areas for an additional fee. For urgent after-hours deliveries, contact our customer service team for special arrangements.",
-    },
+    }, */
     {
       question: "What if I need to cancel or modify my delivery?",
       answer:
@@ -81,14 +81,14 @@ export default function Faq() {
           animation: fadeIn 0.5s ease forwards;
         }
       `}</style>
-
-      <section className="max-w-[1440px]  bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] 
-      text-[var(--color-text)] dark:text-[var(--color-text-dark)] mx-auto flex flex-col lg:flex-row justify-between items-center py-16 px-6 md:px-12 bg-gradient-to-br shadow-xl rounded-3xl my-10">
+      <div className="bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] py-16 px-6 md:px-8">
+      <section className="max-w-[1440px]   
+      text-[var(--color-text)] dark:text-[var(--color-text-dark)] mx-auto flex flex-col lg:flex-row justify-between items-center rounded-3xl my-10">
         {/* Image Side with Animation */}
-        <div className="flex-1 flex justify-center items-center mb-10 lg:mb-0 lg:mr-10">
-          <div className="relative">
+        <div className=" flex-1 flex w-full items-center mb-10 lg:mb-0 lg:mr-10">
+          <div className="relative flex-1 hidden lg:block">
             <img
-              className="w-full  rounded-2xl h-auto object-cover shadow-xl transform hover:scale-105 transition-transform duration-700"
+              className="w-full rounded-2xl h-auto object-cover shadow-xl transform hover:scale-105 transition-transform duration-700"
               src="https://plus.unsplash.com/premium_photo-1678000616480-d4a041e6eba1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8RmFxfGVufDB8fDB8fHww"
               alt="Ezi Courier Service FAQ"
             />
@@ -108,7 +108,7 @@ export default function Faq() {
               Frequently Asked Questions
             </p>
           </div>
-          <h1 className="text-lg md:text-5xl font-bold mt-2 mb-4 text-base-900">
+          <h1 className="text-lg md:text-3xl font-bold mt-2 mb-4 text-base-900">
             Need Help? We've Got Answers
           </h1>
           <p className="text-lg text-base-600 mb-8 max-w-lg">
@@ -174,6 +174,7 @@ export default function Faq() {
           </div>
         </div>
       </section>
+      </div>
     </>
   );
 }

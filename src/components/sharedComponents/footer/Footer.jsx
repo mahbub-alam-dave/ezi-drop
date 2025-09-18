@@ -6,8 +6,8 @@ import logo from "../../../app/assests/brandlogo.png"
 import Image from "next/image";
 export default function Footer() {
     return (
-        <footer className="bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] px-6 md:px-8">
-            <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between gap-10 py-8 shadow-t-md">
+        <footer className="bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] px-6 md:px-8 py-16">
+            <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between gap-10 shadow-t-md pb-8">
 
                 {/* Logo + About */}
                 <div className="md:max-w-96">
@@ -90,7 +90,7 @@ export default function Footer() {
             </div>
 
             {/* Bottom */}
-            <p className="pt-4 border-t-1 border-gray-200 text-center text-xs md:text-sm pb-5 text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)]">
+            <p className="pt-8 border-t-1 border-gray-200 text-center text-xs md:text-sm text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)]">
                 Copyright 2025 © <span className="font-semibold">Ezi Drop</span>. All Rights Reserved.
             </p>
         </footer>
