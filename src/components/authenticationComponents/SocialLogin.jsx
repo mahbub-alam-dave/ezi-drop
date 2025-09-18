@@ -1,0 +1,35 @@
+"use client"
+import React, { useEffect } from "react";
+import { FaGithub } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import Image from 'next/image';
+
+
+
+const SocialLogin = () => {
+
+    const handleSocialLogin = () =>{
+        
+    }
+
+  return (
+    <div className="flex justify-center items-center gap-4 mb-6">
+      <div onClick={() => handleSocialLogin("github")} className="w-[50px] h-[50px] bg-gray-200 dark:bg-gray-700 rounded-full flex justify-center items-center cursor-pointer">
+        <FaGithub size={22} />
+      </div>
+      <div onClick={() => handleSocialLogin("google")} className="w-[50px] h-[50px] bg-gray-200 dark:bg-gray-700 rounded-full flex justify-center items-center cursor-pointer ">
+        <FcGoogle size={22} />
+      </div>
+{/*       <Image
+      onClick={() => handleSocialLogin("google")}
+      className="w-[50px] h-[50px] cursor-pointer dark:grayscale-100"
+        width={50}
+        height={50}
+        src={"https://i.ibb.co.com/7hVLq5R/Google.png"}
+        alt="google"
+      /> */}
+    </div>
+  );
+};
+
+export default SocialLogin;

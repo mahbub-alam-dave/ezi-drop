@@ -1,1 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Story+Script&display=swap');
 @import "tailwindcss";
+@plugin "daisyui";
+@custom-variant dark (&:where(.dark, .dark *));
+:root {
+
+  /* use for header, footer, card  */
+  --color-bg: #ffffff;
+  --color-bg-dark: #10182e;
+
+  /* use as a primary text color */
+  --color-text: #000000;
+  --color-text-dark: #e5e7eb;
+
+  /* use for secondary text color */
+  --color-text-soft: #3a3a3a;
+  --color-text-soft-dark: #c0c0c0;
+
+  /* use for button logo and other place that highlight our project theme */
+  --color-primary:#3469fc; 
+  --color-primary-dark: #1f5aff;
+
+  /* secondary color */
+  --color-secondary: #fb2c36;
+  --color-secondary-dark: #e7000b;
+
+  /* border color */
+  --color-border: #cdd0d4;  /* white border #d1d5dc */
+  --border-color-two: #6a7282;  /* black border */
+
+}
+
+/* default light theme */
+.banner-shape {
+  fill: var(--color-bg); /* white background */
+}
+
+/* dark mode */
+.dark .banner-shape {
+  fill: var(--color-text-soft-dark); /* #c0c0c0 */
+}
+
+/* new font style  */
+.story-script-regular {
+  font-family: "Story Script", sans-serif;
+  font-style: normal;
+}
+
+
+/* utility css color classes */
+
+/* background color */
+.background-color {
+  @apply bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
+}
+
+.background-color-primary {
+  @apply bg-[var(--color-primary)] dark:bg-[var(--color-primary-dark)]
+}
+
+.background-color-secondary {
+  @apply bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)]
+}
+
+/* text color */
+.text-color {
+  @apply text-[var(--color-text)] dark:text-[var(--color-text-dark)]
+}
+
+.text-color-soft {
+    @apply text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)]
+}
+
+
+/* input style */
+.input-style {
+  @apply px-3 py-2 border border-[var(--color-border)] dark:border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] dark:focus:ring-[var(--color-primary-dark)]  
+}
