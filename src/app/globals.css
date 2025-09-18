@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Story+Script&display=swap');
 @import "tailwindcss";
 @plugin "daisyui";
 @custom-variant dark (&:where(.dark, .dark *));
@@ -18,4 +19,20 @@
   /* use for button logo and other place that highlight our project theme */
   --color-primary:#3469fc; 
   --color-primary-dark: #1f5aff;
+
+  /* secondary color */
+  --color-secondary: #fb2c36;
+  --color-secondary-dark: #e7000b;
+
+  /* border color */
+  --border-color: #d1d5dc;  /* white border */
+  --border-color-two: #6a7282;  /* black border */
+
+}
+
+
+/* new font style  */
+.story-script-regular {
+  font-family: "Story Script", sans-serif;
+  font-style: normal;
 }

@@ -36,7 +36,7 @@ export default function Navbar() {
       <Link href={'/'}>Home</Link>
       <Link href={"send-parcel"}>Send Parcel</Link>
       <Link href={"dashboard"}>Dashboard</Link>
-      <Link href={"about"}>About</Link>
+      <Link href={"/about"}>About</Link>
     </>
   );
 
@@ -47,6 +47,7 @@ export default function Navbar() {
         <div className="flex items-center gap-8">
           <nav>
             <ul className="md:flex gap-8 hidden">
+              
               {navLinks}
             </ul>
           </nav>
