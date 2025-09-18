@@ -40,10 +40,10 @@ const NewsLetter = () => {
   return (
     <section
       id="newsletter"
-      className="flex justify-center mb-16 px-4 sm:px-6 lg:px-8 py-12 lg:py-20 
-                 bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
-                 text-[var(--color-text)] dark:text-[var(--color-text-dark)]
-                 transition-colors duration-500"
+      className="flex justify-center mb-16 px-4 sm:px-6 lg:px-8 py-6 lg:py-12 
+       bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
+       text-[var(--color-text)] dark:text-[var(--color-text-dark)]
+       transition-colors duration-500"
     >
       <div className="w-full max-w-[1440px] grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         {/* ===== Left Side Animation ===== */}
@@ -67,39 +67,21 @@ const NewsLetter = () => {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-          className="rounded-2xl border-[1px] border-r-0 border-l-0 border-[var(--border-color)]
-                     dark:border-[var(--border-color-two)]
-                     bg-white/80 dark:bg-[#10182e]/80
-                     backdrop-blur-md shadow-xl p-6 sm:p-10 lg:p-14"
+          className="rounded-2xl 
+           dark:border-[var(--border-color-two)]
+           bg-white/80 dark:bg-[#10182e]/80
+           backdrop-blur-md  p-6 sm:p-10 lg:p-14"
         >
           <h2
-            className="text-center font-serif font-bold mb-8
-                         text-2xl sm:text-3xl md:text-4xl"
+            className=" font-serif font-bold mb-8
+             text-2xl sm:text-3xl md:text-4xl"
           >
             Subscribe to Our Newsletter
           </h2>
-
           <form
             onSubmit={handleSubmit}
-            className="flex flex-col sm:flex-row flex-wrap justify-center gap-4"
+            className="flex flex-col sm:flex-row flex-wrap gap-4"
           >
-            <input
-              type="text"
-              placeholder="Your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="flex-1 min-w-[220px] rounded-lg border
-                         border-[var(--border-color)]
-                         dark:border-[var(--border-color-two)]
-                         bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
-                         placeholder:text-[var(--color-text-soft)]
-                         dark:placeholder:text-[var(--color-text-soft-dark)]
-                         focus:outline-none focus:ring-1 focus:ring-[var(--border-color-two)]
-                         dark:focus:ring-[var(--color-primary-dark)]
-                         px-4 py-3 text-base"
-            />
-
             <input
               type="email"
               placeholder="Your email"
@@ -107,14 +89,14 @@ const NewsLetter = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="flex-1 min-w-[220px] rounded-lg border
-                         border-[var(--border-color)]
-                         dark:border-[var(--border-color-two)]
-                         bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
-                         placeholder:text-[var(--color-text-soft)]
-                         dark:placeholder:text-[var(--color-text-soft-dark)]
-                         focus:outline-none focus:ring-1 focus:ring-[var(--border-color-two)]
-                         dark:focus:ring-[var(--color-primary-dark)]
-                         px-4 py-3 text-base"
+               border-[var(--border-color)]
+               dark:border-[var(--border-color-two)]
+               bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
+               placeholder:text-[var(--color-text-soft)]
+               dark:placeholder:text-[var(--color-text-soft-dark)]
+               focus:outline-none focus:ring-1 focus:ring-[var(--border-color-two)]
+               dark:focus:ring-[var(--color-primary-dark)]
+               px-4 py-3 text-base"
             />
 
             <motion.button
@@ -125,9 +107,9 @@ const NewsLetter = () => {
               whileTap={{ scale: 0.96 }}
               type="submit"
               className="w-full sm:w-auto rounded-lg bg-[var(--color-primary)]
-                         hover:bg-[var(--color-primary-dark)]
-                         text-white font-semibold px-6 py-3 text-base
-                         transition-colors duration-300"
+               hover:bg-[var(--color-primary-dark)]
+               text-white font-semibold px-6 py-3 text-base
+               transition-colors duration-300"
             >
               Subscribe
             </motion.button>
