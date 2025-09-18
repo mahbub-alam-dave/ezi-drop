@@ -18,7 +18,7 @@ const SendParcel = () => {
   useEffect(() => {
     let baseCost = 0;
 
-    if (pickupDistrict === deliveryDistrict && parcelType === "Documents") {
+    if (pickupDistrict === deliveryDistrict && parcelType === "Documents" && weight<=5) {
       baseCost = 60;
     } else {
       if (pickupDistrict && deliveryDistrict) {
