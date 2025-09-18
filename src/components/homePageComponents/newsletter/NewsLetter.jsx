@@ -47,6 +47,7 @@ const NewsLetter = () => {
             type="text"
             placeholder="Your name"
             value={name}
+            required
             onChange={(e) => setName(e.target.value)}
             className="input w-full rounded-lg border-2 border-gray-300 bg-white placeholder:text-[--color-text-soft] focus:outline-none focus:ring-1 focus:ring-[--color-primary] dark:border-gray-700 dark:bg-gray-800 dark:placeholder:text-[--color-text-soft-dark] dark:focus:ring-[--color-primary-dark]"
           />
@@ -54,6 +55,7 @@ const NewsLetter = () => {
             type="email"
             placeholder="Your email"
             value={email}
+            required
             onChange={(e) => setEmail(e.target.value)}
             className="input w-full rounded-lg border-2 border-gray-300 bg-white placeholder:text-[--color-text-soft] focus:outline-none focus:ring-1 focus:ring-[--color-primary] dark:border-gray-700 dark:bg-gray-800 dark:placeholder:text-[--color-text-soft-dark] dark:focus:ring-[--color-primary-dark]"
           />
