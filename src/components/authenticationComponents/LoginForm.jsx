@@ -20,7 +20,7 @@ const LoginForm = () => {
         <input
           type="email"
           name="email"
-          className="input w-full mt-2"
+          className="input-style w-full mt-2"
           placeholder="Enter email"
         />
       </div>
@@ -31,26 +31,21 @@ const LoginForm = () => {
         <input
           type="password"
           name="password"
-          className="input w-full mt-2"
+          className="input-style w-full mt-2"
           placeholder="Enter password (6 characters)"
         />
       </div>
       <button
         type="submit"
-        className="bg-red-600 px-6 py-3 cursor-pointer rounded-full mt-4 w-full text-white font-medium text-lg"
+        className="bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] px-6 py-3 cursor-pointer rounded-full mt-4 w-full text-[var(--color-text-dark)] font-medium text-lg"
       >
         Login
       </button>
       <span className="mt-6 text-center">Or Sign Up with</span>
-{/*       <div className='flex justify-center items-center gap-4 mb-6'>
-                    <Image width={50} height={50} src={'/assets/icons/Facebook.png'} alt='facebook'/>
-                    <Image width={50} height={50} src={'/assets/icons/linkedin.png'} alt="linkedin"/>
-                    <Image width={50} height={50} src={'/assets/icons/Google.png'} alt="google" />
-                </div> */}
       <SocialLogin />
       <span className="text-center">
         Don't have an account?{" "}
-        <Link href={"/register"} className="text-red-600">
+        <Link href={"/register"} className="text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]">
           register
         </Link>
       </span>
