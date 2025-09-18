@@ -80,7 +80,7 @@ const NewsLetter = () => {
           </h2>
           <form
             onSubmit={handleSubmit}
-            className="flex flex-col sm:flex-row flex-wrap gap-4"
+            className="flex flex-col sm:flex-row gap-4"
           >
             <input
               type="email"
