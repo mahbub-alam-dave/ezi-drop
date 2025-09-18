@@ -30,6 +30,15 @@
 
 }
 
+/* default light theme */
+.banner-shape {
+  fill: var(--color-bg); /* white background */
+}
+
+/* dark mode */
+.dark .banner-shape {
+  fill: var(--color-text-soft-dark); /* #c0c0c0 */
+}
 
 /* new font style  */
 .story-script-regular {

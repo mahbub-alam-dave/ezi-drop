@@ -48,68 +48,69 @@ export default function BannerSection() {
   const slide = slides[index];
 
   return (
-    <section
-      className="
-        relative mb-16 h-[70vh] flex overflow-hidden rounded-2xl
-        bg-[color:var(--color-primary)]/10
-        max-w-[1440px] mx-auto
+    <section className="w-full pt-5">
+      <div
+        className="
+        relative mb-16 h-[70vh] flex overflow-hidden rounded-lg
+        bg-[color:var(--color-primary)]/20
+        max-w-[1440px] mx-auto shadow-[color:var(--color-primary)]/20 shadow-sm
       "
-    >
-      {/* ---------- LEFT SHAPED TEXT BOX ---------- */}
-      <div className="absolute w-full h-full md:w-4/6 flex items-center justify-center p-8 md:p-16">
-        <svg
-          className="absolute inset-0 w-full h-full"
-          viewBox="0 0 100 100"
-          preserveAspectRatio="none"
-        >
-          {/* Dark/Light bg change */}
-          <polygon
-            points="0,0 90,0 100,50 90,100 0,100"
-            fill="var(--color-bg)"
-          />
-        </svg>
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={index}
-            className="max-w-lg relative z-10"
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 1 }}
+      >
+        {/* ---------- LEFT SHAPED TEXT BOX ---------- */}
+        <div className="absolute w-full h-full md:w-4/6 flex items-center justify-start p-6 md:p-16">
+          <svg
+            className="absolute inset-0 w-full h-full"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
           >
-            <p
-              className="
-                uppercase tracking-wider story-script-regular mb-2
-                text-[color:var(--color-text-soft)]
-                dark:text-[color:var(--color-text-soft)]
-              "
-            >
-              {slide.subtitle}
-            </p>
+            <polygon
+              className="banner-shape"
+              points="0,0 90,0 100,50 90,100 0,100"
+            />
+          </svg>
 
-            <h1
-              className="
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={index}
+              className="max-w-lg relative z-10"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 1 }}
+            >
+              <p
+                className="
+                uppercase tracking-wider story-script-regular mb-2
+                text-[color:var(--color-primary)]
+                dark:text-[color:var(--color-primary)]
+              "
+              >
+                {slide.subtitle}
+              </p>
+
+              <h1
+                className="
                 text-2xl md:text-4xl font-extrabold mb-4 leading-snug
                 text-[color:var(--color-text)] dark:text-[color:var(--color-text)]
               "
-            >
-              {slide.title}
-            </h1>
+              >
+                {slide.title}
+              </h1>
 
-            <p
-              className="
+              <p
+                className="
                 mb-6 text-base md:text-lg
                 text-[color:var(--color-text-soft)]
                 dark:text-[color:var(--color-text-soft)]
               "
-            >
-              {slide.desc}
-            </p>
+              >
+                {slide.desc}
+              </p>
 
-            <div className="flex items-center gap-4">
-              <button
-                className="
+              <div className="flex items-center gap-4">
+                <button
+                  className="
                   px-5 py-3 rounded-lg border transition
                   border-[color:var(--color-primary)]
                   text-[color:var(--color-primary)]
@@ -119,50 +120,51 @@ export default function BannerSection() {
                   dark:text-[color:var(--color-primary-dark)]
                   dark:hover:bg-[color:var(--color-primary-dark)]
                 "
-              >
-                {slide.button}
-              </button>
+                >
+                  {slide.button}
+                </button>
 
-              <div className="flex items-center gap-2">
-                <span
-                  className="
+                <div className="flex items-center gap-2">
+                  <span
+                    className="
                     p-3 rounded-full border-2
                     border-[color:var(--color-primary)]
                     hover:bg-[color:var(--color-primary)] hover:text-white
                     dark:border-[color:var(--color-primary-dark)]
                     dark:hover:bg-[color:var(--color-primary-dark)]
                   "
-                >
-                  📞
-                </span>
-                <div>
-                  <p className="text-sm text-[color:var(--color-text-soft)] dark:text-[color:var(--color-text-soft)]">
-                    Call Us Now
-                  </p>
-                  <p className="font-bold text-lg text-[color:var(--color-text)] dark:text-[color:var(--color-text)]">
-                    {slide.phone}
-                  </p>
+                  >
+                    📞
+                  </span>
+                  <div>
+                    <p className="text-sm text-[color:var(--color-text-soft)] dark:text-[color:var(--color-text-soft)]">
+                      Call Us Now
+                    </p>
+                    <p className="font-bold text-lg text-[color:var(--color-text)] dark:text-[color:var(--color-text)]">
+                      {slide.phone}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-      {/* ---------- RIGHT IMAGE SECTION ---------- */}
-      <div className="absolute md:w-3/6 hidden md:flex h-full z-10 right-0 top-0">
-        <AnimatePresence mode="wait">
-          <motion.img
-            key={index}
-            src={slide.image}
-            alt="Courier Banner"
-            className="h-full w-full p-5 md:p-10 object-center"
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 100 }}
-            transition={{ duration: 1 }}
-          />
-        </AnimatePresence>
+        {/* ---------- RIGHT IMAGE SECTION ---------- */}
+        <div className="absolute md:w-3/6 hidden md:flex h-full z-10 right-0 top-0">
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={index}
+              src={slide.image}
+              alt="Courier Banner"
+              className="h-full w-full p-5 md:p-10 object-center"
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 100 }}
+              transition={{ duration: 1 }}
+            />
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   );
