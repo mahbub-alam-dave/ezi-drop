@@ -91,7 +91,7 @@ export default function Review() {
 
         {/* 🔹 Section Title */}
         <div className="text-center pt-6 sm:pt-8 md:pt-12 pb-6 sm:pb-8 px-4">
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
             What Our Customers Say
           </h2>
           <p className="text-[11px] sm:text-xs md:text-base text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)] mt-2">
@@ -101,7 +101,7 @@ export default function Review() {
         </div>
 
         {/* 🔹 Marquee Row 1 */}
-        <div className="marquee-row w-full mx-auto max-w-7xl overflow-hidden relative">
+        <div className="marquee-row w-full max-w-[1440px] mx-auto overflow-hidden relative">
           <div className="absolute left-0 top-0 h-full w-8 sm:w-14 md:w-20 z-10 pointer-events-none bg-gradient-to-r from-[var(--color-bg)] dark:from-[var(--color-bg-dark)] to-transparent"></div>
           <div className="marquee-inner flex transform-gpu min-w-[200%] pt-6 sm:pt-8 md:pt-10 pb-4 sm:pb-5">
             {[...reviewsData, ...reviewsData].map((review, index) => (
@@ -112,7 +112,7 @@ export default function Review() {
         </div>
 
         {/* 🔹 Marquee Row 2 (Reverse scroll) */}
-        <div className="marquee-row w-full mx-auto max-w-7xl overflow-hidden relative">
+        <div className="marquee-row w-full mx-auto max-w-[1440px] overflow-hidden relative">
           <div className="absolute left-0 top-0 h-full w-8 sm:w-14 md:w-20 z-10 pointer-events-none bg-gradient-to-r from-[var(--color-bg)] dark:from-[var(--color-bg-dark)] to-transparent"></div>
           <div className="marquee-inner marquee-reverse flex transform-gpu min-w-[200%] pt-6 sm:pt-8 md:pt-10 pb-4 sm:pb-5">
             {[...reviewsData, ...reviewsData].map((review, index) => (

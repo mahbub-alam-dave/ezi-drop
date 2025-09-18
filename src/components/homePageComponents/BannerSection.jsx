@@ -48,7 +48,7 @@ export default function BannerSection() {
   const slide = slides[index];
 
   return (
-    <section className="w-full pt-5">
+    <section className="w-full">
       <div
         className="
         relative mb-16 h-[70vh] flex overflow-hidden rounded-lg

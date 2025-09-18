@@ -5,8 +5,9 @@ import { IoMdCheckmark } from "react-icons/io";
 
 export default function Overview() {
   return (
-    <section className="">
-      <div className="bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] py-16 px-6 md:px-8 max-w-[1440px] mx-auto grid md:grid-cols-2 gap-12 items-center">
+    // bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
+    <section className="py-16 px-6 md:px-8">
+      <div className="max-w-[1440px] mx-auto grid md:grid-cols-2 gap-12 items-center">
         
         {/* Left Side Image */}
         <div className="">
@@ -15,13 +16,13 @@ export default function Overview() {
             alt="Smart Courier Delivery"
             width={500}
             height={400}
-            className="rounded-xl shadow-lg"
+            className="rounded-xl shadow-lg w-full"
           />
         </div>
 
         {/* Right Side Content */}
         <div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
             Smart Courier & Delivery Platform
           </h2>
           <p className="text-lg mb-6 text-[var(--color-subtext)] dark:text-[var(--color-subtext-dark)] leading-relaxed">

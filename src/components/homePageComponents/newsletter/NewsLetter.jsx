@@ -49,7 +49,7 @@ const NewsLetter = () => {
             value={name}
             required
             onChange={(e) => setName(e.target.value)}
-            className="input w-full rounded-lg border-2 border-gray-300 bg-white placeholder:text-[--color-text-soft] focus:outline-none focus:ring-1 focus:ring-[--color-primary] dark:border-gray-700 dark:bg-gray-800 dark:placeholder:text-[--color-text-soft-dark] dark:focus:ring-[--color-primary-dark]"
+            className="input-style w-full text-color-soft"
           />
           <input
             type="email"
@@ -57,12 +57,13 @@ const NewsLetter = () => {
             value={email}
             required
             onChange={(e) => setEmail(e.target.value)}
-            className="input w-full rounded-lg border-2 border-gray-300 bg-white placeholder:text-[--color-text-soft] focus:outline-none focus:ring-1 focus:ring-[--color-primary] dark:border-gray-700 dark:bg-gray-800 dark:placeholder:text-[--color-text-soft-dark] dark:focus:ring-[--color-primary-dark]"
+            className="input-style w-full text-color-soft"
           />
+          {/* input w-full rounded-lg border-2 border-gray-300 bg-white placeholder:text-[--color-text-soft] focus:outline-none focus:ring-1 focus:ring-[--color-primary] dark:border-gray-700 dark:bg-gray-800 dark:placeholder:text-[--color-text-soft-dark] dark:focus:ring-[--color-primary-dark] */}
           <button
             type="button"
             onClick={handleSubmit}
-            className="btn w-full rounded-lg border-none bg-gray-800 px-6 py-3 text-white transition-all duration-300 hover:bg-gray-900 md:w-auto dark:bg-gray-600 dark:hover:bg-gray-700"
+            className="background-color-primary btn rounded-md text-white"
           >
             Subscribe
           </button>
