@@ -4,9 +4,9 @@ export default function AboutFeatures() {
     const features = [
         {
             tag: "Delivery",
-            title: "Globally Connected by Large Network",
-            desc: "At Logistics, we leverage our far-reaching network with multiple transport modes to provide fast, efficient and cost-effective logistics solutions across the industry.",
-            img: "https://i.ibb.co/S4h5JHtN/img-about-2-1.png",
+            title: "Discover possibilities with simplified FedEx Import Rates",
+            desc: "EZI Drop Take advantage of this new opportunity to grow your business. With simplified Import Pricing offered by FedEx, you can now import with ease and without the worry of exchange rate risk when paying offshore.",
+            img: "https://i.ibb.co/6pb5LfJ/2019-Fed-Ex-India-28.webp",
             bullets: ["Affordable Cost", "Real-Time Delivery"],
             buttons: [
                 { label: "Affordable Cost", href: "/contact" },
@@ -15,7 +15,7 @@ export default function AboutFeatures() {
         },
         {
             tag: "Delivery",
-            title: "Globally Connected by Large Network",
+            title: "We Connected by Large Network",
             desc: "Logistics Teams was founded in 2003 by a group of transport logistics professionals who shared a vision to improve customer service, while streamlining supply chain efficiency.",
             img: "https://i.ibb.co/Z1Lh1kqP/img-about-2-2.png", 
             bullets: ["Reliable Partner", "Fast Turnaround"],
@@ -55,16 +55,16 @@ export default function AboutFeatures() {
 
                     {/* Content */}
                     <div className={`${i % 2 === 1 ? "md:order-1" : ""}`}>
-                        <span className="inline-block mb-3 text-sm font-medium text-yellow-600 uppercase">
+                        <span className="inline-block mb-3 text-sm font-medium text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)] uppercase">
                             {f.tag}
                         </span>
-                        <h3 className="text-2xl md:text-3xl text-[#5372a0] font-bold mb-4">{f.title}</h3>
-                        <p className="text-gray-600 mb-5">{f.desc}</p>
+                        <h3 className="text-2xl md:text-3xl text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)] font-bold mb-4">{f.title}</h3>
+                        <p className=" mb-5">{f.desc}</p>
 
                         <ul className="mb-5 space-y-2">
                             {f.bullets.map((b, j) => (
                                 <li key={j} className="flex items-center gap-2">
-                                    <span className="inline-block w-2 h-2 rounded-full bg-yellow-500" />
+                                    <span className="inline-block w-2 h-2 rounded-full bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]" />
                                     <span>{b}</span>
                                 </li>
                             ))}
@@ -75,7 +75,7 @@ export default function AboutFeatures() {
                                 <a
                                     key={k}
                                     href={btn.href}
-                                    className={`px-5 py-2 rounded-md border text-sm font-medium hover:shadow-md transition ${k === 0 ? "bg-slate-900 text-white" : "bg-white text-slate-900"
+                                    className={`px-5 py-2 rounded-md border text-sm font-medium hover:shadow-md transition ${k === 0 ? "bg-[var(--color-bg)] text-[var(--color-text-soft)]" : "dark:bg-[var(--color-bg-dark)] dark:text-[var(--color-text-soft-dark)]"
                                         }`}
                                 >
                                     {btn.label}
