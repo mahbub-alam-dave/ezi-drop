@@ -82,7 +82,8 @@ export default function Faq() {
         }
       `}</style>
 
-      <section className="max-w-[1440px] mx-auto flex flex-col lg:flex-row justify-between items-center py-16 px-6 md:px-12 bg-gradient-to-br from-white to-indigo-50 shadow-xl rounded-3xl my-10">
+      <section className="max-w-[1440px]  bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] 
+      text-[var(--color-text)] dark:text-[var(--color-text-dark)] mx-auto flex flex-col lg:flex-row justify-between items-center py-16 px-6 md:px-12 bg-gradient-to-br shadow-xl rounded-3xl my-10">
         {/* Image Side with Animation */}
         <div className="flex-1 flex justify-center items-center mb-10 lg:mb-0 lg:mr-10">
           <div className="relative">
@@ -107,10 +108,10 @@ export default function Faq() {
               Frequently Asked Questions
             </p>
           </div>
-          <h1 className="text-lg md:text-5xl font-bold mt-2 mb-4 text-gray-900">
+          <h1 className="text-lg md:text-5xl font-bold mt-2 mb-4 text-base-900">
             Need Help? We've Got Answers
           </h1>
-          <p className="text-lg text-slate-600 mb-8 max-w-lg">
+          <p className="text-lg text-base-600 mb-8 max-w-lg">
             Everything you need to know about Ezi Courier & Delivery services. 
             Can't find the answer you're looking for? Please contact our friendly team.
           </p>
@@ -118,12 +119,12 @@ export default function Faq() {
           <div className="space-y-2">
             {faqs.map((faq, index) => (
               <div
-                className={`faq-item border border-slate-200 rounded-2xl p-5 transition-all cursor-pointer bg-white shadow-sm hover:shadow-md ${openIndex === index ? 'border-indigo-300 shadow-md' : ''}`}
+                className={`faq-item border border-slate-200 rounded-2xl p-5 transition-all cursor-pointer bg-base-400 shadow-sm hover:shadow-md ${openIndex === index ? 'border-indigo-300 shadow-md' : ''}`}
                 key={index}
                 onClick={() => handleToggle(index)}
               >
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-800 pr-4">
+                  <h3 className="text-lg font-semibold text-base-800 pr-4">
                     {faq.question}
                   </h3>
                   <svg
@@ -132,7 +133,7 @@ export default function Faq() {
                     viewBox="0 0 20 20"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
-                    className={`flex-shrink-0 transform transition-transform duration-500 ${openIndex === index ? "rotate-180 text-indigo-600" : "text-gray-500"}`}
+                    className={`flex-shrink-0 transform transition-transform duration-500 ${openIndex === index ? "rotate-180 text-indigo-600" : "text-base-500"}`}
                   >
                     <path
                       d="m5 7.5 5 5 5-5"
@@ -150,7 +151,7 @@ export default function Faq() {
                     height: openIndex === index ? `${heights[index]}px` : '0px'
                   }}
                 >
-                  <p className="text-base text-slate-600 answer-text pb-1">
+                  <p className="text-base text-base-600 answer-text pb-1">
                     {faq.answer}
                   </p>
                 </div>
@@ -159,7 +160,7 @@ export default function Faq() {
           </div>
           
           {/* Additional Support CTA */}
-          <div className="mt-10 p-6 bg-gradient-to-r from-blue-600 to-violet-400 rounded-2xl text-white shadow-lg transform hover:scale-[1.02] transition-transform duration-300">
+          <div className="mt-2 p-6 bg-gradient-to-r from-blue-600 to-violet-400 rounded-2xl text-white shadow-lg transform hover:scale-[1.02] transition-transform duration-300">
             <h3 className="text-xl font-bold mb-2">Still have questions?</h3>
             <p className="mb-4 opacity-90">We're here to help you with all your delivery needs</p>
             <div className="flex flex-col sm:flex-row gap-3">
