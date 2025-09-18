@@ -2,7 +2,7 @@ import AboutFeatures from "@/components/AboutSection/AboutFeatures";
 import AboutSection from "@/components/AboutSection/AboutSection";
 
 
-export default function AboutsPage() {
+export default function AboutPage() {
     return (
         <main className=" px-6 md:px-8 py-18">
             <div className="max-w-[1440px] mx-auto">
