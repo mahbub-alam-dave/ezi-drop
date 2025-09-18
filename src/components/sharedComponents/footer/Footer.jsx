@@ -37,7 +37,7 @@ export default function Footer() {
                         <ul className="text-sm space-y-2">
                             <li><a href="#" className="hover:text-[var(--color-primary)]">Home</a></li>
                             <li><a href="#" className="hover:text-[var(--color-primary)]">About us</a></li>
-                            <li><a href="#" className="hover:text-[var(--color-primary)]">Contact us</a></li>
+                            <li><a href="/contact" className="hover:text-[var(--color-primary)]">Contact us</a></li>
                             <li><a href="#" className="hover:text-[var(--color-primary)]">Privacy policy</a></li>
                         </ul>
                     </div>
@@ -49,7 +49,7 @@ export default function Footer() {
                             <li><a href="#" className="hover:text-[var(--color-primary)]">Return & Refund Policy</a></li>
                             <li><a href="#" className="hover:text-[var(--color-primary)]">Payment Methods</a></li>
                             <li><a href="#" className="hover:text-[var(--color-primary)]">Track your Order</a></li>
-                            <li><a href="#" className="hover:text-[var(--color-primary)]">Contact Us</a></li>
+                            <li><a href="/contact" className="hover:text-[var(--color-primary)]">Contact Us</a></li>
                         </ul>
                     </div>
                     {/* Contact + Socials */}

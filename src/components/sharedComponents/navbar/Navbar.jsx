@@ -47,6 +47,7 @@ export default function Navbar() {
         <div className="flex items-center gap-8">
           <nav>
             <ul className="md:flex gap-8 hidden">
+              
               {navLinks}
             </ul>
           </nav>
