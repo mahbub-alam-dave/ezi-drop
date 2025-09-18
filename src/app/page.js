@@ -15,7 +15,7 @@ export default function Home() {
         <Overview />
       <Faq></Faq>
         <Review />
-      {/* <NewsLetter /> */}
+      <NewsLetter />
     </div>
   );
 }
