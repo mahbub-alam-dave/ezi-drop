@@ -51,7 +51,7 @@ export default function BannerSection() {
     <section className="w-full">
       <div
         className="
-        relative mb-16 h-[60vh] md:h-[80vh] flex overflow-hidden rounded-lg
+        relative mb-16 mt-[100px] h-[60vh] md:h-[80vh] flex overflow-hidden rounded-lg
         bg-[color:var(--color-primary)]/20  mx-auto shadow-[color:var(--color-primary)]/20 shadow-sm
       "
       >
@@ -150,7 +150,7 @@ export default function BannerSection() {
         </div>
 
         {/* ---------- RIGHT IMAGE SECTION ---------- */}
-        <div className="absolute md:w-3/6  h-full md:z-10 opacity-30 md:opacity-100 right-0 top-0">
+        <div className="absolute md:w-3/6  h-full md:z-10 flex items-center opacity-30 md:opacity-100 right-0 top-0">
           <div className="xl:w-[720px]">
             <AnimatePresence mode="wait">
             <motion.img
