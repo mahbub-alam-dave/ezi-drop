@@ -85,12 +85,12 @@ export default function ContactPage() {
 
             <div>
               <label className="block mb-2 text-[var(--color-text)] dark:text-[var(--color-text-dark)]">Name</label>
-              <input type="text" placeholder="Your Name" className="w-full px-5 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text)] dark:text-[var(--color-text-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"/>
+              <input type="text" required placeholder="Your Name" className="w-full px-5 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text)] dark:text-[var(--color-text-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"/>
             </div>
 
             <div>
               <label className="block mb-2 text-[var(--color-text)] dark:text-[var(--color-text-dark)]">Email</label>
-              <input type="email" placeholder="Your Email" className="w-full px-5 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text)] dark:text-[var(--color-text-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"/>
+              <input type="email" required placeholder="Your Email" className="w-full px-5 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text)] dark:text-[var(--color-text-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"/>
             </div>
 
             <div>
