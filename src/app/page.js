@@ -13,9 +13,10 @@ export default function Home() {
         <HowItWorks />
       </main>
         <Overview />
-      <Faq></Faq>
         <Review />
       <NewsLetter />
+      <Faq></Faq>
+        
     </div>
   );
 }

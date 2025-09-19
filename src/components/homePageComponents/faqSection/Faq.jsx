@@ -1,9 +1,75 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Lottie from "lottie-react";
+import supportAnimation from "../../../app/assests/lottieFiles/lottie.json";
 
 export default function Faq() {
   const [openIndex, setOpenIndex] = useState(null);
+  const lottieRef = useRef();
+
+  // Function to change colors in the Lottie animation
+  const modifyColors = (animationData) => {
+    // Create a deep copy of the animation data
+    const modifiedData = JSON.parse(JSON.stringify(animationData));
+    
+    // Define color mappings (original colors to new colors)
+    const colorMappings = {
+      // Blue colors to indigo
+      "#3b82f6": "#4f46e5", // blue-500 to indigo-600
+      "#2563eb": "#4338ca", // blue-600 to indigo-700
+      "#1d4ed8": "#3730a3", // blue-700 to indigo-800
+      
+      // Light blue to lighter indigo
+      "#93c5fd": "#a5b4fc", // blue-300 to indigo-300
+      
+      // You can add more color mappings based on your animation
+    };
+    
+    // Recursive function to update colors in the animation data
+    const updateColors = (obj) => {
+      if (typeof obj === "object" && obj !== null) {
+        for (let key in obj) {
+          if (key === "c" && typeof obj[key] === "object" && obj[key].k !== undefined) {
+            // This is a color property
+            const colorValue = obj[key].k;
+            if (Array.isArray(colorValue) && colorValue.length >= 3) {
+              // Convert RGB array to hex
+              const r = Math.round(colorValue[0] * 255);
+              const g = Math.round(colorValue[1] * 255);
+              const b = Math.round(colorValue[2] * 255);
+              const hexColor = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+              
+              // Check if this color should be replaced
+              if (colorMappings[hexColor]) {
+                const newColor = colorMappings[hexColor];
+                // Convert hex back to RGB values (0-1 range)
+                const bigint = parseInt(newColor.slice(1), 16);
+                obj[key].k = [
+                  ((bigint >> 16) & 255) / 255,
+                  ((bigint >> 8) & 255) / 255,
+                  (bigint & 255) / 255,
+                  colorValue[3] // preserve alpha
+                ];
+              }
+            }
+          } else {
+            updateColors(obj[key]);
+          }
+        }
+      }
+    };
+    
+    updateColors(modifiedData);
+    return modifiedData;
+  };
+
+  const [modifiedAnimation, setModifiedAnimation] = useState(null);
+
+  useEffect(() => {
+    // Modify the animation colors when component mounts
+    setModifiedAnimation(modifyColors(supportAnimation));
+  }, []);
 
   const faqs = [
     {
@@ -42,28 +108,6 @@ export default function Faq() {
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5
-      }
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -88,17 +132,31 @@ export default function Faq() {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Lottie Animation Section */}
+          <div className="flex items-center justify-center">
+            {modifiedAnimation ? (
+              <Lottie 
+                animationData={modifiedAnimation} 
+                loop={true}
+                autoplay={true}
+                lottieRef={lottieRef}
+                className="w-full max-w-md"
+              />
+            ) : (
+              <div className="w-full h-64 flex items-center justify-center">
+                <div className="animate-pulse bg-gray-200 rounded-lg w-full h-full"></div>
+              </div>
+            )}
+          </div>
+
           {/* FAQ Items */}
-          <motion.div 
-            className="space-y-4"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
+          <div className="space-y-4">
             {faqs.map((faq, index) => (
               <motion.div
                 key={index}
-                variants={itemVariants}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
                 className={`bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all cursor-pointer border border-gray-100 dark:border-slate-700 ${
                   openIndex === index ? 'ring-2 ring-blue-500 shadow-lg' : ''
                 }`}
@@ -160,91 +218,17 @@ export default function Faq() {
                 </AnimatePresence>
               </motion.div>
             ))}
-          </motion.div>
-
-          {/* Support Section */}
-          <div className="flex flex-col space-y-8">
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-8 text-white shadow-lg"
-            >
-              <div className="mb-6">
-                <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center mb-4">
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold mb-2">Still have questions?</h3>
-                <p className="opacity-90">We're here to help you with all your delivery needs</p>
-              </div>
-              <div className="space-y-4">
-                <motion.button 
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full bg-white text-blue-700 font-medium py-3 px-6 rounded-lg flex items-center justify-center space-x-2"
-                >
-                  <span>Contact Support</span>
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                  </svg>
-                </motion.button>
-                <motion.button 
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full bg-transparent border border-white text-white font-medium py-3 px-6 rounded-lg flex items-center justify-center space-x-2"
-                >
-                  <span>Live Chat</span>
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
-                  </svg>
-                </motion.button>
-              </div>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-slate-700"
-            >
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">Fast Delivery</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">24/7 service available</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">Secure Handling</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Your packages are safe</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">Online Tracking</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Real-time updates</p>
-                </div>
-              </div>
-            </motion.div>
           </div>
         </div>
+
+        {/* Support Section */}
+        <motion.div 
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.5, delay: 0.5 }}
+  className="mt-16"
+>
+</motion.div>
       </div>
     </div>
   );
