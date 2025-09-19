@@ -16,8 +16,8 @@ export default function DiscountSection() {
       {/* Overlay that adapts to theme */}
       <div className="
         absolute inset-0
-        bg-[rgba(0,0,0,0.4)]
-        dark:bg-[rgba(0,0,0,0.6)]
+        bg-[rgba(0,0,0,0.3)]
+        dark:bg-[rgba(0,0,0,0.4)]
       "></div>
 
       <div className="relative text-center">
@@ -29,7 +29,7 @@ export default function DiscountSection() {
           viewport={{ once: true }}
           className="
             text-3xl md:text-4xl font-bold mb-4
-            text-color
+            text-white
           "
         >
           Special Discount for New Customers!
@@ -43,7 +43,7 @@ export default function DiscountSection() {
           viewport={{ once: true }}
           className="
             mb-8 text-lg md:text-xl
-            text-color-soft
+            text-white
           "
         >
           Get <span className="font-extrabold">20% OFF</span> on your first parcel delivery
@@ -52,14 +52,14 @@ export default function DiscountSection() {
 
         {/* Call-to-action button */}
         <motion.a
-          href="/book-parcel"
+          href="/send-parcel"
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.5, duration: 0.6 }}
           viewport={{ once: true }}
           className="
             inline-block font-semibold px-8 py-3 rounded-full shadow-md transition
-            background-color-primary hover:bg- text-[var(--color-bg)]
+            background-color-primary hover:bg-[var(--color-bg)] hover:text-color-primary text-[var(--color-bg)]
             hover:opacity-90
           "
         >
