@@ -1,8 +1,38 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { IoMdCheckmark } from "react-icons/io";
-import { motion } from "framer-motion"; 
+import { motion } from "framer-motion";
+
+function Counter({ target, label }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const end = parseInt(target);
+    if (start === end) return;
+
+    let totalMilSecDur = 2000; // 2 seconds
+    let incrementTime = Math.floor(totalMilSecDur / end);
+
+    let timer = setInterval(() => {
+      start += 1;
+      setCount(start);
+      if (start === end) clearInterval(timer);
+    }, incrementTime);
+
+    return () => clearInterval(timer);
+  }, [target]);
+
+  return (
+    <div className="text-center">
+      <h3 className="text-3xl md:text-4xl font-bold text-[var(--color-primary)]">
+        {count}+ 
+      </h3>
+      <p className="text-[var(--color-subtext)] dark:text-[var(--color-subtext-dark)]">{label}</p>
+    </div>
+  );
+}
 
 export default function Overview() {
   return (
@@ -52,6 +82,13 @@ export default function Overview() {
               <span className="text-[var(--color-primary)]"><IoMdCheckmark /></span> Coverage area: Dhaka, Chattogram, Sylhet (initially)
             </li>
           </ul>
+
+          {/* Stats / Counters */}
+          <div className="grid grid-cols-3 gap-6 mt-10">
+            <Counter target={5000} label="Parcels Delivered" />
+            <Counter target={200} label="Partners" />
+            <Counter target={24} label="7 Support (Hours)" />
+          </div>
         </motion.div>
       </div>
     </section>
