@@ -4,6 +4,7 @@ import Faq from "@/components/homePageComponents/faqSection/Faq";
 import NewsLetter from "@/components/homePageComponents/newsletter/NewsLetter";
 import Overview from "@/components/homePageComponents/Overview";
 import Review from "@/components/homePageComponents/reviewSection/Review";
+import DiscountSection from "@/components/homePageComponents/DiscountSection";
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
         <HowItWorks />
       </main>
         <Overview />
+        <DiscountSection/>
       <Faq></Faq>
         <Review />
       <NewsLetter />
