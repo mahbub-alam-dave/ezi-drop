@@ -28,7 +28,7 @@ export default function Footer() {
 
   return (
     <footer className="bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] px-6 md:px-8 py-16 relative">
-      <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between gap-10 shadow-t-md pb-8">
+      <div className="w-full max-w-[1440px] mx-auto flex flex-col lg:flex-row justify-between gap-10 shadow-t-md pb-8">
         
         {/* Logo + About */}
         <div className="md:max-w-96">
@@ -54,7 +54,7 @@ export default function Footer() {
         </div>
 
         {/* Footer Navigation */}
-        <div className="flex-1 flex flex-col md:flex-row justify-between gap-20">
+        <div className="flex-1 flex flex-col lg:flex-row justify-between gap-20">
           
           {/* Company Links */}
           <div>
@@ -162,14 +162,14 @@ export default function Footer() {
       </p>
 
       {/* Back-to-top button */}
-      {showTop && (
+{/*       {showTop && (
         <button
           onClick={scrollToTop}
           className="fixed bottom-6 right-6 rounded-full px-6 py-4 bg-[var(--color-primary)] text-white font-bold text-2xl shadow-lg hover:opacity-90 transition"
         >
           ↑
         </button>
-      )}
+      )} */}
     </footer>
   );
 }

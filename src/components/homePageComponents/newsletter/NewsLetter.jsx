@@ -40,7 +40,7 @@ const NewsLetter = () => {
   return (
     <section
       id="newsletter"
-      className="flex justify-center mb-16 px-4 sm:px-6 lg:px-8 py-6 lg:py-12 
+      className="w-full flex justify-center mb-16 px-4 sm:px-6 lg:px-8 py-6 lg:py-12 
        bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
        text-[var(--color-text)] dark:text-[var(--color-text-dark)]
        transition-colors duration-500"
@@ -63,7 +63,7 @@ const NewsLetter = () => {
 
         {/* ===== Right Side Form ===== */}
         <motion.div
-          initial={{ opacity: 0, x: 60 }}
+          // initial={{ opacity: 0, x: 60 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}

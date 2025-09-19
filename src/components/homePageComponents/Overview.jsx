@@ -39,8 +39,8 @@ function Counter({ target, label }) {
 
 export default function Overview() {
   return (
-    <section className="py-16 px-6 md:px-8">
-      <div className="max-w-[1440px] mx-auto grid md:grid-cols-2 gap-12 items-center">
+    <section className="py-16 px-6 md:px-8 w-full">
+      <div className="w-full max-w-[1440px] mx-auto grid md:grid-cols-2 gap-12 items-center">
         {/* Left Side Image with Animation */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
@@ -58,7 +58,7 @@ export default function Overview() {
 
         {/* Right Side Content */}
         <motion.div
-          initial={{ opacity: 0, x: 50 }}
+          // initial={{ opacity: 0, x: 50 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >

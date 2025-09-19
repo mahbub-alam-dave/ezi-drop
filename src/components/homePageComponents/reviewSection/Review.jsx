@@ -86,7 +86,7 @@ export default function Review() {
 
   return (
     <div>
-      <section className="py-10 sm:py-14 md:py-16 dark:bg-[var(--color-bg-light-dark)]">
+      <section className="w-full py-10 sm:py-14 md:py-16 dark:bg-[var(--color-bg-light-dark)]">
         {/* 🔹 CSS for marquee animation */}
         <style>{`
           @keyframes marqueeScroll {

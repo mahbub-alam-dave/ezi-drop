@@ -10,13 +10,10 @@ import DiscountSection from "@/components/homePageComponents/DiscountSection";
 export default function Home() {
   return (
     <div className="min-h-screen">
-      <main>
         <BannerSection />
         <HowItWorks />
-      </main>
-      
-        <Overview />
         <DiscountSection/>
+        <Overview />
       <Faq></Faq>
         <Review />
       <NewsLetter />
