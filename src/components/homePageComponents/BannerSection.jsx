@@ -51,14 +51,14 @@ export default function BannerSection() {
     <section className="w-full">
       <div
         className="
-        relative mb-16 h-[70vh] flex overflow-hidden rounded-lg
-        bg-[color:var(--color-primary)]/20
-        max-w-[1440px] mx-auto shadow-[color:var(--color-primary)]/20 shadow-sm
+        relative mb-16 mt-[100px] h-[60vh] md:h-[80vh] flex overflow-hidden rounded-lg
+        bg-[color:var(--color-primary)]/20  mx-auto shadow-[color:var(--color-primary)]/20 shadow-sm
       "
       >
         {/* ---------- LEFT SHAPED TEXT BOX ---------- */}
-        <div className="absolute w-full h-full md:w-4/6 flex items-center justify-start p-6 md:p-16">
-          <svg
+        <div className="absolute w-full h-full md:w-4/6 flex items-center justify-end p-6 md:p-16 lg:pr-40 xl:p-0">
+          <div className="xl:w-[1050px] ml-10">
+            <svg
             className="absolute inset-0 w-full h-full"
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
@@ -68,8 +68,6 @@ export default function BannerSection() {
               points="0,0 90,0 100,50 90,100 0,100"
             />
           </svg>
-
-
           <AnimatePresence mode="wait">
             <motion.div
               key={index}
@@ -148,22 +146,25 @@ export default function BannerSection() {
               </div>
             </motion.div>
           </AnimatePresence>
+          </div>
         </div>
 
         {/* ---------- RIGHT IMAGE SECTION ---------- */}
-        <div className="absolute md:w-3/6 hidden md:flex h-full z-10 right-0 top-0">
-          <AnimatePresence mode="wait">
+        <div className="absolute md:w-3/6  h-full md:z-10 flex items-center opacity-30 md:opacity-100 right-0 top-0">
+          <div className="xl:w-[720px]">
+            <AnimatePresence mode="wait">
             <motion.img
               key={index}
               src={slide.image}
               alt="Courier Banner"
-              className="h-full w-full p-5 md:p-10 object-center"
+              className="h-full w-full p-5 object-center"
               initial={{ opacity: 0, x: 100 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 100 }}
               transition={{ duration: 1 }}
             />
           </AnimatePresence>
+          </div>
         </div>
       </div>
     </section>
