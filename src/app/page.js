@@ -4,18 +4,21 @@ import Faq from "@/components/homePageComponents/faqSection/Faq";
 import NewsLetter from "@/components/homePageComponents/newsletter/NewsLetter";
 import Overview from "@/components/homePageComponents/Overview";
 import Review from "@/components/homePageComponents/reviewSection/Review";
+import DiscountSection from "@/components/homePageComponents/DiscountSection";
+
 
 export default function Home() {
   return (
     <div className="min-h-screen">
-      <main>
         <BannerSection />
         <HowItWorks />
-      </main>
+        <DiscountSection/>
         <Overview />
       <Faq></Faq>
         <Review />
-      {/* <NewsLetter /> */}
+      <NewsLetter />
+      
+        
     </div>
   );
 }
