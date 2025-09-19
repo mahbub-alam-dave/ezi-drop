@@ -7,7 +7,24 @@ import { MdMarkEmailRead } from "react-icons/md";
 
 export default function ContactPage() {
   const [enquiryType, setEnquiryType] = useState("");
+   const [status, setStatus] = useState(null); // success | error
+  const [loading, setLoading] = useState(false);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setStatus(null);
 
+    if (!enquiryType) {
+      setStatus("error");
+      return;
+    }
+
+    setLoading(true);
+
+    setTimeout(() => {
+      setLoading(false);
+      setStatus("success");
+    }, 2000); // simulate 2s delay
+  }
   return (
     <main className="bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] min-h-screen py-20 px-6 md:px-10">
       <div className="max-w-[1440px] mx-auto space-y-28">
@@ -57,7 +74,8 @@ export default function ContactPage() {
           </motion.div>
 
           {/* Right Form */}
-          <motion.form
+              <motion.form
+            onSubmit={handleSubmit}
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
@@ -66,10 +84,12 @@ export default function ContactPage() {
             <h2 className="text-2xl font-semibold text-[var(--color-text)] dark:text-[var(--color-text-dark)] mb-4">
               Send Us a Message
             </h2>
-            
+
             {/* Enquiry Categories */}
             <div>
-              <label className="block mb-2 text-[var(--color-text)] dark:text-[var(--color-text-dark)]">Enquiry Type</label>
+              <label className="block mb-2 text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
+                Enquiry Type
+              </label>
               <select
                 value={enquiryType}
                 onChange={(e) => setEnquiryType(e.target.value)}
@@ -84,34 +104,56 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <label className="block mb-2 text-[var(--color-text)] dark:text-[var(--color-text-dark)]">Name</label>
-              <input type="text" required placeholder="Your Name" className="w-full px-5 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text)] dark:text-[var(--color-text-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"/>
+              <label className="block mb-2 text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
+                Name
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="Your Name"
+                className="w-full px-5 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text)] dark:text-[var(--color-text-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+              />
             </div>
 
             <div>
-              <label className="block mb-2 text-[var(--color-text)] dark:text-[var(--color-text-dark)]">Email</label>
-              <input type="email" required placeholder="Your Email" className="w-full px-5 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text)] dark:text-[var(--color-text-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"/>
+              <label className="block mb-2 text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
+                Email
+              </label>
+              <input
+                type="email"
+                required
+                placeholder="Your Email"
+                className="w-full px-5 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text)] dark:text-[var(--color-text-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+              />
             </div>
 
             <div>
-              <label className="block mb-2 text-[var(--color-text)] dark:text-[var(--color-text-dark)]">Message</label>
-              <textarea rows="5" placeholder="Your Message" className="w-full px-5 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text)] dark:text-[var(--color-text-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"/>
+              <label className="block mb-2 text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
+                Message
+              </label>
+              <textarea
+                rows="5"
+                placeholder="Your Message"
+                className="w-full px-5 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text)] dark:text-[var(--color-text-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+              />
             </div>
 
-            {/* File Upload */}
-            <div>
-              <label className="block mb-2 text-[var(--color-text)] dark:text-[var(--color-text-dark)]">Attach File (Optional)</label>
-              <input type="file" className="w-full text-[var(--color-text)] dark:text-[var(--color-text-dark)]"/>
-            </div>
+            {/* Status Message */}
+            {status === "success" && (
+              <p className="text-green-600 font-medium">Your message has been sent successfully!</p>
+            )}
+            {status === "error" && (
+              <p className="text-red-500 font-medium">Please select an enquiry type before submitting.</p>
+            )}
 
-            {/* Preferred Contact Time */}
-            <div>
-              <label className="block mb-2 text-[var(--color-text)] dark:text-[var(--color-text-dark)]">Preferred Contact Time</label>
-              <input type="time" className="w-full px-5 py-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text)] dark:text-[var(--color-text-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"/>
-            </div>
-
-            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} type="submit" className="w-full py-3 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white font-semibold shadow-md transition">
-              Send Message
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 rounded-xl bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white font-semibold shadow-md transition disabled:opacity-60"
+            >
+              {loading ? "Sending..." : "Send Message"}
             </motion.button>
           </motion.form>
         </div>
