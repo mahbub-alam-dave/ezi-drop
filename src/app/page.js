@@ -15,9 +15,10 @@ export default function Home() {
       </main>
         <Overview />
         <DiscountSection/>
+        <Faq></Faq>
         <Review />
       <NewsLetter />
-      <Faq></Faq>
+      
         
     </div>
   );
