@@ -6,6 +6,7 @@ import Overview from "@/components/homePageComponents/Overview";
 import Review from "@/components/homePageComponents/reviewSection/Review";
 import DiscountSection from "@/components/homePageComponents/DiscountSection";
 
+
 export default function Home() {
   return (
     <div className="min-h-screen">
@@ -13,9 +14,10 @@ export default function Home() {
         <BannerSection />
         <HowItWorks />
       </main>
+      
         <Overview />
         <DiscountSection/>
-        <Faq></Faq>
+      <Faq></Faq>
         <Review />
       <NewsLetter />
       
