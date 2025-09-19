@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 export default function DiscountSection() {
   return (
     <section
-      className="
+      className=" w-full my-16
         max-w-[1440px] mx-auto relative py-16 px-4 md:px-10
         bg-center bg-cover bg-no-repeat
       "

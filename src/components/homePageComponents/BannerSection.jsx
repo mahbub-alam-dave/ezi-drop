@@ -48,11 +48,11 @@ export default function BannerSection() {
   const slide = slides[index];
 
   return (
-    <section className="w-full">
+    <section className="w-full h-[60vh] md:h-[80vh]">
       <div
         className="
-        relative mb-16 mt-[100px] h-[60vh] md:h-[80vh] flex overflow-hidden rounded-lg
-        bg-[color:var(--color-primary)]/20  mx-auto shadow-[color:var(--color-primary)]/20 shadow-sm
+        relative mb-16 h-full flex overflow-hidden rounded-lg
+        bg-[color:var(--color-primary)]/20 w-full  mx-auto shadow-[color:var(--color-primary)]/20 shadow-sm
       "
       >
         {/* ---------- LEFT SHAPED TEXT BOX ---------- */}

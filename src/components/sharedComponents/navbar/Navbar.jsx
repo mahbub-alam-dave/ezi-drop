@@ -3,11 +3,12 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { CiMenuBurger } from "react-icons/ci";
 import Sidebar from "./Sidebar";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
 
 export default function Navbar() {
 
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession();
+  const status = "not authenticated"
 
   const [dark, setDark] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
@@ -47,7 +48,7 @@ export default function Navbar() {
 
   return (
     <div className="bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] px-6 md:px-8 relative">
-      <div className="max-w-[1440px] mx-auto flex justify-between items-center h-[100px]">
+      <div className="w-full max-w-[1440px] mx-auto flex justify-between items-center h-[100px]">
         <h1 className="text-2xl font-bold"><Link href={"/"}>Ezi Drop </Link></h1>
         <div className="flex items-center gap-8">
           <nav>
