@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { IoMdCheckmark } from "react-icons/io";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 function Counter({ target, label }) {
   const [count, setCount] = useState(0);
@@ -27,9 +28,11 @@ function Counter({ target, label }) {
   return (
     <div className="text-center">
       <h3 className="text-3xl md:text-4xl font-bold text-[var(--color-primary)]">
-        {count}+ 
+        {count}+
       </h3>
-      <p className="text-[var(--color-subtext)] dark:text-[var(--color-subtext-dark)]">{label}</p>
+      <p className="text-[var(--color-subtext)] dark:text-[var(--color-subtext-dark)]">
+        {label}
+      </p>
     </div>
   );
 }
@@ -38,11 +41,10 @@ export default function Overview() {
   return (
     <section className="py-16 px-6 md:px-8">
       <div className="max-w-[1440px] mx-auto grid md:grid-cols-2 gap-12 items-center">
-        
         {/* Left Side Image with Animation */}
-        <motion.div 
-          initial={{ opacity: 0, x: -50 }} 
-          whileInView={{ opacity: 1, x: 0 }} 
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
         >
           <Image
@@ -64,25 +66,47 @@ export default function Overview() {
             Smart Courier & Delivery Platform
           </h2>
           <p className="text-lg mb-6 text-[var(--color-subtext)] dark:text-[var(--color-subtext-dark)] leading-relaxed">
-            Our platform ensures faster, safer, and hassle-free parcel delivery. 
-            With just a few clicks, you can easily send and track your parcels anytime, anywhere.
+            Our platform ensures faster, safer, and hassle-free parcel delivery.
+            With just a few clicks, you can easily send and track your parcels
+            anytime, anywhere.
           </p>
 
           <ul className="space-y-3 text-[var(--color-subtext)] dark:text-[var(--color-subtext-dark)]">
             <li className="flex items-center gap-2">
-              <span className="text-[var(--color-primary)]"><IoMdCheckmark /></span> Easy parcel sending & tracking
+              <span className="text-[var(--color-primary)]">
+                <IoMdCheckmark />
+              </span>{" "}
+              Easy parcel sending & tracking
             </li>
             <li className="flex items-center gap-2">
-              <span className="text-[var(--color-primary)]"><IoMdCheckmark /></span> Fast & secure delivery
+              <span className="text-[var(--color-primary)]">
+                <IoMdCheckmark />
+              </span>{" "}
+              Fast & secure delivery
             </li>
             <li className="flex items-center gap-2">
-              <span className="text-[var(--color-primary)]"><IoMdCheckmark /></span> 24/7 customer support
+              <span className="text-[var(--color-primary)]">
+                <IoMdCheckmark />
+              </span>{" "}
+              24/7 customer support
             </li>
             <li className="flex items-center gap-2">
-              <span className="text-[var(--color-primary)]"><IoMdCheckmark /></span> Coverage area: Dhaka, Chattogram, Sylhet (initially)
+              <span className="text-[var(--color-primary)]">
+                <IoMdCheckmark />
+              </span>{" "}
+              Coverage area: Dhaka, Chattogram, Sylhet (initially)
             </li>
           </ul>
-
+          {/* Learn More Button */}
+          <Link href={"/about"} className="flex justify-end">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-6 py-3 rounded-lg mt-2  bg-[var(--color-primary)] text-white font-semibold shadow-md hover:bg-[var(--color-primary-dark)] transition"
+            >
+              Learn More
+            </motion.button>
+          </Link>
           {/* Stats / Counters */}
           <div className="grid grid-cols-3 gap-6 mt-10">
             <Counter target={5000} label="Parcels Delivered" />
