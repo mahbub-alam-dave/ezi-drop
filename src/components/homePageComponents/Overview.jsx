@@ -2,15 +2,19 @@
 import React from "react";
 import Image from "next/image";
 import { IoMdCheckmark } from "react-icons/io";
+import { motion } from "framer-motion"; 
 
 export default function Overview() {
   return (
-    // bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
     <section className="py-16 px-6 md:px-8">
       <div className="max-w-[1440px] mx-auto grid md:grid-cols-2 gap-12 items-center">
         
-        {/* Left Side Image */}
-        <div className="">
+        {/* Left Side Image with Animation */}
+        <motion.div 
+          initial={{ opacity: 0, x: -50 }} 
+          whileInView={{ opacity: 1, x: 0 }} 
+          transition={{ duration: 0.8 }}
+        >
           <Image
             src="/delivery.jpg"
             alt="Smart Courier Delivery"
@@ -18,10 +22,14 @@ export default function Overview() {
             height={400}
             className="rounded-xl shadow-lg w-full"
           />
-        </div>
+        </motion.div>
 
         {/* Right Side Content */}
-        <div>
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
             Smart Courier & Delivery Platform
           </h2>
@@ -44,7 +52,7 @@ export default function Overview() {
               <span className="text-[var(--color-primary)]"><IoMdCheckmark /></span> Coverage area: Dhaka, Chattogram, Sylhet (initially)
             </li>
           </ul>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
