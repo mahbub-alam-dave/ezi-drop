@@ -2,23 +2,65 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import SocialLogin from "./SocialLogin";
-
-
-
+import { registerUser } from "@/actions/auth/register";
+import { signIn, useSession } from "next-auth/react";
+import Swal from "sweetalert2";
 
 const RegisterForm = () => {
+  const [loading, setLoading] = useState(false);
+  const { update } = useSession();
 
-  const [loading, setLoading]  =  useState(false)
+  const handleRegisterForm = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const form = new FormData(e.target);
+    const registerData = Object.fromEntries(form.entries());
+    console.log(registerData);
 
-    const handleRegisterForm = async (e) => {
-      e.preventDefault();
-      setLoading(true);
-      const form = new FormData(e.target)
-      const registerData = Object.fromEntries(form.entries());
-      console.log(registerData)
+    try {
+      const res = await registerUser(registerData);
+      if (res.uiConfirmation.acknowledged) {
+        // login after registration
+        const signInAfterRegister = await signIn("credentials", {
+          email: registerData.email,
+          password: registerData.password,
+          redirect: true,
+        });
 
-
+        if (signInAfterRegister.ok) {
+          await update();
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Registration & Login successful",
+            showConfirmButton: false,
+            timer: 1500,
+          }).then(() => {
+            router.push("/products"); // redirect AFTER Swal closes
+          });
+        }
+        else {
+          Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Failed to login after registration",
+        });
+        }
+      }
+      else {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Registration failed!",
+      });
     }
+    } catch (error) {
+      console.error(error)
+    }
+    finally {
+      setLoading(false)
+    }
+  };
 
   return (
     <form onSubmit={handleRegisterForm} className="flex flex-col gap-4">
@@ -65,7 +107,10 @@ const RegisterForm = () => {
       <SocialLogin />
       <span className="text-center">
         Already have an account?{" "}
-        <Link href={"/login"} className="text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]">
+        <Link
+          href={"/login"}
+          className="text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]"
+        >
           Login
         </Link>
       </span>
