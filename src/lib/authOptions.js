@@ -1,3 +1,4 @@
+import { loginUser } from "@/actions/auth/login";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions = {
@@ -12,7 +13,8 @@ providers: [
     },
     async authorize(credentials, req) {
       // Add logic here to look up the user from the credentials supplied
-      const user = { id: "1", name: "J Smith", email: "jsmith@example.com" }
+      // const user = { id: "1", name: "J Smith", email: "jsmith@example.com" }
+      const user = await loginUser(credentials)
 
       if (user) {
         // Any object returned will be saved in `user` property of the JWT
@@ -25,5 +27,11 @@ providers: [
       }
     }
   })
-]}
+],
+  pages: {
+    signIn: "/login",
+  },
+secret: process.env.NEXTAUTH_SECRET,
+
+}
 

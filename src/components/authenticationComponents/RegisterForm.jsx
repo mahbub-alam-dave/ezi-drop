@@ -18,7 +18,8 @@ const RegisterForm = () => {
 
     try {
       const res = await registerUser(registerData);
-      if (res.acknowledged) {
+      console.log(res)
+      if (res.insertedId) {
         // login after registration
         const signInAfterRegister = await signIn("credentials", {
           email: registerData.email,
@@ -35,7 +36,7 @@ const RegisterForm = () => {
             showConfirmButton: false,
             timer: 1500,
           }).then(() => {
-            router.push("/products"); // redirect AFTER Swal closes
+            router.push("/"); // redirect AFTER Swal closes
           });
         }
         else {
