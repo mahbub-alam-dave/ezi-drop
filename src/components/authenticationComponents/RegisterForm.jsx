@@ -15,11 +15,10 @@ const RegisterForm = () => {
     setLoading(true);
     const form = new FormData(e.target);
     const registerData = Object.fromEntries(form.entries());
-    console.log(registerData);
 
     try {
       const res = await registerUser(registerData);
-      if (res.uiConfirmation.acknowledged) {
+      if (res.acknowledged) {
         // login after registration
         const signInAfterRegister = await signIn("credentials", {
           email: registerData.email,

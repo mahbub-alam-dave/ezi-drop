@@ -1,4 +1,5 @@
-import { collectionName, dbConnect } from "@/lib/dbConnect";
+"use server"
+import { collectionNames, dbConnect } from "@/lib/dbConnect";
 import bcrypt from "bcrypt"
 
 export const registerUser = async (registerData) => {
@@ -9,7 +10,7 @@ export const registerUser = async (registerData) => {
     }
 
     // check user availability
-    const isUserExist = await dbConnect(collectionName.users).findOne({email: registerData.email})
+    const isUserExist = await dbConnect(collectionNames.users).findOne({email: registerData.email})
 
     if(!isUserExist){
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -21,7 +22,11 @@ export const registerUser = async (registerData) => {
             insertedId: result.insertedId.toString()
         }
 
-        return uiConfirmation
+    return {
+    acknowledged: result.acknowledged,
+    insertedId: result.insertedId.toString(),
+    }
+    
     }
 
     else {
