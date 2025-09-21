@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import SocialLogin from "./SocialLogin";
-import { registerUser } from "@/actions/auth/register";
+import { registerUser } from "@/app/actions/auth/register";
 import { signIn, useSession } from "next-auth/react";
 import Swal from "sweetalert2";
 

@@ -1,4 +1,4 @@
-import { loginUser } from "@/actions/auth/login";
+import { loginUser } from "@/app/actions/auth/login";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions = {
