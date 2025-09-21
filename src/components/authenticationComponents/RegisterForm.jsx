@@ -8,7 +8,15 @@ import SocialLogin from "./SocialLogin";
 
 const RegisterForm = () => {
 
-    const handleRegisterForm = () => {
+  const [loading, setLoading]  =  useState(false)
+
+    const handleRegisterForm = async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      const form = new FormData(e.target)
+      const registerData = Object.fromEntries(form.entries());
+      console.log(registerData)
+
 
     }
 
