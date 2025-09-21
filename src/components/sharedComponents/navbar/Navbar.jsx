@@ -3,12 +3,11 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { CiMenuBurger } from "react-icons/ci";
 import Sidebar from "./Sidebar";
-// import { useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export default function Navbar() {
 
-  // const { data: session, status } = useSession();
-  const status = "not authenticated"
+  const { data: session, status } = useSession();
 
   const [dark, setDark] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
