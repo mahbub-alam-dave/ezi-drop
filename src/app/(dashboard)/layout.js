@@ -4,13 +4,13 @@ import Link from "next/link";
 export default function DashboardLayout({ children }) {
   const status = "authenticated";
 //   const role = "user";
-  const role = "rider";
-//   const role = "admin";
+  // const role = "rider";
+  const role = "admin";
 
   const dashboardLinks = {
     adminLinks: (
       <>
-        <Link href="/dashboard">Overview</Link>
+        <Link href="/dashboard/overview">Overview</Link>
         <Link href="/assign-riders">Assign Riders</Link>
         <Link href="/dashboard/manage-candidate">Manage Candidate</Link>
         <Link href="/dashboard/profile">Profile</Link>

@@ -2,14 +2,54 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import SocialLogin from "./SocialLogin";
+import { signIn, useSession } from "next-auth/react";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
 
 const LoginForm = () => {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter()
+  const { update } = useSession();
 
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const form = e.target;
+    const email = form.email.value;
+    const password = form.password.value;
 
-    const handleLogin = () => {
-
+    try {
+      const response = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+      if (response.ok) {
+        await update()
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Logged In successfully",
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(() => {
+          router.push("/");
+          form.reset();
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Invalid credentials",
+        });
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
     }
+  };
 
   return (
     <form onSubmit={handleLogin} className="flex flex-col gap-4">
@@ -45,7 +85,10 @@ const LoginForm = () => {
       <SocialLogin />
       <span className="text-center">
         Don't have an account?{" "}
-        <Link href={"/register"} className="text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]">
+        <Link
+          href={"/register"}
+          className="text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]"
+        >
           register
         </Link>
       </span>
