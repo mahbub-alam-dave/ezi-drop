@@ -1,4 +1,4 @@
-// Implement By Abu Bokor
+// Implement By Abu Bokor And Backend MD. Yasin...
 "use client";
 
 import { useEffect, useState } from "react";
@@ -18,8 +18,12 @@ const SendParcel = () => {
   useEffect(() => {
     let baseCost = 0;
 
-    if (pickupDistrict === deliveryDistrict && parcelType === "Documents" && weight<=5) {
-      baseCost = 60;
+    if (
+      pickupDistrict === deliveryDistrict &&
+      parcelType === "Documents" &&
+      weight <= 5
+    ) {
+      baseCost += 60;
     } else {
       if (pickupDistrict && deliveryDistrict) {
         baseCost = pickupDistrict === deliveryDistrict ? 60 : 120;
@@ -44,7 +48,10 @@ const SendParcel = () => {
 
   const onSubmit = async (data) => {
     try {
+      
       //   When Fetch or Send Data Use "data" argument here
+      console.log(data); // This data will send to server
+
       Swal.fire({
         title: "Success!",
         text: "Your parcel request has been submitted.",
@@ -122,7 +129,7 @@ const SendParcel = () => {
             <div>
               <label className="block mb-1 font-medium">Pickup Address</label>
               <textarea
-                {...register("pickup", { required: true })}
+                {...register("pickupAddress", { required: true })}
                 placeholder="Complete Pickup Address"
                 className="w-full textarea textarea-bordered bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] border border-[var(--border-color)] dark:border-[var(--border-color-two)]"
               />
@@ -177,7 +184,7 @@ const SendParcel = () => {
             <div>
               <label className="block mb-1 font-medium">Delivery Address</label>
               <textarea
-                {...register("delivery", { required: true })}
+                {...register("deliveryAddress", { required: true })}
                 placeholder="Complete Delivery Address"
                 className="w-full textarea textarea-bordered bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] border border-[var(--border-color)] dark:border-[var(--border-color-two)]"
               />
@@ -222,7 +229,7 @@ const SendParcel = () => {
 
           {/* Submit Button */}
           <div className="lg:col-span-2">
-            <button
+            <button // This button name changable.
               type="submit"
               className="
                 w-full mt-2 btn border-none
