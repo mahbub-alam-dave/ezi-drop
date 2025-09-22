@@ -19,7 +19,7 @@ export default function DashboardLayout({ children }) {
     riderLinks: (
       <>
         <li>
-          <Link href="/dashboard/rider-overview">Overview</Link>
+          <Link href="/dashboard/rider-overview">Rider dashboard</Link>
         </li>
         <li>
           <Link href="/dashboard/manage-orders">Manage Orders</Link>
