@@ -3,14 +3,34 @@ import React, { useEffect } from "react";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import Image from 'next/image';
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 
 
 const SocialLogin = () => {
 
-    const handleSocialLogin = () =>{
-        
+  const session = useSession();
+  const router = useRouter()
+
+    const handleSocialLogin = (providerName) =>{
+        console.log("social login", providerName)
+        signIn(providerName, {callbackUrl: "/"})
     }
+
+    useEffect(() => {
+      if(session.status === "authenticated") {
+        router.push("/")
+        Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Logged In successfully",
+            showConfirmButton: false,
+            timer: 1500,
+          })
+      }
+    },[session.status])
 
   return (
     <div className="flex justify-center items-center gap-4 mb-6">
