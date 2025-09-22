@@ -25,14 +25,54 @@
   --color-secondary-dark: #e7000b;
 
   /* border color */
-  --border-color: #d1d5dc;  /* white border */
+  --color-border: #cdd0d4;  /* white border #d1d5dc */
   --border-color-two: #6a7282;  /* black border */
 
 }
 
+/* default light theme */
+.banner-shape {
+  fill: var(--color-bg); /* white background */
+}
+
+/* dark mode */
+.dark .banner-shape {
+  fill: var(--color-text-soft-dark); /* #c0c0c0 */
+}
 
 /* new font style  */
 .story-script-regular {
   font-family: "Story Script", sans-serif;
   font-style: normal;
+}
+
+
+/* utility css color classes */
+
+/* background color */
+.background-color {
+  @apply bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
+}
+
+.background-color-primary {
+  @apply bg-[var(--color-primary)] dark:bg-[var(--color-primary-dark)]
+}
+
+.background-color-secondary {
+  @apply bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)]
+}
+
+/* text color */
+.text-color {
+  @apply text-[var(--color-text)] dark:text-[var(--color-text-dark)]
+}
+
+.text-color-soft {
+    @apply text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)]
+}
+
+
+/* input style */
+.input-style {
+  @apply px-3 py-2 border border-[var(--color-border)] dark:border-[var(--color-border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] dark:focus:ring-[var(--color-primary-dark)]  
 }
