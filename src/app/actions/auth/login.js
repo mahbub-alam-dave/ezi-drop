@@ -9,6 +9,10 @@ export const loginUser = async (loginData) => {
     const isExistUser = await dbConnect(collectionNames.users).findOne({email})
     console.log(isExistUser)
 
+    if(isExistUser) {
+        await dbConnect(collectionNames.users).updateOne({_id: isExistUser._id},{$set: {updatedAt: new Date()}})
+    }
+
     if(!isExistUser) {
         console.log("user not exist")
         return null
