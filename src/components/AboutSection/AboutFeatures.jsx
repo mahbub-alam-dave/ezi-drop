@@ -45,7 +45,7 @@ export default function AboutFeatures() {
                     key={i}
                     className="w-full grid md:grid-cols-2 gap-10 items-center"
                 >
-                    {/* Image */}
+                   
                     <div
                         className={`relative w-full h-72 md:h-80 rounded-xl overflow-hidden shadow-md ${i % 2 === 1 ? "md:order-2" : ""
                             }`}
@@ -53,7 +53,6 @@ export default function AboutFeatures() {
                         <Image src={f.img} alt={f.title} fill className="object-cover" />
                     </div>
 
-                    {/* Content */}
                     <div className={`${i % 2 === 1 ? "md:order-1" : ""}`}>
                         <span className="inline-block mb-3 text-sm font-medium text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)] uppercase">
                             {f.tag}
