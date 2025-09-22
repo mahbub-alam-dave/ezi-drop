@@ -13,9 +13,11 @@ export const registerUser = async (registerData) => {
     const isUserExist = await dbConnect(collectionNames.users).findOne({email: registerData.email})
 
     if(!isUserExist){
+        const newRegisteredUser = {...registerData, role: "user", createdAt: new Date(),
+        updatedAt: new Date()}
         const hashedPassword = await bcrypt.hash(password, 10);
-        registerData.password = hashedPassword;
-        const result = await dbConnect(collectionNames.users).insertOne(registerData)
+        newRegisteredUser.password = hashedPassword;
+        const result = await dbConnect(collectionNames.users).insertOne(newRegisteredUser)
 
         const uiConfirmation = {
             acknowledged: result.acknowledged,
