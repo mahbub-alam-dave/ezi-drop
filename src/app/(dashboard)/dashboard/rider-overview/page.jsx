@@ -4,11 +4,19 @@ import { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { Package, CheckCircle, Clock, DollarSign } from "lucide-react";
+import {
+  RadialBarChart,
+  RadialBar,
+  Legend,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 export default function RiderOverviewPage() {
   const [date, setDate] = useState(new Date());
 
   const riderName = "Sefat";
+
   const stats = [
     { id: 1, title: "Active Deliveries", value: 3, icon: Package },
     { id: 2, title: "Completed Orders", value: 120, icon: CheckCircle },
@@ -22,18 +30,62 @@ export default function RiderOverviewPage() {
     { id: 3, parcelId: "PCK-103", status: "Pending", date: "2025-09-22" },
   ];
 
+  // RadialBarChart data
+  const radialData = [
+    { name: "Today", value: 65, fill: "#3b82f6" },
+    { name: "Target", value: 55, fill: "#ef4444" },
+    { name: "This Year", value: 36, fill: "#10b981" },
+  ];
+
   return (
     <div className="space-y-8 text-color">
       {/* Heading */}
       <div>
-        <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Smart Courier Rider</h1>
+        <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          Smart Courier Rider
+        </h1>
         <h2 className="text-2xl font-bold">Welcome back, {riderName} 👋</h2>
         <p className="text-color-soft">
           Here’s a quick look at your delivery performance today.
         </p>
       </div>
 
-      {/* Stats Section */}
+      {/* Revenue Statistics Section with RadialBarChart */}
+      <div className="background-color rounded-2xl shadow-md p-6 border border-[var(--color-border)]">
+        <h2 className="text-2xl font-semibold mb-6">Revenue Statistics</h2>
+
+        <div style={{ width: "100%", height: 300 }}>
+          <ResponsiveContainer>
+            <RadialBarChart
+              cx="50%"
+              cy="50%"
+              innerRadius="20%"
+              outerRadius="90%"
+              barSize={20}
+              data={radialData}
+              startAngle={180}
+              endAngle={-180}
+            >
+              <RadialBar
+                minAngle={15}
+                background
+                clockWise
+                dataKey="value"
+                cornerRadius={10}
+              />
+              <Legend
+                iconSize={10}
+                layout="horizontal"
+                verticalAlign="bottom"
+                align="center"
+              />
+              <Tooltip />
+            </RadialBarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Rider Stats Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
           <div
