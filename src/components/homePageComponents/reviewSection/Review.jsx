@@ -1,59 +1,40 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import axios from 'axios';
 
 export default function Review() {
   const [filter, setFilter] = useState("all");
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // 🔹 Sample review data
-  const reviewsData = [
-    {
-      name: "Safin Ahmed",
-      rating: 5,
-      comment: "Ezi Drop made my parcel delivery super fast and reliable!",
-      date: "August 10, 2025",
-      image: "https://i.pravatar.cc/100?img=12",
-    },
-    {
-      name: "Jamal Karim",
-      rating: 4,
-      comment: "Good service, rider was polite. Just a bit delay.",
-      date: "September 1, 2025",
-      image: "https://i.pravatar.cc/100?img=8",
-    },
-    {
-      name: "Sara Islam",
-      rating: 5,
-      comment: "Smart Courier is the best! Affordable and trustworthy.",
-      date: "September 12, 2025",
-      image: "https://i.pravatar.cc/100?img=5",
-    },
-    {
-      name: "Mitu Akter",
-      rating: 4,
-      comment: "Easy booking process and timely updates. Very satisfied!",
-      date: "September 14, 2025",
-      image: "https://i.pravatar.cc/100?img=10",
-    },
-    {
-      name: "Ahmed Jamil",
-      rating: 5,
-      comment: "Easy booking process and timely updates. Very satisfied!",
-      date: "September 14, 2025",
-      image: "https://i.pravatar.cc/100?img=14",
-    },
-  ];
+  // 🔹 Fetch reviews from the database using axios
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get('/api/reviews');
+        setReviews(response.data);
+      } catch (error) {
+        console.error("Failed to fetch reviews:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, []);
 
   // 🔹 Average Rating + Count
   const avgRating = useMemo(() => {
-    const total = reviewsData.reduce((sum, r) => sum + r.rating, 0);
-    return (total / reviewsData.length).toFixed(1);
-  }, [reviewsData]);
+    if (reviews.length === 0) return "0.0";
+    const total = reviews.reduce((sum, r) => sum + r.rating, 0);
+    return (total / reviews.length).toFixed(1);
+  }, [reviews]);
 
   // 🔹 Filter reviews based on rating
   const filteredReviews =
     filter === "all"
-      ? reviewsData
-      : reviewsData.filter((r) => r.rating === Number(filter));
+      ? reviews
+      : reviews.filter((r) => r.rating === Number(filter));
 
   // 🔹 Review card
   const ReviewCard = ({ review }) => (
@@ -83,6 +64,14 @@ export default function Review() {
       </p>
     </div>
   );
+
+  if (loading) {
+    return (
+      <section className="w-full py-10 sm:py-14 md:py-16 text-center dark:bg-[var(--color-bg-light-dark)]">
+        <p className="text-xl text-[var(--color-text)] dark:text-[var(--color-text-dark)]">Loading reviews...</p>
+      </section>
+    );
+  }
 
   return (
     <div>
@@ -117,7 +106,7 @@ export default function Review() {
               ⭐ {avgRating} / 5
             </p>
             <p className="text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)]">
-              Based on {reviewsData.length} reviews
+              Based on {reviews.length} reviews
             </p>
           </div>
 
