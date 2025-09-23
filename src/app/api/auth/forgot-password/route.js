@@ -32,7 +32,7 @@ export async function POST(request) {
       { $set: { resetPasswordToken: token, resetPasswordExpires: expires } }
     );
 
-    const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password/${token}`;
+    const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password/${token}`;
 
     await sendEmail({
       to: email,
