@@ -81,7 +81,7 @@ const SendParcel = () => {
   return (
     <div
       className="min-h-screen my-16 flex justify-center items-center p-4
-       bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
+      
        text-[var(--color-text)] dark:text-[var(--color-text-dark)]"
     >
       <div
