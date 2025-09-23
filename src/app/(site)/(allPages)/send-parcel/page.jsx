@@ -47,29 +47,41 @@ const SendParcel = () => {
     setCost(baseCost);
   }, [pickupDistrict, deliveryDistrict, parcelType, weight]);
 
-  const onSubmit = (data) => {
-
-    // "data" ready to send server>> worked on Md yasin vai
-    console.log(data)
-
-    Swal.fire({
-      title: "Success!",
-      text: "Your parcel request has been submitted.",
-      icon: "success",
-      confirmButtonColor: "var(--color-primary)",
-      background: "var(--color-bg)",
-      color: "var(--color-text)",
+  const onSubmit = async (data) => {
+  try {
+    const res = await fetch("/api/parcels", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     });
-    reset();
-    console.log(data);
-  };
+
+    if (res.ok) {
+      Swal.fire({
+        title: "Success!",
+        text: "Your parcel request has been submitted.",
+        icon: "success",
+        confirmButtonColor: "var(--color-primary)",
+        background: "var(--color-bg)",
+        color: "var(--color-text)",
+      });
+      reset();
+    } else {
+      const errData = await res.json();
+      Swal.fire("Error", errData.message || "Something went wrong", "error");
+    }
+  } catch (err) {
+    console.error(err);
+    Swal.fire("Error", "Network error", "error");
+  }
+};
+
 
   const districts = Object.keys(districtData);
 
   return (
     <div
       className="min-h-screen my-16 flex justify-center items-center p-4
-       bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
+      
        text-[var(--color-text)] dark:text-[var(--color-text-dark)]"
     >
       <div

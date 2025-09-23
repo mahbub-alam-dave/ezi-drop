@@ -43,9 +43,64 @@ providers: [
   pages: {
     signIn: "/login",
   },
+    session: {
+    strategy: "jwt", // ✅ Enable JWT-based sessions
+  },
   secret: process.env.NEXTAUTH_SECRET,
+callbacks: {
+  async signIn({ user, account }) {
+    if (!account || !user?.email) return false;
 
-  callbacks: {
+    const { provider, providerAccountId } = account;
+    const { name, email, image } = user;
+
+    const usersCollection = await dbConnect("users");
+
+    // 1. Check if user already exists by email
+    const existUser = await usersCollection.findOne({ email });
+
+    if (!existUser) {
+      // New user → insert
+      const userData = {
+        name,
+        email,
+        image,
+        role: "user",
+        providers: [{ provider, providerAccountId }], // store multiple providers
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      await usersCollection.insertOne(userData);
+    } else {
+      // Existing user → update provider info if not already linked
+      const hasProvider = existUser.providers?.some(
+        (p) => p.provider === provider && p.providerAccountId === providerAccountId
+      );
+
+      if (!hasProvider) {
+        await usersCollection.updateOne(
+          { _id: existUser._id },
+          {
+            $push: { providers: { provider, providerAccountId } },
+            $set: { updatedAt: new Date() },
+          }
+        );
+      } else {
+        await usersCollection.updateOne(
+          { _id: existUser._id },
+          { $set: { updatedAt: new Date() } }
+        );
+      }
+    }
+
+    return true;
+  },
+}
+
+}
+
+/*   callbacks: {
   async signIn({ user, account, profile, email, credentials }) {
     if(account) {
         const {provider, providerAccountId} = account
@@ -56,6 +111,9 @@ providers: [
         const existUser = await dbConnect("users").findOne({providerAccountId})
 
        if(!existUser) {
+        if(existUser.email === user_email){
+          dbConnect("users").updateOne({_id: existUser._id},{$set: {provider, providerAccountId}})
+        }
         await dbConnect("users").insertOne(userData)
        }
        else {
@@ -64,27 +122,7 @@ providers: [
     }
     return true
   }, 
-}
-}
-
-/* let userRecord = await users.findOne({ providerAccountId })
-
-if (!userRecord) {
-  // try finding by email
-  userRecord = await users.findOne({ email: user_email })
-  
-  if (userRecord) {
-    // link new provider to existing user
-    await users.updateOne(
-      { email: user_email },
-      { $set: { provider, providerAccountId } }
-    )
-  } else {
-    // new user entirely
-    await users.insertOne(userData)
-  }
-}
- */
+} */
 
 
 

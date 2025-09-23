@@ -79,7 +79,7 @@ const LoginForm = () => {
         type="submit"
         className="bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] px-6 py-3 cursor-pointer rounded-full mt-4 w-full text-white font-medium text-lg"
       >
-        Login
+        {loading ? "loading..." : "Login"}
       </button>
       <span className="mt-6 text-center">Or Sign Up with</span>
       <SocialLogin />

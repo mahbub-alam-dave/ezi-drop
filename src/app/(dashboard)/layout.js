@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function DashboardLayout({ children }) {
   const status = "authenticated";
-  const role = "user";
+  // const role = "user";
   // const role = "rider";
   // const role = "admin";
 
@@ -19,7 +19,7 @@ export default function DashboardLayout({ children }) {
     riderLinks: (
       <>
         <li>
-          <Link href="/dashboard/rider-overview">Overview</Link>
+          <Link href="/dashboard/rider-overview">Rider dashboard</Link>
         </li>
         <li>
           <Link href="/dashboard/manage-orders">Manage Orders</Link>
@@ -44,7 +44,10 @@ export default function DashboardLayout({ children }) {
           <Link href="/dashboard/send-parcel">Orders history</Link>
         </li>
         <li>
-          <Link href="/dashboard/dashboard/profile">Profile</Link>
+          <Link href="/dashboard/profile">Profile</Link>
+        </li>
+        <li>
+          <Link href="/dashboard/be-a-rider">Be A Rider</Link>
         </li>
       </>
     ),
@@ -65,9 +68,13 @@ export default function DashboardLayout({ children }) {
                 {dashboardLinks.adminLinks}
               </ul>
             ) : status === "authenticated" && role === "rider" ? (
-              <ul className="space-y-3 flex flex-col mt-6">{dashboardLinks.riderLinks}</ul>
+              <ul className="space-y-3 flex flex-col mt-6">
+                {dashboardLinks.riderLinks}
+              </ul>
             ) : (
-              <ul className="space-y-3 flex flex-col mt-6">{dashboardLinks.userLinks}</ul>
+              <ul className="space-y-3 flex flex-col mt-6">
+                {dashboardLinks.userLinks}
+              </ul>
             )}
           </aside>
 
