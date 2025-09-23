@@ -9,6 +9,15 @@ const LoginPage = () => {
           Login Now
         </h2>
         <LoginForm />
+        {/* Forgot Password Link */}
+    <div className="text-center mt-4">
+      <a
+        href="/forgot-password"
+        className="text-sm text-blue-600 hover:underline"
+      >
+        Forgot your password?
+      </a>
+    </div>
       </div>
     </div>
   );
