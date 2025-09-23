@@ -43,6 +43,9 @@ providers: [
   pages: {
     signIn: "/login",
   },
+    session: {
+    strategy: "jwt", // ✅ Enable JWT-based sessions
+  },
   secret: process.env.NEXTAUTH_SECRET,
 
   callbacks: {
