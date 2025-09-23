@@ -3,9 +3,9 @@ import Link from "next/link";
 
 export default function DashboardLayout({ children }) {
   const status = "authenticated";
-//   const role = "user";
+  const role = "user";
   // const role = "rider";
-  const role = "admin";
+  // const role = "admin";
 
   const dashboardLinks = {
     adminLinks: (
@@ -35,7 +35,7 @@ export default function DashboardLayout({ children }) {
     userLinks: (
       <>
         <li>
-          <Link href="/dashboard/rider-overview">Overview</Link>
+          <Link href="/dashboard/useroverview">Overview</Link>
         </li>
         <li>
           <Link href="/dashboard/send-parcel">Send Parcel</Link>
@@ -55,7 +55,7 @@ export default function DashboardLayout({ children }) {
       <NextAuthProvider>
         <div className="flex min-h-screen bg-gray-50 dark:bg-black">
           {/* Sidebar */}
-          <aside className="w-[450px] text-color bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] p-6 lg:p-8">
+          <aside className="w-1/5 text-color bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] p-6 lg:p-8">
             <Link href={"/"} className="mb-6">
               <h2 className="text-2xl font-bold ">Ezi Drop</h2>
             </Link>
