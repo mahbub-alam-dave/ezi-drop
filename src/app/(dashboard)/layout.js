@@ -4,10 +4,10 @@ import Link from "next/link";
 
 export default function DashboardLayout({ children }) {
   
-  const { data: session, status } = useSession();
-  console.log(session)
+  // const { data: session, status } = useSession();
+  // console.log(session)
   
-  // const status = "authenticated";
+  const status = "authenticated";
   // const role = "user";
   const role = "rider";
   // const role = "admin";
