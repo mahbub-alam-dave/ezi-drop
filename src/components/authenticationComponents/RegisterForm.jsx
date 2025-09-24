@@ -3,15 +3,16 @@ import React, { useState } from "react";
 import Link from "next/link";
 import SocialLogin from "./SocialLogin";
 import { registerUser } from "@/app/actions/auth/register";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Swal from "sweetalert2";
 import OtpModal from "../modals/OtpModal";
 
 const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false)
-  const [registerEmail, setRegisterEmail] = useState("")
-  const [registerPass, setRegisterPass] = useState("")
+  const [otpModalData, setOtpModalData] = useState({})
+/*   const [registerEmail, setRegisterEmail] = useState("")
+  const [registerPass, setRegisterPass] = useState("") */
   const { update } = useSession();
 
   const handleRegisterForm = async (e) => {
@@ -23,17 +24,13 @@ const RegisterForm = () => {
     try {
       const res = await registerUser(registerData);
 
-      console.log(res);
-
       if (res.insertedId) {
         await fetch("/api/auth/generate-otp", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: registerData.email }),
         });
-
-        setRegisterEmail(registerData.email); // store for OTP modal
-        setRegisterPass(registerData.password)
+        setOtpModalData({ email: registerData.email, password:registerData.password });
         setShowOtpModal(true); // open modal
 
         /*         // login after registration
@@ -131,7 +128,7 @@ const RegisterForm = () => {
       </span>
     </form>
     {showOtpModal && 
-    <OtpModal email={registerEmail} password={registerPass} />
+    <OtpModal signInData={otpModalData} closeModal={setShowOtpModal} />
     }
     </div>
   );

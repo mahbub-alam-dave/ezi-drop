@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import { collectionNames, dbConnect } from "@/lib/dbConnect";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/authOptions";
 
-export async function GET({response}) {
 
-  const {email:userEmail} = response.json()
+export async function GET({req}) {
+
+  const {email:userEmail} = req.json()
 
   const db = dbConnect(collectionNames.users);
   const user = await db.findOne({ email: userEmail });
