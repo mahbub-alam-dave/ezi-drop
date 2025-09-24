@@ -41,7 +41,7 @@ export default function OtpModal({ signInData, closeModal }) {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 flex items-center justify-center bg-white/95 dark:bg-black/95 z-1000">
       <div className="background-color p-6 rounded-xl shadow-md w-96">
         <h2 className="text-lg font-bold mb-4">Verify OTP</h2>
         <input
@@ -54,7 +54,7 @@ export default function OtpModal({ signInData, closeModal }) {
         <div className="flex gap-2 items-center">
           <button
             onClick={resendOtp}
-            className="btn border-color text-color py-2 rounded-md hover:bg-blue-700 transition"
+            className="btn border-color bg-transparent text-color py-2 rounded-md hover:bg-gray-800 transition"
           >
             resend
           </button>
