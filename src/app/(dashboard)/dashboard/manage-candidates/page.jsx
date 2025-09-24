@@ -11,13 +11,12 @@ import {
 } from "@/components/ui/dialog";
 
 export default function ManageCandidatesPage() {
-  // ফেক অ্যাপ্লিকেশন ডাটা
   const [applications, setApplications] = useState([
     {
       id: 1,
-      name: "Sefat Ahmed",
-      email: "sefat@example.com",
-      phone: "+8801789456123",
+      name: "Ahmed",
+      email: "ahmed@example.com",
+      phone: "+8801789456105",
       address: "Dhaka, Bangladesh",
       experience: "2 years",
       licenseNo: "DL-2024-9876",
@@ -26,9 +25,9 @@ export default function ManageCandidatesPage() {
     },
     {
       id: 2,
-      name: "Mahbub Alam",
-      email: "mahbub@example.com",
-      phone: "+8801712345678",
+      name: "Alam",
+      email: "alom@example.com",
+      phone: "+88017123450000",
       address: "Chattogram, Bangladesh",
       experience: "3 years",
       licenseNo: "DL-2023-1122",
@@ -49,26 +48,31 @@ export default function ManageCandidatesPage() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Manage Rider Applications</h1>
+    <div className="p-6 background-color min-h-screen">
+      <h1 className="text-4xl font-extrabold bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] bg-clip-text text-transparent mb-8">
+        Manage Rider Applications
+      </h1>
 
-      <div className="overflow-x-auto rounded-xl shadow border">
-        <table className="min-w-full bg-white">
-          <thead className="bg-gray-100 text-left">
+      <div className="overflow-x-auto rounded-xl shadow border border-[var(--color-border)] background-color">
+        <table className="min-w-full">
+          <thead className="bg-[var(--color-primary)] text-white">
             <tr>
-              <th className="px-6 py-3 font-semibold">Applicant Name</th>
-              <th className="px-6 py-3 font-semibold">Email</th>
-              <th className="px-6 py-3 font-semibold">Phone</th>
-              <th className="px-6 py-3 font-semibold">Status</th>
-              <th className="px-6 py-3 font-semibold">Action</th>
+              <th className="px-6 py-3 text-left">Applicant Name</th>
+              <th className="px-6 py-3 text-left">Email</th>
+              <th className="px-6 py-3 text-left">Phone</th>
+              <th className="px-6 py-3 text-left">Status</th>
+              <th className="px-6 py-3 text-left">Action</th>
             </tr>
           </thead>
           <tbody>
             {applications.map((app) => (
-              <tr key={app.id} className="border-t hover:bg-gray-50">
-                <td className="px-6 py-3">{app.name}</td>
-                <td className="px-6 py-3">{app.email}</td>
-                <td className="px-6 py-3">{app.phone}</td>
+              <tr
+                key={app.id}
+                className="border-t hover:bg-[var(--color-muted)] transition-all"
+              >
+                <td className="px-6 py-3 text-color">{app.name}</td>
+                <td className="px-6 py-3 text-color-soft">{app.email}</td>
+                <td className="px-6 py-3 text-color-soft">{app.phone}</td>
                 <td
                   className={`px-6 py-3 font-semibold ${
                     app.status === "Accepted"
@@ -84,7 +88,7 @@ export default function ManageCandidatesPage() {
                   <Button
                     variant="outline"
                     onClick={() => setSelected(app)}
-                    className="text-sm"
+                    className="text-sm background-color-secondary text-white hover:opacity-90 transition"
                   >
                     View Details
                   </Button>
@@ -97,16 +101,16 @@ export default function ManageCandidatesPage() {
 
       {/* Modal */}
       <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md background-color">
           <DialogHeader>
-            <DialogTitle>Applicant Details</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-color">Applicant Details</DialogTitle>
+            <DialogDescription className="text-color-soft">
               View and manage the selected rider’s application.
             </DialogDescription>
           </DialogHeader>
 
           {selected && (
-            <div className="space-y-3 mt-4">
+            <div className="space-y-3 mt-4 text-color">
               <p>
                 <strong>Name:</strong> {selected.name}
               </p>
@@ -131,13 +135,13 @@ export default function ManageCandidatesPage() {
 
               <div className="flex gap-3 mt-6">
                 <Button
-                  className="bg-green-600 hover:bg-green-700"
+                  className="background-color-primary text-white hover:opacity-90"
                   onClick={() => handleStatus(selected.id, "Accepted")}
                 >
                   Accept
                 </Button>
                 <Button
-                  className="bg-red-600 hover:bg-red-700"
+                  className="background-color-secondary text-white hover:opacity-90"
                   onClick={() => handleStatus(selected.id, "Rejected")}
                 >
                   Reject
