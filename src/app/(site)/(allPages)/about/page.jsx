@@ -1,5 +1,5 @@
-import AboutFeatures from "@/components/aboutPageComponents/AboutFeatures";
 import AboutSection from "@/components/aboutPageComponents/AboutSection";
+import AboutFeatures from "@/components/AboutSection/AboutFeatures";
 
 
 export default function AboutPage() {

@@ -8,35 +8,29 @@ import Swal from "sweetalert2";
 const BeARider = () => {
   const { register, handleSubmit, reset } = useForm();
 
-  const onSubmit = async (data) => {
-    try {
-      // Md. Yasin Brother> you also check this code and add other nessasery code and file.
-      // If you want to change role used userId here also call contaxt and get id.
-      const res = await fetch(`/api/users/${data.email}`, {
-        method: "PUT", // change one data or create one if don't match anyone. like role. Other wise you also can use "PATCH".
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role: "rider" }),
-      });
+ const onSubmit = async (data) => {
+  try {
+    const res = await fetch("/api/riders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-      if (res.ok) {
-        Swal.fire({
-          title: "application Send",
-          text: "Thanks for applying to be a Rider. We’ll contact you soon.",
-          icon: "success",
-          confirmButtonColor: "var(--color-primary)",
-          background: "var(--color-bg)",
-          color: "var(--color-text)",
-        });
-        reset();
-      } else {
-        const errData = await res.json();
-        Swal.fire("Error", errData.message || "Something went wrong", "error");
-      }
-    } catch (err) {
-      console.error(err);
-      Swal.fire("Error", "Network error", "error");
+    const result = await res.json();
+
+    if (result.success) {
+      Swal.fire("Success!", "Application submitted successfully.", "success");
+      reset(); // form reset hobe
+    } else {
+      Swal.fire("Error!", result.error || "Something went wrong.", "error");
     }
-  };
+  } catch (err) {
+    Swal.fire("Error!", err.message, "error");
+  }
+};
+
 
   return (
     <section

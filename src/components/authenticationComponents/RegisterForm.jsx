@@ -101,7 +101,7 @@ const RegisterForm = () => {
         type="submit"
         className="bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] px-6 py-3 cursor-pointer rounded-full mt-4 w-full text-white font-medium text-lg"
       >
-        Register
+        {loading ? "loading..." : "Register"}
       </button>
       <span className="mt-6 text-center">Or Sign Up with</span>
       <SocialLogin />
