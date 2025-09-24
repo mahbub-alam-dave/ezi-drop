@@ -4,7 +4,7 @@ import { dbConnect } from "@/lib/dbConnect";
 export async function POST(req) {
   try {
     const body = await req.json(); //  data  from form 
-    const collection = dbConnect("riders"); // riders collection used
+    const collection = dbConnect("rider-applications"); // riders collection used
     const result = await collection.insertOne(body);
 
     return new Response(JSON.stringify({ success: true, data: result }), {
