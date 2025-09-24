@@ -1,11 +1,23 @@
-import axios from "axios";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./authOptions";
+import { collectionNames, dbConnect } from "./dbConnect";
 
-export async function getUserData() {
-  try {
-    const res = await axios.get("/api/user");
-    return res.data;
-  } catch (error) {
-    console.error("Failed to fetch user data", error);
-    throw error;
+
+// Get the full user document (with role) from DB
+export async function getCurrentUser() {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user?.email) {
+    return null; // Not logged in
   }
+
+  const db = dbConnect(collectionNames.users);
+  const user = await db.findOne({ email: session.user.email });
+
+  return user; // { name, email, role, ... }
 }
+
+
+
+/*       method: "GET",
+      headers: { "Content-Type": "application/json" } */

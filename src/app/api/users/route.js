@@ -1,18 +1,14 @@
 import { NextResponse } from "next/server";
+import { collectionNames, dbConnect } from "@/lib/dbConnect";
 import { getServerSession } from "next-auth";
-import { dbConnect, collectionNames } from "@/lib/db";
 import { authOptions } from "@/lib/authOptions";
 
-export async function GET() {
-  const session = await getServerSession(authOptions);
-  console.log(session)
+export async function GET({response}) {
 
-  if (!session || !session.user?.email) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const {email:userEmail} = response.json()
 
-  const db = await dbConnect(collectionNames.users);
-  const user = await db.findOne({ email: session.user.email });
+  const db = dbConnect(collectionNames.users);
+  const user = await db.findOne({ email: userEmail });
 
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
