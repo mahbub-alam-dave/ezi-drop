@@ -51,12 +51,17 @@ callbacks: {
   async signIn({ user, account }) {
     if (!account || !user?.email) return false;
 
+    if (account?.type === "credentials") {
+      // Block login if email not verified
+      if (!user.emailVerified) {
+        throw new Error("Email not verified. Please verify OTP first.");
+      }
+    }
+
     const { provider, providerAccountId } = account;
     const { name, email, image } = user;
 
     const usersCollection = await dbConnect("users");
-
-    // 1. Check if user already exists by email
     const existUser = await usersCollection.findOne({ email });
 
     if (!existUser) {
@@ -66,23 +71,37 @@ callbacks: {
         email,
         image,
         role: "user",
-        providers: [{ provider, providerAccountId }], // store multiple providers
+        providers: [
+          provider === "credentials"
+            ? { provider: "credentials" } // ✅ store without providerAccountId
+            : { provider, providerAccountId },
+        ],
         createdAt: new Date(),
         updatedAt: new Date(),
       };
 
       await usersCollection.insertOne(userData);
     } else {
-      // Existing user → update provider info if not already linked
-      const hasProvider = existUser.providers?.some(
-        (p) => p.provider === provider && p.providerAccountId === providerAccountId
-      );
+      // Existing user → update provider info
+      const hasProvider = existUser.providers?.some((p) => {
+        if (p.provider === "credentials" && provider === "credentials") return true;
+        return (
+          p.provider === provider &&
+          providerAccountId &&
+          p.providerAccountId === providerAccountId
+        );
+      });
 
       if (!hasProvider) {
         await usersCollection.updateOne(
           { _id: existUser._id },
           {
-            $push: { providers: { provider, providerAccountId } },
+            $push: {
+              providers:
+                provider === "credentials"
+                  ? { provider: "credentials" }
+                  : { provider, providerAccountId },
+            },
             $set: { updatedAt: new Date() },
           }
         );
@@ -98,31 +117,9 @@ callbacks: {
   },
 }
 
+
 }
 
-/*   callbacks: {
-  async signIn({ user, account, profile, email, credentials }) {
-    if(account) {
-        const {provider, providerAccountId} = account
-        const {name, email: user_email, image} = user
-
-        const userData = {provider, providerAccountId, name, email: user_email, image, role : "user", createdAt: new Date(),
-            updatedAt: new Date(),}
-        const existUser = await dbConnect("users").findOne({providerAccountId})
-
-       if(!existUser) {
-        if(existUser.email === user_email){
-          dbConnect("users").updateOne({_id: existUser._id},{$set: {provider, providerAccountId}})
-        }
-        await dbConnect("users").insertOne(userData)
-       }
-       else {
-        await dbConnect("users").updateOne({_id: existUser._id},{$set: {updatedAt: new Date()}})
-       }
-    }
-    return true
-  }, 
-} */
 
 
 

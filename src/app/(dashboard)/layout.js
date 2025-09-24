@@ -1,11 +1,16 @@
 import NextAuthProvider from "@/providers/NextAuthProvider";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 export default function DashboardLayout({ children }) {
+  
+  // const { data: session, status } = useSession();
+  // console.log(session)
+  
   const status = "authenticated";
-  const role = "user";
-  // const role = "rider";
-  const role = "admin";
+  // const role = "user";
+  const role = "rider";
+  // const role = "admin";
 
   const dashboardLinks = {
     adminLinks: (
