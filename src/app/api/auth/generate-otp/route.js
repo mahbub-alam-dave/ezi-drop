@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { dbConnect, collectionNames } from "@/lib/db";
 import { randomInt } from "crypto";
 import { transporter } from "@/lib/nodemailer"; // reuse your SMTP transporter
+import { collectionNames, dbConnect } from "@/lib/dbConnect";
 
 export async function POST(req) {
   try {
