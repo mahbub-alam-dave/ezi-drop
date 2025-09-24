@@ -1,19 +1,19 @@
 import { NextResponse } from "next/server";
 import { randomInt } from "crypto";
-import { transporter } from "@/lib/nodemailer"; // reuse your SMTP transporter
 import { collectionNames, dbConnect } from "@/lib/dbConnect";
+import { sendEmail } from "@/lib/email";
 
 export async function POST(req) {
   try {
     const { email } = await req.json();
     if (!email) return NextResponse.json({ message: "Email is required" }, { status: 400 });
 
-    await dbConnect(collectionNames.users);
+    const db = dbConnect(collectionNames.users);
 
     const otp = randomInt(100000, 999999).toString();
     const otpExpires = new Date(Date.now() + 5 * 60 * 1000); // 5 min expiry
 
-    const result = await collectionNames.users.updateOne(
+    const result = await db.updateOne(
       { email },
       { $set: { otp, otpExpires } }
     );
@@ -21,8 +21,7 @@ export async function POST(req) {
     if (!result.matchedCount) return NextResponse.json({ message: "User not found" }, { status: 404 });
 
     // Send OTP via email
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    await sendEmail({
       to: email,
       subject: "Your OTP Code",
       text: `Your OTP code is ${otp}. It expires in 5 minutes.`,

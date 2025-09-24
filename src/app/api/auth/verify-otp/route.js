@@ -7,7 +7,6 @@ export async function POST(req) {
     if (!email || !otp)
       return NextResponse.json({ message: "Email and OTP are required" }, { status: 400 });
 
-    await dbConnect(collectionNames.users);
 
     const db = dbConnect(collectionNames.users)
 
@@ -18,7 +17,7 @@ export async function POST(req) {
     if (new Date() > user.otpExpires) return NextResponse.json({ message: "OTP expired" }, { status: 400 });
 
     // Mark email as verified and remove OTP
-    await collectionNames.users.updateOne(
+    await db.updateOne(
       { email },
       { $set: { emailVerified: true }, $unset: { otp: "", otpExpires: "" } }
     );

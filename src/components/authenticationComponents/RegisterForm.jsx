@@ -5,9 +5,13 @@ import SocialLogin from "./SocialLogin";
 import { registerUser } from "@/app/actions/auth/register";
 import { signIn, useSession } from "next-auth/react";
 import Swal from "sweetalert2";
+import OtpModal from "../modals/OtpModal";
 
 const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
+  const [showOtpModal, setShowOtpModal] = useState(false)
+  const [registerEmail, setRegisterEmail] = useState("")
+  const [registerPass, setRegisterPass] = useState("")
   const { update } = useSession();
 
   const handleRegisterForm = async (e) => {
@@ -18,9 +22,21 @@ const RegisterForm = () => {
 
     try {
       const res = await registerUser(registerData);
-      console.log(res)
+
+      console.log(res);
+
       if (res.insertedId) {
-        // login after registration
+        await fetch("/api/auth/generate-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: registerData.email }),
+        });
+
+        setRegisterEmail(registerData.email); // store for OTP modal
+        setRegisterPass(registerData.password)
+        setShowOtpModal(true); // open modal
+
+        /*         // login after registration
         const signInAfterRegister = await signIn("credentials", {
           email: registerData.email,
           password: registerData.password,
@@ -45,24 +61,23 @@ const RegisterForm = () => {
           title: "Oops...",
           text: "Failed to login after registration",
         });
-        }
+        } */
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Registration failed!",
+        });
       }
-      else {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Registration failed!",
-      });
-    }
     } catch (error) {
-      console.error(error)
-    }
-    finally {
-      setLoading(false)
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
+    <div>
     <form onSubmit={handleRegisterForm} className="flex flex-col gap-4">
       <div>
         <label htmlFor="name" className="">
@@ -115,6 +130,10 @@ const RegisterForm = () => {
         </Link>
       </span>
     </form>
+    {showOtpModal && 
+    <OtpModal email={registerEmail} password={registerPass} />
+    }
+    </div>
   );
 };
 
