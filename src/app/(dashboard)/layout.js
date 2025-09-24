@@ -5,7 +5,7 @@ export default function DashboardLayout({ children }) {
   const status = "authenticated";
   // const role = "user";
   // const role = "rider";
-  // const role = "admin";
+  const role = "admin";
 
   const dashboardLinks = {
     adminLinks: (
@@ -22,7 +22,7 @@ export default function DashboardLayout({ children }) {
           <Link href="/dashboard/rider-overview">Rider dashboard</Link>
         </li>
         <li>
-          <Link href="/dashboard/manage-orders">Manage Orders</Link>
+          <Link href="/dashboard/manage-candidates">Manage Candidates</Link>
         </li>
         <li>
           <Link href="/dashboard/delivery-history">Delivery History</Link>
