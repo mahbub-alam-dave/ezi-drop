@@ -50,6 +50,7 @@ export default function RiderOverviewPage() {
         </p>
       </div>
 
+
       {/* Revenue Statistics Section with RadialBarChart */}
       <div className="background-color rounded-2xl shadow-md p-6 border border-[var(--color-border)]">
         <h2 className="text-2xl font-semibold mb-6">Revenue Statistics</h2>
