@@ -48,6 +48,7 @@ const SendParcel = () => {
   }, [pickupDistrict, deliveryDistrict, parcelType, weight]);
 
   const onSubmit = async (data) => {
+    console.log(data)
   try {
     const res = await fetch("/api/parcels", {
       method: "POST",
