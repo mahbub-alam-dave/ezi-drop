@@ -51,6 +51,13 @@ callbacks: {
   async signIn({ user, account }) {
     if (!account || !user?.email) return false;
 
+    if (account?.type === "credentials") {
+      // Block login if email not verified
+      if (!user.emailVerified) {
+        throw new Error("Email not verified. Please verify OTP first.");
+      }
+    }
+
     const { provider, providerAccountId } = account;
     const { name, email, image } = user;
 

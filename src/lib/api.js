@@ -16,8 +16,3 @@ export async function getCurrentUser() {
 
   return user; // { name, email, role, ... }
 }
-
-
-
-/*       method: "GET",
-      headers: { "Content-Type": "application/json" } */
