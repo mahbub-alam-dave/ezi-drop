@@ -25,11 +25,12 @@ export default function DashboardLayout({ children }) {
   const dashboardLinks = {
     adminLinks: (
       <>
-        <Link href="/dashboard/overview" className={linkClass("/dashboard/overview")}>Overview</Link>
-        <Link href="/dashboard/manage-users" className={linkClass("/dashboard/manage-users")}>Manage Rider</Link>
-        <Link href="/assign-riders" className={linkClass("/assign-riders")}>Assign Riders</Link>
-        <Link href="/dashboard/manage-candidates" className={linkClass("/dashboard/manage-candidates")}>Manage Candidate</Link>
-        <Link href="/dashboard/profile" className={linkClass("/dashboard/profile")}>Profile</Link>
+        <Link href="/dashboard/overview">Overview</Link>
+        <Link href="/dashboard/manage-users">Manage Rider</Link>
+        <Link href="/assign-riders">Assign Riders</Link>
+        <Link href="/dashboard/manage-candidates">Manage Candidate</Link>
+        <Link href="/dashboard/profile">Profile</Link>
+        <Link href="/dashboard/manage-order">Manage Order</Link>
       </>
     ),
     riderLinks: (
