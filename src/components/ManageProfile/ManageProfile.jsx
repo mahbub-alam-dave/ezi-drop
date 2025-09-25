@@ -55,20 +55,20 @@ export default function ManageProfile({ role }) {
       ]
     },
     admin: {
-      name: 'Michael Rodriguez',
+      name: 'MD Abdul Halim',
       role: 'System Administrator',
-      email: 'mrodriguez@deliverypro.com',
-      phone: '+1 (555) 123-4567',
+      email: 'abdulhalim1100@gmail.com',
+      phone: '018229XXXXX',
       company: 'DeliveryPro Inc.',
       joinDate: 'January 10, 2019',
-      birthDate: '1985-05-15',
+      birthDate: '2005-05-15',
       employmentType: 'Full-Time',
       status: 'Active',
       department: 'IT Management',
       accessLevel: 'Super Admin',
       systemStats: {
-        totalUsers: 1547,
-        activeRiders: 89,
+        totalUsers: 2547,
+        activeRiders: 100,
         pendingIssues: 12
       },
       upcomingDeliveries: [
