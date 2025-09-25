@@ -294,7 +294,7 @@ export default function ManageProfile({ role }) {
   };
 
   return (
-    <div className="min-h-screen background-color text-color p-4">
+    <div className="min-h-screen background-color text-color p-2 md:p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
