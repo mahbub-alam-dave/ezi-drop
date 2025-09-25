@@ -10,7 +10,50 @@ export default function ManageProfile({ role }) {
 
   // Sample data for different roles
   const profileData = {
-   
+    user: {
+      name: 'Helen Voizhicki',
+      role: 'Premium User',
+      email: 'helenvoizhick@gmail.com',
+      phone: '+7 (39) 235 38 43',
+      company: 'Lownipuru Group',
+      joinDate: 'August 15, 2020',
+      birthDate: '1996-12-02',
+      employmentType: 'Full-Time',
+      status: 'Active',
+      address: '123 Main Street, New York, NY',
+      deliveryPreferences: 'Evening',
+      notificationEmail: true,
+      notificationSMS: false,
+      deliveryStats: {
+        completed: 47,
+        pending: 3,
+        cancelled: 2
+      },
+      upcomingDeliveries: [
+        { 
+          date: 'July 24, 2020', 
+          time: '8:20 AM — 10:20 AM', 
+          type: 'Package delivery', 
+          address: '123 Main St, New York',
+          status: 'Scheduled',
+          priority: 'High'
+        },
+        { 
+          date: 'July 25, 2020', 
+          time: '2:00 PM — 4:00 PM', 
+          type: 'Express delivery', 
+          address: '456 Oak Ave, Brooklyn',
+          status: 'Confirmed',
+          priority: 'Medium'
+        }
+      ],
+      tasks: [
+        { task: 'Verify delivery address', assigned: 'Jim Jones', due: '07/24/2020', attachments: 'address_list.zip', completed: true },
+        { task: 'Confirm payment method', assigned: 'Jim Jones', due: '07/24/2020', attachments: 'payment_info.zip', completed: false },
+        { task: 'Delivery preferences setup', assigned: 'Sara Smith', due: '07/24/2020', attachments: 'preferences.zip', completed: true },
+        { task: 'Loyalty program info', assigned: 'Sara Smith', due: '07/24/2020', attachments: 'loyalty.zip', completed: false }
+      ]
+    },
     admin: {
       name: 'Michael Rodriguez',
       role: 'System Administrator',
