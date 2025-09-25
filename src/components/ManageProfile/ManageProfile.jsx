@@ -4,6 +4,10 @@
 import { useState } from 'react';
 
 export default function ManageProfile({ role }) {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [formData, setFormData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
   // Sample data for different roles
   const profileData = {
     user: {
@@ -13,9 +17,13 @@ export default function ManageProfile({ role }) {
       phone: '+7 (39) 235 38 43',
       company: 'Lownipuru Group',
       joinDate: 'August 15, 2020',
-      birthDate: 'December 2, 1996',
+      birthDate: '1996-12-02',
       employmentType: 'Full-Time',
       status: 'Active',
+      address: '123 Main Street, New York, NY',
+      deliveryPreferences: 'Evening',
+      notificationEmail: true,
+      notificationSMS: false,
       deliveryStats: {
         completed: 47,
         pending: 3,
@@ -41,24 +49,26 @@ export default function ManageProfile({ role }) {
       ],
       tasks: [
         { task: 'Verify delivery address', assigned: 'Jim Jones', due: '07/24/2020', attachments: 'address_list.zip', completed: true },
-        { task: 'Confirm payment method', assigned: 'Jim Jones', due: '07/24/2020', attachments: 'payment_info.zip', completed: false },
+        { task: 'Confirm payment method', assigned: 'Jim Jones', due: '07/24/2020', attachments: 'payment_info.zip', completed: true },
         { task: 'Delivery preferences setup', assigned: 'Sara Smith', due: '07/24/2020', attachments: 'preferences.zip', completed: true },
         { task: 'Loyalty program info', assigned: 'Sara Smith', due: '07/24/2020', attachments: 'loyalty.zip', completed: false }
       ]
     },
     admin: {
-      name: 'Michael Rodriguez',
+      name: 'MD Abdul Halim',
       role: 'System Administrator',
-      email: 'mrodriguez@deliverypro.com',
-      phone: '+1 (555) 123-4567',
+      email: 'abdulhalim1100@gmail.com',
+      phone: '018229XXXXX',
       company: 'DeliveryPro Inc.',
       joinDate: 'January 10, 2019',
-      birthDate: 'May 15, 1985',
+      birthDate: '2005-05-15',
       employmentType: 'Full-Time',
       status: 'Active',
+      department: 'IT Management',
+      accessLevel: 'Super Admin',
       systemStats: {
-        totalUsers: 1547,
-        activeRiders: 89,
+        totalUsers: 2547,
+        activeRiders: 100,
         pendingIssues: 12
       },
       upcomingDeliveries: [
@@ -80,9 +90,9 @@ export default function ManageProfile({ role }) {
         }
       ],
       tasks: [
-        { task: 'Review rider performance', assigned: 'System Admin', due: '07/24/2020', attachments: 'performance.zip', completed: true },
-        { task: 'Update delivery zones', assigned: 'System Admin', due: '07/24/2020', attachments: 'zones.zip', completed: false },
-        { task: 'Monthly report generation', assigned: 'Finance Team', due: '07/24/2020', attachments: 'reports.zip', completed: false },
+        { task: 'Review rider performance', assigned: 'System Admin', due: '07/24/2020', attachments: 'performance.zip', completed: false },
+        { task: 'Update delivery zones', assigned: 'System Admin', due: '07/24/2020', attachments: 'zones.zip', completed: true },
+        { task: 'Monthly report generation', assigned: 'Finance Team', due: '07/24/2020', attachments: 'reports.zip', completed: true },
         { task: 'Security audit', assigned: 'Security Team', due: '07/24/2020', attachments: 'audit.zip', completed: true }
       ]
     },
@@ -93,9 +103,11 @@ export default function ManageProfile({ role }) {
       phone: '+1 (555) 987-6543',
       company: 'DeliveryPro Inc.',
       joinDate: 'March 22, 2020',
-      birthDate: 'August 30, 1992',
+      birthDate: '1992-08-30',
       employmentType: 'Full-Time',
       status: 'On Duty',
+      vehicleType: 'Motorcycle',
+      licensePlate: 'RIDER2020',
       riderStats: {
         deliveriesToday: 8,
         rating: 4.8,
@@ -121,9 +133,9 @@ export default function ManageProfile({ role }) {
       ],
       tasks: [
         { task: 'Vehicle maintenance check', assigned: 'Fleet Manager', due: '07/24/2020', attachments: 'checklist.zip', completed: true },
-        { task: 'Route optimization', assigned: 'Dispatch Team', due: '07/24/2020', attachments: 'routes.zip', completed: true },
+        { task: 'Route optimization', assigned: 'Dispatch Team', due: '07/24/2020', attachments: 'routes.zip', completed: false },
         { task: 'Safety protocol review', assigned: 'Safety Officer', due: '07/24/2020', attachments: 'safety.zip', completed: false },
-        { task: 'Customer feedback review', assigned: 'Quality Team', due: '07/24/2020', attachments: 'feedback.zip', completed: false }
+        { task: 'Customer feedback review', assigned: 'Quality Team', due: '07/24/2020', attachments: 'feedback.zip', completed: true }
       ]
     }
   };
@@ -137,26 +149,152 @@ export default function ManageProfile({ role }) {
       title: 'User Profile',
       icon: '📦',
       stats: data.deliveryStats,
-      statTitle: 'Delivery Statistics'
+      statTitle: 'Delivery Statistics',
+      formFields: [
+        { name: 'name', label: 'Full Name', type: 'text', required: true },
+        { name: 'email', label: 'Email Address', type: 'email', required: true },
+        { name: 'phone', label: 'Phone Number', type: 'tel', required: true },
+        { name: 'company', label: 'Company', type: 'text' },
+        { name: 'birthDate', label: 'Birth Date', type: 'date' },
+        { name: 'address', label: 'Delivery Address', type: 'textarea' },
+        { name: 'deliveryPreferences', label: 'Delivery Preferences', type: 'select', options: ['Morning', 'Afternoon', 'Evening', 'Anytime'] },
+        { name: 'notificationEmail', label: 'Email Notifications', type: 'checkbox' },
+        { name: 'notificationSMS', label: 'SMS Notifications', type: 'checkbox' }
+      ]
     },
     admin: {
       title: 'Admin Profile',
       icon: '⚙️',
       stats: data.systemStats,
-      statTitle: 'System Overview'
+      statTitle: 'System Overview',
+      formFields: [
+        { name: 'name', label: 'Full Name', type: 'text', required: true },
+        { name: 'email', label: 'Email Address', type: 'email', required: true },
+        { name: 'phone', label: 'Phone Number', type: 'tel', required: true },
+        { name: 'department', label: 'Department', type: 'text', required: true },
+        { name: 'accessLevel', label: 'Access Level', type: 'select', options: ['View Only', 'Standard Admin', 'Super Admin'] },
+        { name: 'birthDate', label: 'Birth Date', type: 'date' },
+        { name: 'employmentType', label: 'Employment Type', type: 'select', options: ['Full-Time', 'Part-Time', 'Contract'] }
+      ]
     },
     rider: {
       title: 'Rider Profile',
       icon: '🚴',
       stats: data.riderStats,
-      statTitle: 'Today\'s Performance'
+      statTitle: 'Today\'s Performance',
+      formFields: [
+        { name: 'name', label: 'Full Name', type: 'text', required: true },
+        { name: 'email', label: 'Email Address', type: 'email', required: true },
+        { name: 'phone', label: 'Phone Number', type: 'tel', required: true },
+        { name: 'vehicleType', label: 'Vehicle Type', type: 'select', options: ['Motorcycle', 'Bicycle', 'Car', 'Scooter'] },
+        { name: 'licensePlate', label: 'License Plate', type: 'text' },
+        { name: 'birthDate', label: 'Birth Date', type: 'date' },
+        { name: 'employmentType', label: 'Employment Type', type: 'select', options: ['Full-Time', 'Part-Time', 'Contract'] }
+      ]
     }
   };
 
   const config = roleConfig[role] || roleConfig.user;
 
+  // Initialize form data when modal opens
+  const openEditModal = () => {
+    setFormData(data);
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setFormData({});
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    // Simulate API call
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('Profile updated:', formData);
+      // Here you would typically make an API call to update the profile
+      alert('Profile updated successfully!');
+      closeEditModal();
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert('Error updating profile. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Render form field based on type
+  const renderFormField = (field) => {
+    switch (field.type) {
+      case 'textarea':
+        return (
+          <textarea
+            name={field.name}
+            value={formData[field.name] || ''}
+            onChange={handleInputChange}
+            className="input-style"
+            rows={3}
+            placeholder={`Enter ${field.label.toLowerCase()}`}
+          />
+        );
+      
+      case 'select':
+        return (
+          <select
+            name={field.name}
+            value={formData[field.name] || ''}
+            onChange={handleInputChange}
+            className="input-style"
+          >
+            <option value="">Select {field.label}</option>
+            {field.options.map(option => (
+              <option key={option} value={option}>{option}</option>
+            ))}
+          </select>
+        );
+      
+      case 'checkbox':
+        return (
+          <label className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              name={field.name}
+              checked={formData[field.name] || false}
+              onChange={handleInputChange}
+              className="w-4 h-4 background-color-primary rounded focus:ring-blue-500"
+            />
+            <span className="text-color text-sm">Enable {field.label}</span>
+          </label>
+        );
+      
+      default:
+        return (
+          <input
+            type={field.type}
+            name={field.name}
+            value={formData[field.name] || ''}
+            onChange={handleInputChange}
+            className="input-style"
+            placeholder={`Enter ${field.label.toLowerCase()}`}
+            required={field.required}
+          />
+        );
+    }
+  };
+
   return (
-    <div className="min-h-screen background-color text-color p-4">
+    <div className="min-h-screen background-color text-color p-2 md:p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
@@ -168,13 +306,20 @@ export default function ManageProfile({ role }) {
             <p className="text-color-soft mt-2">Manage your delivery profile and preferences</p>
           </div>
           
-          {/* Status Badge */}
-          <div className={`px-4 py-2 rounded-full text-sm font-medium ${
-            data.status === 'Active' || data.status === 'On Duty' 
-              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
-              : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
-          }`}>
-            {data.status}
+          <div className="flex items-center gap-3">
+            <div className={`px-4 py-2 rounded-full text-sm font-medium ${
+              data.status === 'Active' || data.status === 'On Duty' 
+                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+            }`}>
+              {data.status}
+            </div>
+            <button 
+              onClick={openEditModal}
+              className="background-color-primary text-white py-2 px-6 rounded-lg font-medium hover:opacity-90 transition-opacity"
+            >
+              Edit Profile
+            </button>
           </div>
         </div>
 
@@ -227,7 +372,10 @@ export default function ManageProfile({ role }) {
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-color-border dark:border-gray-700 p-6">
               <h3 className="font-semibold text-lg text-color mb-4">Quick Actions</h3>
               <div className="space-y-2">
-                <button className="w-full background-color-primary text-white py-2 px-4 rounded-lg hover:opacity-90 transition-opacity">
+                <button 
+                  onClick={openEditModal}
+                  className="w-full background-color-primary text-white py-2 px-4 rounded-lg hover:opacity-90 transition-opacity"
+                >
                   Edit Profile
                 </button>
                 <button className="w-full border border-color-border dark:border-gray-700 text-color py-2 px-4 rounded-lg hover:background-color-primary hover:text-white transition-all">
@@ -417,6 +565,67 @@ export default function ManageProfile({ role }) {
           </div>
         </div>
       </div>
+
+      {/* Edit Profile Modal */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center p-6 border-b border-color-border dark:border-gray-700">
+              <h2 className="text-2xl font-bold text-color">Edit Profile</h2>
+              <button 
+                onClick={closeEditModal}
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <form onSubmit={handleSubmit} className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {config.formFields.map((field) => (
+                  <div key={field.name} className={field.type === 'textarea' ? 'md:col-span-2' : ''}>
+                    <label className="block text-color text-sm font-medium mb-2">
+                      {field.label}
+                      {field.required && <span className="text-red-500 ml-1">*</span>}
+                    </label>
+                    {renderFormField(field)}
+                  </div>
+                ))}
+              </div>
+
+              {/* Modal Footer */}
+              <div className="flex justify-end space-x-3 mt-8 pt-6 border-t border-color-border dark:border-gray-700">
+                <button
+                  type="button"
+                  onClick={closeEditModal}
+                  className="px-6 py-2 border border-color-border dark:border-gray-600 text-color rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  disabled={isLoading}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 background-color-primary text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Saving...</span>
+                    </div>
+                  ) : (
+                    'Save Changes'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
