@@ -15,7 +15,7 @@ export default function DashboardLayout({ children }) {
         <Link href="/assign-riders">Assign Riders</Link>
         <Link href="/dashboard/manage-candidates">Manage Candidate</Link>
         <Link href="/dashboard/profile">Profile</Link>
-        <Link href="/dashboard/order">Manage Order</Link>
+        <Link href="/dashboard/manage-order">Manage Order</Link>
       </>
     ),
     riderLinks: (
