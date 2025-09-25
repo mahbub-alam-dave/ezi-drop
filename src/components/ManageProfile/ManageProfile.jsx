@@ -49,7 +49,7 @@ export default function ManageProfile({ role }) {
       ],
       tasks: [
         { task: 'Verify delivery address', assigned: 'Jim Jones', due: '07/24/2020', attachments: 'address_list.zip', completed: true },
-        { task: 'Confirm payment method', assigned: 'Jim Jones', due: '07/24/2020', attachments: 'payment_info.zip', completed: false },
+        { task: 'Confirm payment method', assigned: 'Jim Jones', due: '07/24/2020', attachments: 'payment_info.zip', completed: true },
         { task: 'Delivery preferences setup', assigned: 'Sara Smith', due: '07/24/2020', attachments: 'preferences.zip', completed: true },
         { task: 'Loyalty program info', assigned: 'Sara Smith', due: '07/24/2020', attachments: 'loyalty.zip', completed: false }
       ]
@@ -90,9 +90,9 @@ export default function ManageProfile({ role }) {
         }
       ],
       tasks: [
-        { task: 'Review rider performance', assigned: 'System Admin', due: '07/24/2020', attachments: 'performance.zip', completed: true },
-        { task: 'Update delivery zones', assigned: 'System Admin', due: '07/24/2020', attachments: 'zones.zip', completed: false },
-        { task: 'Monthly report generation', assigned: 'Finance Team', due: '07/24/2020', attachments: 'reports.zip', completed: false },
+        { task: 'Review rider performance', assigned: 'System Admin', due: '07/24/2020', attachments: 'performance.zip', completed: false },
+        { task: 'Update delivery zones', assigned: 'System Admin', due: '07/24/2020', attachments: 'zones.zip', completed: true },
+        { task: 'Monthly report generation', assigned: 'Finance Team', due: '07/24/2020', attachments: 'reports.zip', completed: true },
         { task: 'Security audit', assigned: 'Security Team', due: '07/24/2020', attachments: 'audit.zip', completed: true }
       ]
     },
@@ -133,9 +133,9 @@ export default function ManageProfile({ role }) {
       ],
       tasks: [
         { task: 'Vehicle maintenance check', assigned: 'Fleet Manager', due: '07/24/2020', attachments: 'checklist.zip', completed: true },
-        { task: 'Route optimization', assigned: 'Dispatch Team', due: '07/24/2020', attachments: 'routes.zip', completed: true },
+        { task: 'Route optimization', assigned: 'Dispatch Team', due: '07/24/2020', attachments: 'routes.zip', completed: false },
         { task: 'Safety protocol review', assigned: 'Safety Officer', due: '07/24/2020', attachments: 'safety.zip', completed: false },
-        { task: 'Customer feedback review', assigned: 'Quality Team', due: '07/24/2020', attachments: 'feedback.zip', completed: false }
+        { task: 'Customer feedback review', assigned: 'Quality Team', due: '07/24/2020', attachments: 'feedback.zip', completed: true }
       ]
     }
   };
