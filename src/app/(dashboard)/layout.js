@@ -16,6 +16,7 @@ export default function DashboardLayout({ children }) {
     adminLinks: (
       <>
         <Link href="/dashboard/overview">Overview</Link>
+        <Link href="/dashboard/manageRider">Manage Rider</Link>
         <Link href="/assign-riders">Assign Riders</Link>
         <Link href="/dashboard/manage-candidate">Manage Candidate</Link>
         <Link href="/dashboard/profile">Profile</Link>
@@ -68,7 +69,7 @@ export default function DashboardLayout({ children }) {
               <h2 className="text-2xl font-bold ">Ezi Drop</h2>
             </Link>
 
-            {status === "authenticated" && role === "admin" ? (
+            {status === "authenticated"  ? (
               <ul className="space-y-3 flex flex-col mt-6">
                 {dashboardLinks.adminLinks}
               </ul>
