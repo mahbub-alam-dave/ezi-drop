@@ -1,11 +1,10 @@
-/** @type {import('tailwindcss').Config} */
+// tailwind.config.js
 module.exports = {
   content: [
-    "./app/**/*.{js,ts,jsx,tsx}",       // App Router
-    "./pages/**/*.{js,ts,jsx,tsx}",     // Pages Router
+    "./app/**/*.{js,ts,jsx,tsx}",
+    "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}"
   ],
-  // darkMode: "class",
   theme: {
     extend: {
       colors: {
@@ -15,20 +14,20 @@ module.exports = {
         },
       },
       clipPath: {
-        // custom arrow-tip shape for banner text box
         arrow: "polygon(0 0,80% 0,100% 50%,80% 100%,0 100%)",
       },
-    },
-    screens: {
-      xs: "480px",
-      sm: "640px",
-      md: "768px",
-      lg: "1024px",
-      xl: "1280px",
-      "2xl": "1536px",
+      screens: {
+        xs: "480px",
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
+        "2xl": "1536px",
+        "ml": "875px",   // ✅ custom
+      },
     },
   },
   plugins: [
-    require("tailwind-clip-path"), // add the clip-path plugin
+    require("tailwind-clip-path"),
   ],
 };

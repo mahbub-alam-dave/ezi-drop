@@ -11,9 +11,9 @@ export default function DashboardLayout({ children }) {
     adminLinks: (
       <>
         <Link href="/dashboard/overview">Overview</Link>
-        <Link href="/dashboard/manageRider">Manage Rider</Link>
+        <Link href="/dashboard/manage-users">Manage Rider</Link>
         <Link href="/assign-riders">Assign Riders</Link>
-        <Link href="/dashboard/manage-candidate">Manage Candidate</Link>
+        <Link href="/dashboard/manage-candidates">Manage Candidate</Link>
         <Link href="/dashboard/profile">Profile</Link>
       </>
     ),

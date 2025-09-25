@@ -53,7 +53,7 @@ export default function Navbar() {
         <h1 className="text-2xl font-bold"><Link href={"/"}>Ezi Drop </Link></h1>
         <div className="flex items-center gap-8">
           <nav>
-            <ul className="md:flex gap-8 hidden">
+            <ul className="hidden md:flex gap-8 ">
               
               {navLinks}
             </ul>
