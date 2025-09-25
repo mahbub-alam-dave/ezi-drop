@@ -3,11 +3,11 @@ import { dbConnect } from "@/lib/dbConnect";
 import bcrypt from "bcrypt";
 
 
-export async function loginUser({ username, password }) {
+export const loginUser = async ({email, password}) => {
 
   const users = dbConnect("users");
 
-  const user = await users.findOne({ email: username });
+  const user = await users.findOne({ email });
 
   if (!user) {
     throw new Error("Invalid credentials");

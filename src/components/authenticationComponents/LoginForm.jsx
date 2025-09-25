@@ -60,7 +60,7 @@ const LoginForm = () => {
     });
 
     if (response.error) {
-  setError(res.error); // Will show "Account locked. Try again later."
+  setError(response.error); // Will show "Account locked. Try again later."
 }
 
     if (response?.ok) {
@@ -109,9 +109,9 @@ const LoginForm = () => {
           placeholder="Enter password (6 characters)"
         />
       </div>
-      {error && 
-      <p>{error}</p>
-      }
+  
+      <p className="text-red-600">{error}</p>
+
       <button
         type="submit"
         className="bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] px-6 py-3 cursor-pointer rounded-full mt-4 w-full text-white font-medium text-lg"
