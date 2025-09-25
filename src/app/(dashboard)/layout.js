@@ -4,15 +4,16 @@ import Link from "next/link";
 export default function DashboardLayout({ children }) {
   const status = "authenticated";
   // const role = "user";
-  // const role = "rider";
-  const role = "admin";
+  const role = "rider";
+  // const role = "admin";
 
   const dashboardLinks = {
     adminLinks: (
       <>
         <Link href="/dashboard/overview">Overview</Link>
+        <Link href="/dashboard/manage-users">Manage Rider</Link>
         <Link href="/assign-riders">Assign Riders</Link>
-        <Link href="/dashboard/manage-candidate">Manage Candidate</Link>
+        <Link href="/dashboard/manage-candidates">Manage Candidate</Link>
         <Link href="/dashboard/profile">Profile</Link>
       </>
     ),
@@ -22,7 +23,7 @@ export default function DashboardLayout({ children }) {
           <Link href="/dashboard/rider-overview">Rider dashboard</Link>
         </li>
         <li>
-          <Link href="/dashboard/manage-candidates">Manage Candidates</Link>
+          <Link href="/dashboard/manage-orders">Manage Orders</Link>
         </li>
         <li>
           <Link href="/dashboard/delivery-history">Delivery History</Link>
@@ -63,7 +64,7 @@ export default function DashboardLayout({ children }) {
               <h2 className="text-2xl font-bold ">Ezi Drop</h2>
             </Link>
 
-            {status === "authenticated" && role === "admin" ? (
+            {status === "authenticated"  ? (
               <ul className="space-y-3 flex flex-col mt-6">
                 {dashboardLinks.adminLinks}
               </ul>
