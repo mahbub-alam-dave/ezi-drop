@@ -12,6 +12,7 @@ const LoginForm = () => {
   const [loading, setLoading] = useState(false);
     const [showOtpModal, setShowOtpModal] = useState(false)
     const [otpModalData, setOtpModalData] = useState({})
+    const [error, setError] =useState("")
 
   const router = useRouter()
   const { update } = useSession();
@@ -57,6 +58,10 @@ const LoginForm = () => {
       password,
       redirect: false,
     });
+
+    if (response.error) {
+  setError(res.error); // Will show "Account locked. Try again later."
+}
 
     if (response?.ok) {
       Swal.fire({
@@ -104,6 +109,9 @@ const LoginForm = () => {
           placeholder="Enter password (6 characters)"
         />
       </div>
+      {error && 
+      <p>{error}</p>
+      }
       <button
         type="submit"
         className="bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] px-6 py-3 cursor-pointer rounded-full mt-4 w-full text-white font-medium text-lg"
