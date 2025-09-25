@@ -10,7 +10,49 @@ export default function ManageProfile({ role }) {
 
   // Sample data for different roles
   const profileData = {
-    
+   
+    admin: {
+      name: 'Michael Rodriguez',
+      role: 'System Administrator',
+      email: 'mrodriguez@deliverypro.com',
+      phone: '+1 (555) 123-4567',
+      company: 'DeliveryPro Inc.',
+      joinDate: 'January 10, 2019',
+      birthDate: '1985-05-15',
+      employmentType: 'Full-Time',
+      status: 'Active',
+      department: 'IT Management',
+      accessLevel: 'Super Admin',
+      systemStats: {
+        totalUsers: 1547,
+        activeRiders: 89,
+        pendingIssues: 12
+      },
+      upcomingDeliveries: [
+        { 
+          date: 'July 24, 2020', 
+          time: '9:00 AM — 11:00 AM', 
+          type: 'System maintenance', 
+          address: 'Data Center - Server Room A',
+          status: 'Scheduled',
+          priority: 'Critical'
+        },
+        { 
+          date: 'July 25, 2020', 
+          time: '3:00 PM — 5:00 PM', 
+          type: 'Team meeting', 
+          address: 'Conference Room A - HQ',
+          status: 'Confirmed',
+          priority: 'Medium'
+        }
+      ],
+      tasks: [
+        { task: 'Review rider performance', assigned: 'System Admin', due: '07/24/2020', attachments: 'performance.zip', completed: true },
+        { task: 'Update delivery zones', assigned: 'System Admin', due: '07/24/2020', attachments: 'zones.zip', completed: false },
+        { task: 'Monthly report generation', assigned: 'Finance Team', due: '07/24/2020', attachments: 'reports.zip', completed: false },
+        { task: 'Security audit', assigned: 'Security Team', due: '07/24/2020', attachments: 'audit.zip', completed: true }
+      ]
+    },
     rider: {
       name: 'David Chen',
       role: 'Senior Delivery Rider',
