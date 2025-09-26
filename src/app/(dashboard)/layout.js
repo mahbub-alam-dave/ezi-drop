@@ -1,5 +1,9 @@
+"use client";
+
 import NextAuthProvider from "@/providers/NextAuthProvider";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 export default function DashboardLayout({ children }) {
   const status = "authenticated";
@@ -11,25 +15,19 @@ export default function DashboardLayout({ children }) {
     adminLinks: (
       <>
         <Link href="/dashboard/overview">Overview</Link>
+        <Link href="/dashboard/manage-users">Manage users</Link>
         <Link href="/assign-riders">Assign Riders</Link>
-        <Link href="/dashboard/manage-candidate">Manage Candidate</Link>
+        <Link href="/dashboard/manage-candidates">Manage Candidate</Link>
         <Link href="/dashboard/profile">Profile</Link>
+        <Link href="/dashboard/manage-order">Manage Order</Link>
       </>
     ),
     riderLinks: (
       <>
-        <li>
-          <Link href="/dashboard/rider-overview">Rider dashboard</Link>
-        </li>
-        <li>
-          <Link href="/dashboard/manage-candidates">Manage Candidates</Link>
-        </li>
-        <li>
-          <Link href="/dashboard/delivery-history">Delivery History</Link>
-        </li>
-        <li>
-          <Link href="/dashboard/profile">Profile</Link>
-        </li>
+        <Link href="/dashboard/rider-overview" className={linkClass("/dashboard/rider-overview")}>Rider dashboard</Link>
+        <Link href="/dashboard/manage-orders" className={linkClass("/dashboard/manage-orders")}>Manage Orders</Link>
+        <Link href="/dashboard/delivery-history" className={linkClass("/dashboard/delivery-history")}>Delivery History</Link>
+        <Link href="/dashboard/profile" className={linkClass("/dashboard/profile")}>Profile</Link>
       </>
     ),
     userLinks: (
@@ -43,7 +41,6 @@ export default function DashboardLayout({ children }) {
         <li>
           <Link href="/dashboard/send-parcel">Orders history</Link>
         </li>
-      
         <li>
           <Link href="/dashboard/profile">Profile</Link>
         </li>
@@ -54,35 +51,55 @@ export default function DashboardLayout({ children }) {
     ),
   };
 
+  const renderLinks =
+    status === "authenticated" && role === "admin"
+      ? dashboardLinks.adminLinks
+      : status === "authenticated" && role === "rider"
+      ? dashboardLinks.riderLinks
+      : dashboardLinks.userLinks;
+
   return (
-    <>
-      <NextAuthProvider>
-        <div className="flex min-h-screen bg-gray-50 dark:bg-black">
-          {/* Sidebar */}
-          <aside className="w-1/5 text-color bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] p-6 lg:p-8">
-            <Link href={"/"} className="mb-6">
-              <h2 className="text-2xl font-bold ">Ezi Drop</h2>
+    <NextAuthProvider>
+      <div className="bg-gray-50 dark:bg-black">
+        {/* ---- Topbar / Mobile Nav ---- */}
+        <header className="lg:hidden fixed top-0 left-0 w-full z-50 bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] shadow-md">
+          <div className="flex justify-between items-center p-4">
+            <Link href="/" className="text-2xl font-bold text-color">
+              Ezi Drop
             </Link>
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="text-2xl text-color focus:outline-none"
+            >
+              {menuOpen ? "✖" : "☰"}
+            </button>
+          </div>
 
-            {status === "authenticated" && role === "admin" ? (
-              <ul className="space-y-3 flex flex-col mt-6">
-                {dashboardLinks.adminLinks}
-              </ul>
-            ) : status === "authenticated" && role === "rider" ? (
-              <ul className="space-y-3 flex flex-col mt-6">
-                {dashboardLinks.riderLinks}
-              </ul>
-            ) : (
-              <ul className="space-y-3 flex flex-col mt-6">
-                {dashboardLinks.userLinks}
-              </ul>
-            )}
-          </aside>
+          {/* mobile menu horizontal */}
+          {menuOpen && (
+            <nav className="flex flex-col relative gap-2 px-4 pb-4">
+              {renderLinks}
+            </nav>
+          )}
+        </header>
 
-          {/* Main content */}
-          <main className="flex-1 p-8">{children}</main>
-        </div>
-      </NextAuthProvider>
-    </>
+        {/* ---- Sidebar for large screen ---- */}
+        <aside className="hidden lg:block fixed top-0 left-0 z-50 w-64
+                          bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
+                          p-6 lg:p-8 h-screen shadow-md">
+          <Link href="/" className="mb-6 block">
+            <h2 className="text-2xl font-bold text-color">Ezi Drop</h2>
+          </Link>
+          <nav className="space-y-3 flex flex-col mt-6">{renderLinks}</nav>
+        </aside>
+
+        {/* ---- Main content ---- */}
+        <main
+          className="pt-[72px] lg:pt-0 lg:ml-64 p-4 lg:p-8 min-h-screen"
+        >
+          {children}
+        </main>
+      </div>
+    </NextAuthProvider>
   );
 }
