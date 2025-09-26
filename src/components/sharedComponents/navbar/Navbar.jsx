@@ -44,6 +44,8 @@ export default function Navbar() {
       <Link href={"/dashboard"}>Dashboard</Link>
       <Link href={"/about"}>About</Link>
       <Link href={"/contact"}>Contact</Link>
+       <Link href={"/paymentsystem/mainpoint"}>payment</Link>
+   
     </>
   );
 
