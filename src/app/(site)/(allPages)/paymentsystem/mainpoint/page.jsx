@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export default function PaymentPage() {
   const [loading, setLoading] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState(""); // Stripe or SSLCommerz
+  const [paymentMethod, setPaymentMethod] = useState("");
   const [formData, setFormData] = useState({
     amount: "",
     customer_name: "",
@@ -34,85 +34,82 @@ export default function PaymentPage() {
         alert("Payment Failed");
       }
     } else if (paymentMethod === "Stripe") {
-      alert("Stripe payment integration is not added ");
-      //here add strip
+      alert("Stripe payment integration is not added");
     } else {
-      alert(" select  Payment Method ");
+      alert("Select Payment Method");
     }
 
     setLoading(false);
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen background-color">
       <form
         onSubmit={handlePayment}
-        className="bg-white p-6 rounded shadow-md w-full max-w-md"
+        className="background-color p-6 rounded-lg shadow-md w-full max-w-md border border-[var(--color-border)]"
       >
-        <h2 className="text-2xl font-bold mb-4">Payment Form</h2>
+        <h2 className="text-2xl font-bold mb-4 text-color">Payment Form</h2>
 
-        {/* Payment Method Select */}
-        <label className="block mb-2">Select Payment Method</label>
+        <label className="block mb-2 text-color-soft">Select Payment Method</label>
         <select
           value={paymentMethod}
           onChange={(e) => setPaymentMethod(e.target.value)}
-          className="border p-2 mb-4 w-full"
+          className="input-style mb-4 w-full"
           required
         >
           <option value="">--Select--</option>
           <option value="SSLCommerz">SSLCommerz</option>
-          <option value="Stripe">Stripe</option>
+          {/* <option value="Stripe">Stripe</option> */}
         </select>
 
-        {/* SSLCommerz Form */}
         {paymentMethod === "SSLCommerz" && (
           <>
-            <label className="block mb-2">Name</label>
+            <label className="block mb-2 text-color-soft">Name</label>
             <input
               type="text"
               name="customer_name"
               value={formData.customer_name}
               onChange={handleChange}
-              className="border p-2 mb-4 w-full"
+              className="input-style mb-4 w-full"
               required
             />
 
-            <label className="block mb-2">Email</label>
+            <label className="block mb-2 text-color-soft">Email</label>
             <input
               type="email"
               name="customer_email"
               value={formData.customer_email}
               onChange={handleChange}
-              className="border p-2 mb-4 w-full"
+              className="input-style mb-4 w-full"
               required
             />
 
-            <label className="block mb-2">Phone</label>
+            <label className="block mb-2 text-color-soft">Phone</label>
             <input
               type="text"
               name="customer_phone"
               value={formData.customer_phone}
               onChange={handleChange}
-              className="border p-2 mb-4 w-full"
+              className="input-style mb-4 w-full"
               required
             />
 
-            <label className="block mb-2">Address</label>
+            <label className="block mb-2 text-color-soft">Address</label>
             <input
               type="text"
               name="customer_address"
               value={formData.customer_address}
               onChange={handleChange}
-              className="border p-2 mb-4 w-full"
+              className="input-style mb-4 w-full"
             />
 
-            <label className="block mb-2">Amount</label>
+            <label className="block mb-2 text-color-soft">Amount</label>
             <input
               type="number"
               name="amount"
               value={formData.amount}
               onChange={handleChange}
-              className="border p-2 mb-4 w-full"
+              className="input-style mb-4 w-full"
               required
             />
           </>
@@ -120,7 +117,7 @@ export default function PaymentPage() {
 
         <button
           type="submit"
-          className="bg-blue-600 text-white px-6 py-2 rounded w-full"
+          className="background-color-primary text-white px-6 py-2 rounded w-full"
           disabled={loading}
         >
           {loading
