@@ -7,20 +7,9 @@ import { useState } from "react";
 
 export default function DashboardLayout({ children }) {
   const status = "authenticated";
-  // const role = "user";
-  const role = "rider";
+  const role = "user";
+  // const role = "rider";
   // const role = "admin";
-
-  const pathname = usePathname();
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const linkClass = (path) =>
-    `px-4 py-2 rounded-md transition-colors duration-200
-     ${
-       pathname === path
-         ? "bg-[var(--color-primary)] text-white dark:bg-[var(--color-primary-dark)]"
-         : "hover:bg-[var(--color-primary)] hover:text-white dark:hover:bg-[var(--color-primary-dark)]"
-     }`;
 
   const dashboardLinks = {
     adminLinks: (
@@ -43,11 +32,21 @@ export default function DashboardLayout({ children }) {
     ),
     userLinks: (
       <>
-        <Link href="/dashboard/useroverview" className={linkClass("/dashboard/useroverview")}>Overview</Link>
-        <Link href="/dashboard/send-parcel" className={linkClass("/dashboard/send-parcel")}>Send Parcel</Link>
-        <Link href="/dashboard/send-parcel" className={linkClass("/dashboard/send-parcel")}>Orders history</Link>
-        <Link href="/dashboard/profile" className={linkClass("/dashboard/profile")}>Profile</Link>
-        <Link href="/dashboard/be-a-rider" className={linkClass("/dashboard/be-a-rider")}>Be A Rider</Link>
+        <li>
+          <Link href="/dashboard/useroverview">Overview</Link>
+        </li>
+        <li>
+          <Link href="/dashboard/send-parcel">Send Parcel</Link>
+        </li>
+        <li>
+          <Link href="/dashboard/send-parcel">Orders history</Link>
+        </li>
+        <li>
+          <Link href="/dashboard/profile">Profile</Link>
+        </li>
+        <li>
+          <Link href="/dashboard/be-a-rider">Be A Rider</Link>
+        </li>
       </>
     ),
   };
