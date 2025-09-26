@@ -9,8 +9,6 @@ export default function Navbar() {
 
   const { data: session, status } = useSession();
 
-  console.log(session)
-
   const [dark, setDark] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
 
