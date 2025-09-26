@@ -26,7 +26,7 @@ const DashboardLayoutClient = ({userData, children}) => {
 //   const role = "admin"
 
   const {data:session, status} = useSession()
-  console.log(session)
+
 
 
   const linkClass = (path) =>
