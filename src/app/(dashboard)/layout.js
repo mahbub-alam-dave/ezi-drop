@@ -5,7 +5,7 @@ export default function DashboardLayout({ children }) {
   const status = "authenticated";
   const role = "user";
   // const role = "rider";
-  const role = "admin";
+  // const role = "admin";
 
   const dashboardLinks = {
     adminLinks: (
@@ -43,6 +43,7 @@ export default function DashboardLayout({ children }) {
         <li>
           <Link href="/dashboard/send-parcel">Orders history</Link>
         </li>
+      
         <li>
           <Link href="/dashboard/profile">Profile</Link>
         </li>
