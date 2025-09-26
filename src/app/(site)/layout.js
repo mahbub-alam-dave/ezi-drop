@@ -8,7 +8,9 @@ const MainLayout = ({children}) => {
         <div className="bg-gray-50 dark:bg-black text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
         <NextAuthProvider>
             <Navbar />
-            {children}
+            <div className='pt-[100px]'>
+                {children}
+            </div>
             <Footer />
         </NextAuthProvider>
         </div>

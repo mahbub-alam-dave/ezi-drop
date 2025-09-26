@@ -38,7 +38,7 @@ export default function RiderOverviewPage() {
   ];
 
   return (
-    <div className="space-y-8 text-color">
+    <div className="space-y-8 text-color p-6">
       {/* Heading */}
       <div>
         <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
