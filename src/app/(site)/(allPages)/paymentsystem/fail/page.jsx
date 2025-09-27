@@ -1,7 +1,8 @@
 "use client";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function FailPage() {
+ function FailContent() {
   const searchParams = useSearchParams();
   const tranId = searchParams.get("tran_id");
   const status = searchParams.get("status");
@@ -28,4 +29,16 @@ export default function FailPage() {
       )}
     </div>
   );
+}
+
+
+
+export default function FailPage() {
+
+
+  return(
+        <Suspense fallback={<div>loading...</div>}>
+          <FailContent />
+        </Suspense>
+  )
 }
