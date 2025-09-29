@@ -9,6 +9,7 @@ const SendParcel = () => {
   const { register, handleSubmit, reset, watch } = useForm();
   const [districtData, setDistrictData] = useState({});
   const [cost, setCost] = useState(null);
+  const [parcelId, setParcelId] = useState(null);
   const [showModal, setShowModal] = useState(false); // NEW: modal toggle
   const router = useRouter();
 
@@ -49,26 +50,32 @@ const SendParcel = () => {
     setCost(baseCost);
   }, [pickupDistrict, deliveryDistrict, parcelType, weight]);
 
-  const onSubmit = async (data) => {
-    try {
-      const res = await fetch("/api/parcels", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+ const onSubmit = async (data) => {
+  try {
+    const res = await fetch("/api/parcels", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+     body: JSON.stringify({ ...data, cost }),
+    });
 
-      if (res.ok) {
-        setShowModal(true); // Show fullscreen modal
-        reset();
-      } else {
-        const errData = await res.json();
-        alert(errData.message || "Something went wrong");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Network error");
+    const result = await res.json();
+
+    if (res.ok && result.id) {
+      setParcelId(result.id); 
+      setShowModal(true); // Show fullscreen modal
+      reset();
+
+      
+    } else {
+      const errData = await res.json();
+      alert(errData.message || "Something went wrong");
     }
-  };
+  } catch (err) {
+    console.error(err);
+    alert("Network error");
+  }
+};
+
 
   const districts = Object.keys(districtData);
 
@@ -100,7 +107,7 @@ const SendParcel = () => {
               </button>
               <button
               // 
-                onClick={() => router.push("/paymentsystem/mainpoint")}
+                onClick={() => router.push(`/paymentsystem/mainpoint?parcelId=${parcelId}`)}
                 className="flex-1 rounded-lg border border-[var(--border-color)]
                  dark:border-[var(--border-color-two)]
                  text-[var(--color-text)] dark:text-[var(--color-text-dark)]
