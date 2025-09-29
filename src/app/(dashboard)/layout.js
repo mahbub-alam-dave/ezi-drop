@@ -4,8 +4,8 @@ import Link from "next/link";
 export default function DashboardLayout({ children }) {
   const status = "authenticated";
   // const role = "user";
-  // const role = "rider";
-  const role = "admin";
+  const role = "rider";
+  // const role = "admin";
 
   const dashboardLinks = {
     adminLinks: (
