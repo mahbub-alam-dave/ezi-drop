@@ -9,8 +9,6 @@ export default function Navbar() {
 
   const { data: session, status } = useSession();
 
-  console.log(session)
-
   const [dark, setDark] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
 
@@ -41,15 +39,20 @@ export default function Navbar() {
     <>
       <Link href={'/'}>Home</Link>
       <Link href={"/send-parcel"}>Send Parcel</Link>
-      <Link href={"/dashboard"}>Dashboard</Link>
+      {
+         status==="authenticated" &&
+        <Link href={"/dashboard"}>Dashboard</Link>
+      }
       <Link href={"/about"}>About</Link>
       <Link href={"/contact"}>Contact</Link>
+       {/* <Link href={"/paymentsystem/mainpoint"}>payment</Link> */}
+   
     </>
   );
 
   return (
-    <div className="bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] px-6 md:px-8 relative">
-      <div className="w-full max-w-[1440px] mx-auto flex justify-between items-center h-[100px]">
+    <div className=" w-full flex justify-center h-[100px] bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] px-6 md:px-8  fixed z-1000 ">
+      <div className="w-full max-w-[1440px] mx-auto flex justify-between items-center">
         <h1 className="text-2xl font-bold"><Link href={"/"}>Ezi Drop </Link></h1>
         <div className="flex items-center gap-8">
           <nav>
@@ -74,6 +77,7 @@ export default function Navbar() {
           </div>
         </div>
       </div>
+
       {openMenu && (
         <div className="md:hidden absolute right-0 top-[100px] z-1000">
           <Sidebar navLinks={navLinks} status={status} />

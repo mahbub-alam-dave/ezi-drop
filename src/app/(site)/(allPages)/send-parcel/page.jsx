@@ -99,7 +99,8 @@ const SendParcel = () => {
                 See Your Booking
               </button>
               <button
-                onClick={() => router.push("/user-dashboard/payment")}
+              // 
+                onClick={() => router.push("/paymentsystem/mainpoint")}
                 className="flex-1 rounded-lg border border-[var(--border-color)]
                  dark:border-[var(--border-color-two)]
                  text-[var(--color-text)] dark:text-[var(--color-text-dark)]
