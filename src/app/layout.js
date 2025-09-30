@@ -3,6 +3,7 @@ import "./globals.css";
 // import Navbar from "@/components/sharedComponents/navbar/Navbar";
 // import Footer from "@/components/sharedComponents/footer/Footer";
 import NextAuthProvider from "@/providers/NextAuthProvider";
+import ChatBoxUi from "@/components/customerServicesComponents/ChatBoxUi";
 
 
 
@@ -32,6 +33,7 @@ export default function RootLayout({ children }) {
       >
         <NextAuthProvider>
         {children}
+        <ChatBoxUi />
         </NextAuthProvider>
       </body>
     </html>
