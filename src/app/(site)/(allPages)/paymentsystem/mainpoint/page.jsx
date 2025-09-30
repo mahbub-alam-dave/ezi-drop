@@ -1,7 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function PaymentPage() {
+  const searchParams = useSearchParams();
+  const parcelId = searchParams.get("parcelId");
+
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [formData, setFormData] = useState({
@@ -12,38 +16,79 @@ export default function PaymentPage() {
     customer_address: "",
   });
 
+  const [parcel, setParcel] = useState(null);
+
+  useEffect(() => {
+    if (parcelId) {
+      fetch(`/api/parcels/${parcelId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setParcel(data);
+          setFormData({
+            amount: data.cost || "",
+            customer_name: data.senderName || "",
+            customer_email: "",
+            customer_phone: data.senderPhone || "",
+            customer_address: data.pickupAddress || "",
+          });
+        })
+        .catch((err) => console.error(err));
+    }
+  }, [parcelId]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handlePayment = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    if (paymentMethod === "SSLCommerz") {
-      const res = await fetch("/api/payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-      if (data && data.GatewayPageURL) {
-        window.location.href = data.GatewayPageURL;
-      } else {
-        alert("Payment Failed");
-      }
-    } else if (paymentMethod === "Stripe") {
-      alert("Stripe payment integration is not added");
-    } else {
-      alert("Select Payment Method");
-    }
-
+const handlePayment = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  if (!formData.customer_email || !/\S+@\S+\.\S+/.test(formData.customer_email)) {
+    alert("Please enter a valid email before proceeding!");
     setLoading(false);
-  };
+    return;
+  }
+  if (paymentMethod === "SSLCommerz") {
+    // SSLCommerz Payment
+    const res = await fetch("/api/payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+    console.log("SSLCommerz response:", data);
+
+    if (data && data.GatewayPageURL) {
+      window.location.href = data.GatewayPageURL;
+    } else {
+      alert("SSLCommerz Payment Failed");
+    }
+  } else if (paymentMethod === "Stripe") {
+    // Stripe Payment
+    const res = await fetch("/api/stripe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+    console.log("Stripe response:", data);
+
+    if (data?.url) {
+      window.location.href = data.url; // Stripe checkout redirect
+    } else {
+      alert("Stripe Payment Failed");
+    }
+  } else {
+    alert("Select Payment Method");
+  }
+
+  setLoading(false);
+};
 
   return (
-    <div className="flex justify-center items-center h-screen background-color">
+    <div className="flex justify-center items-center py-10 background-color">
       <form
         onSubmit={handlePayment}
         className="background-color p-6 rounded-lg shadow-md w-full max-w-md border border-[var(--color-border)]"
@@ -59,21 +104,12 @@ export default function PaymentPage() {
         >
           <option value="">--Select--</option>
           <option value="SSLCommerz">SSLCommerz</option>
-          {/* <option value="Stripe">Stripe</option> */}
+          <option value="Stripe">Stripe</option>
+
         </select>
 
-        {paymentMethod === "SSLCommerz" && (
-          <>
-            <label className="block mb-2 text-color-soft">Name</label>
-            <input
-              type="text"
-              name="customer_name"
-              value={formData.customer_name}
-              onChange={handleChange}
-              className="input-style mb-4 w-full"
-              required
-            />
-
+        
+         
             <label className="block mb-2 text-color-soft">Email</label>
             <input
               type="email"
@@ -83,37 +119,8 @@ export default function PaymentPage() {
               className="input-style mb-4 w-full"
               required
             />
-
-            <label className="block mb-2 text-color-soft">Phone</label>
-            <input
-              type="text"
-              name="customer_phone"
-              value={formData.customer_phone}
-              onChange={handleChange}
-              className="input-style mb-4 w-full"
-              required
-            />
-
-            <label className="block mb-2 text-color-soft">Address</label>
-            <input
-              type="text"
-              name="customer_address"
-              value={formData.customer_address}
-              onChange={handleChange}
-              className="input-style mb-4 w-full"
-            />
-
-            <label className="block mb-2 text-color-soft">Amount</label>
-            <input
-              type="number"
-              name="amount"
-              value={formData.amount}
-              onChange={handleChange}
-              className="input-style mb-4 w-full"
-              required
-            />
-          </>
-        )}
+         
+       
 
         <button
           type="submit"

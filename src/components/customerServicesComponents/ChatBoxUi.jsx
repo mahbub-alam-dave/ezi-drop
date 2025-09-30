@@ -6,36 +6,81 @@ export default function ChatBoxUi() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [conversationId, setConversationId] = useState(null);
   const messagesEndRef = useRef(null);
+
+  // Helper: detect links and make them clickable
+  function formatMessage(text) {
+    console.log(text)
+    if (!text || typeof text !== "string") return null; // prevent crash
+    const urlRegex = /(https?:\/\/[^\s]+|\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+    return parts.map((part, i) => {
+      if (part.match(urlRegex)) {
+        return (
+          <a
+            key={i}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 underline"
+          >
+            {part}
+          </a>
+        );
+      }
+      return part;
+    });
+  }
+
 
   // Auto scroll to last message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const sendMessage = async () => {
-    if (!input.trim()) return;
 
-    const userMessage = { role: "user", text: input };
+  // Start new chat session when widget opens
+  useEffect(() => {
+    if (isOpen && !conversationId) {
+      fetch("/api/chat/start", {
+        method: "POST",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setConversationId(data.conversationId);
+          setMessages([{ role: "system", content: data.reply }]);
+        })
+        .catch((err) => console.error("Chat start error:", err));
+    }
+  }, [isOpen, conversationId]);
+
+
+  const sendMessage = async () => {
+    if (!input.trim() || !conversationId) return;
+
+    const userMessage = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
 
     setInput("");
 
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch("/api/chat/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ conversationId, message: input }),
       });
 
       const data = await res.json();
-      const botMessage = { role: "bot", text: data.reply };
+      const botMessage = { role: "bot", content: data.reply };
 
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error("Error:", error);
     }
   };
+
+  console.log(messages)
 
   return (
     <>
@@ -66,13 +111,13 @@ export default function ChatBoxUi() {
                 }`}
               >
                 <div
-                  className={`px-3 py-2 rounded-lg max-w-[70%] text-sm ${
+                  className={`px-3 py-2 rounded-lg max-w-[78%] text-sm ${
                     msg.role === "user"
                       ? "bg-blue-400 dark:bg-blue-600 text-white rounded-br-none"
                       : "bg-gray-300 dark:bg-gray-700 text-black dark:text-white  rounded-bl-none"
                   }`}
                 >
-                  {msg.text}
+                  {formatMessage(msg.content)}
                 </div>
               </div>
             ))}
