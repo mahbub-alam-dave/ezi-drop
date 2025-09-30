@@ -37,6 +37,7 @@
     "react-responsive-carousel": "^3.2.23",
     "recharts": "^3.2.1",
     "sslcommerz-lts": "^1.2.0",
+    "stripe": "^18.5.0",
     "sweetalert2": "^11.23.0",
     "tailwind-clip-path": "^1.0.0",
     "tailwind-merge": "^3.3.1",

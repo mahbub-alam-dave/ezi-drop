@@ -40,33 +40,52 @@ export default function PaymentPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handlePayment = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    
-
-    if (paymentMethod === "SSLCommerz") {
-      const res = await fetch("/api/payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-      console.log("Payment response:", data);
-
-      if (data && data.GatewayPageURL) {
-        window.location.href = data.GatewayPageURL;
-      } else {
-        alert("Payment Failed");
-      }
-    } else {
-      alert("Select Payment Method");
-    }
-
+const handlePayment = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  if (!formData.customer_email || !/\S+@\S+\.\S+/.test(formData.customer_email)) {
+    alert("Please enter a valid email before proceeding!");
     setLoading(false);
-  };
+    return;
+  }
+  if (paymentMethod === "SSLCommerz") {
+    // SSLCommerz Payment
+    const res = await fetch("/api/payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+    console.log("SSLCommerz response:", data);
+
+    if (data && data.GatewayPageURL) {
+      window.location.href = data.GatewayPageURL;
+    } else {
+      alert("SSLCommerz Payment Failed");
+    }
+  } else if (paymentMethod === "Stripe") {
+    // Stripe Payment
+    const res = await fetch("/api/stripe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+    console.log("Stripe response:", data);
+
+    if (data?.url) {
+      window.location.href = data.url; // Stripe checkout redirect
+    } else {
+      alert("Stripe Payment Failed");
+    }
+  } else {
+    alert("Select Payment Method");
+  }
+
+  setLoading(false);
+};
 
   return (
     <div className="flex justify-center items-center py-10 background-color">
@@ -85,10 +104,12 @@ export default function PaymentPage() {
         >
           <option value="">--Select--</option>
           <option value="SSLCommerz">SSLCommerz</option>
+          <option value="Stripe">Stripe</option>
+
         </select>
 
-        {paymentMethod === "SSLCommerz" && (
-          <>
+        
+         
             <label className="block mb-2 text-color-soft">Email</label>
             <input
               type="email"
@@ -98,8 +119,8 @@ export default function PaymentPage() {
               className="input-style mb-4 w-full"
               required
             />
-          </>
-        )}
+         
+       
 
         <button
           type="submit"
