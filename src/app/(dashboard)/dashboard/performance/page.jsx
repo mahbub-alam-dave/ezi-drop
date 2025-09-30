@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, {  useMemo } from "react";
 import { Star, CheckCircle, Trophy, Hash } from "lucide-react";
 import {
   BarChart,
@@ -13,69 +13,33 @@ import {
   Line,
   CartesianGrid,
 } from "recharts";
+// import useLoadingSpinner from "@/hooks/useLoadingSpinner";
 
 export default function PerformancePage() {
 
-  const [data, setData] = useState(null);
+  // const [data, setData] = useState(null);
 
-  // 🔄 Backend থেকে ডেটা ফেচ
-  useEffect(() => {
-    fetch("/api/performance")
-      .then((res) => res.json())
-      .then((result) => {
-        if (result.success) {
-          setData(result.data[0]); // ধরলাম ১টা অবজেক্ট আসছে
-        }
-      });
-  }, []);
+  // // 🔄 Backend থেকে ডেটা ফেচ
+  // useEffect(() => {
+  //   fetch("/api/performance")
+  //     .then((res) => res.json())
+  //     .then((result) => {
+  //       if (result.success) {
+  //         setData(result.data[0]); 
+  //       }
+  //     });
+  // }, []);
+  // if (!data) return useLoadingSpinner;
 
-  if (!data) {
-    return <p className="p-6">Loading performance data...</p>;
-  }
-
-  // 📈 ক্যালকুলেশন
-  const successRate = useMemo(() => {
-    return ((data.successfulDeliveries / data.totalDeliveries) * 100).toFixed(1);
-  }, [data]);
-
-  const avgRating = useMemo(() => {
-    const sum = data.ratings.reduce((s, r) => s + r, 0);
-    return (sum / data.ratings.length).toFixed(2);
-  }, [data]);
-
-  const pointsGoal = 5000;
-  const pointsProgress = Math.min(
-    100,
-    Math.round((data.totalPoints / pointsGoal) * 100)
-  );
-  // 📊 ডেমো ডেটা (পরে API ফেচ করতে পারবেন)
-  // const data = {
-  //   totalDeliveries: 1240,
-  //   successfulDeliveries: 1168,
-  //   ratings: [5, 4, 5, 4, 5, 3, 5, 4],
-  //   totalPoints: 3480,
-  //   monthly: [
-  //     { month: "Jan", deliveries: 90, success: 85, points: 280 },
-  //     { month: "Feb", deliveries: 100, success: 95, points: 300 },
-  //     { month: "Mar", deliveries: 110, success: 102, points: 320 },
-  //     { month: "Apr", deliveries: 95, success: 88, points: 260 },
-  //     { month: "May", deliveries: 130, success: 125, points: 380 },
-  //     { month: "Jun", deliveries: 140, success: 132, points: 420 },
-  //     { month: "Jul", deliveries: 150, success: 140, points: 440 },
-  //     { month: "Aug", deliveries: 160, success: 150, points: 460 },
-  //     { month: "Sep", deliveries: 165, success: 151, points: 500 },
-  //   ],
-  // };
-
-  // // 📈 Success Rate & Rating ক্যালকুলেশন
+  // // 📈 ক্যালকুলেশন
   // const successRate = useMemo(() => {
   //   return ((data.successfulDeliveries / data.totalDeliveries) * 100).toFixed(1);
-  // }, [data.totalDeliveries, data.successfulDeliveries]);
+  // }, [data]);
 
   // const avgRating = useMemo(() => {
   //   const sum = data.ratings.reduce((s, r) => s + r, 0);
   //   return (sum / data.ratings.length).toFixed(2);
-  // }, [data.ratings]);
+  // }, [data]);
 
   // const pointsGoal = 5000;
   // const pointsProgress = Math.min(
@@ -83,9 +47,44 @@ export default function PerformancePage() {
   //   Math.round((data.totalPoints / pointsGoal) * 100)
   // );
 
+  // 📊 ডেমো ডেটা (পরে API ফেচ করতে পারবেন)
+  const data = {
+    totalDeliveries: 1240,
+    successfulDeliveries: 1168,
+    ratings: [5, 4, 5, 4, 5, 3, 5, 4],
+    totalPoints: 3480,
+    monthly: [
+      { month: "Jan", deliveries: 90, success: 85, points: 280 },
+      { month: "Feb", deliveries: 100, success: 95, points: 300 },
+      { month: "Mar", deliveries: 110, success: 102, points: 320 },
+      { month: "Apr", deliveries: 95, success: 88, points: 260 },
+      { month: "May", deliveries: 130, success: 125, points: 380 },
+      { month: "Jun", deliveries: 140, success: 132, points: 420 },
+      { month: "Jul", deliveries: 150, success: 140, points: 440 },
+      { month: "Aug", deliveries: 160, success: 150, points: 460 },
+      { month: "Sep", deliveries: 165, success: 151, points: 500 },
+    ],
+  };
+
+  // 📈 Success Rate & Rating ক্যালকুলেশন
+  const successRate = useMemo(() => {
+    return ((data.successfulDeliveries / data.totalDeliveries) * 100).toFixed(1);
+  }, [data.totalDeliveries, data.successfulDeliveries]);
+
+  const avgRating = useMemo(() => {
+    const sum = data.ratings.reduce((s, r) => s + r, 0);
+    return (sum / data.ratings.length).toFixed(2);
+  }, [data.ratings]);
+
+  const pointsGoal = 5000;
+  const pointsProgress = Math.min(
+    100,
+    Math.round((data.totalPoints / pointsGoal) * 100)
+  );
+
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-3xl font-bold">📊 Performance Dashboard</h1>
+      <h1 className="text-4xl font-extrabold bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] bg-clip-text text-transparent mb-8">Your Performance Dashboard</h1>
 
       {/* 📦 টপ মেট্রিক কার্ডস */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
