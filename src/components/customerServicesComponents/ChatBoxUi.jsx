@@ -11,6 +11,8 @@ export default function ChatBoxUi() {
 
   // Helper: detect links and make them clickable
   function formatMessage(text) {
+    console.log(text)
+    if (!text || typeof text !== "string") return null; // prevent crash
     const urlRegex = /(https?:\/\/[^\s]+|\/[^\s]+)/g;
     const parts = text.split(urlRegex);
     return parts.map((part, i) => {
@@ -57,26 +59,28 @@ export default function ChatBoxUi() {
   const sendMessage = async () => {
     if (!input.trim() || !conversationId) return;
 
-    const userMessage = { role: "user", text: input };
+    const userMessage = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
 
     setInput("");
 
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch("/api/chat/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conversationId, message: input }),
       });
 
       const data = await res.json();
-      const botMessage = { role: "bot", text: data.reply };
+      const botMessage = { role: "bot", content: data.reply };
 
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error("Error:", error);
     }
   };
+
+  console.log(messages)
 
   return (
     <>

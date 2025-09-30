@@ -1,5 +1,6 @@
 // /api/chat/route.js
 import { dbConnect } from "@/lib/dbConnect";
+import { ObjectId } from "mongodb";
 import OpenAI from "openai";
 
 // Initialize OpenAI client
@@ -22,13 +23,28 @@ function extractParcelId(message) {
 
 export async function POST(req) {
   try {
-    const { message } = await req.json();
+    const { conversationId, message } = await req.json();
     const lower = message.toLowerCase().trim();
 
     const db = dbConnect("CustomerServiceChat");
 
+    // add user message to conversation
+    await db.updateOne(
+      { _id: new ObjectId(conversationId) },
+      {
+        $push: {
+          messages: {
+            role: "user",
+            content: message,
+            timestamp: new Date(),
+          },
+        },
+      }
+    );
+
     let reply = "";
 
+    // chect for parcel tracking
     // const trackMatch = lower.match(/track parcel #?(\d+)/);
 
     const parcelId = extractParcelId(lower)
@@ -36,7 +52,7 @@ export async function POST(req) {
       const order = await dbConnect("parcels").findOne({trackingId: parcelId})
 
       if(order) {
-reply = `Your parcel #${parcelId} status: ${order.status}. For full details, please [go to live tracking](https://yourapp.com/tracking/${parcelId}).`;      }
+reply = `Your parcel #${parcelId} status: ${order.status}. For full details, please [go to live tracking](https://ezi-drop.vercel.app/tracking/${parcelId}).`;      }
       else {
         reply = `Sorry, parcel #${parcelId} not found`
       }
@@ -62,12 +78,26 @@ if (!reply) {
       reply = response.choices[0].message.content;
     }
 
-    // 4️⃣ Save conversation in MongoDB
+   /*  // 4️⃣ Save conversation in MongoDB
     await db.insertOne({
       message,
       reply,
       createdAt: new Date(),
-    });
+    }); */
+
+    // Save bot reply
+    await db.updateOne(
+      { _id: new ObjectId(conversationId) },
+      {
+        $push: {
+          messages: {
+            role: "bot",
+            content: reply,
+            timestamp: new Date(),
+          },
+        },
+      }
+    );
 
     return new Response(JSON.stringify({ reply }), {
       headers: { "Content-Type": "application/json" },
