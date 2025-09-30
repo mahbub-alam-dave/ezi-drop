@@ -15,6 +15,7 @@ import {
   FaBox,
   FaUserPlus,
   FaTachometerAlt,
+  FaChartLine,
 } from "react-icons/fa";
 import ThemeToggle from "../sharedComponents/navbar/Toggle";
 
@@ -92,10 +93,10 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaTachometerAlt className="inline-block mr-2" />
           Rider Dashboard
         </Link>
-        {/* <Link href="/dashboard/performance" className={linkClass("/dashboard/performance")}>
+        <Link href="/dashboard/performance" className={linkClass("/dashboard/performance")}>
           <FaChartLine className="inline-block mr-2" />
           Performance
-        </Link> */}
+        </Link>
         <Link
           href="/dashboard/manage-orders"
           className={linkClass("/dashboard/manage-orders")}

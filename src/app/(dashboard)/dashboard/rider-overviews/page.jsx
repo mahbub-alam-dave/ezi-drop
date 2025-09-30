@@ -11,7 +11,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import Performance from "../performance/Performance";
+
 
 export default function RiderOverviewsPage() {
   const [date, setDate] = useState(new Date());
@@ -119,10 +119,6 @@ export default function RiderOverviewsPage() {
           </p>
         </div>
       </div>
-
-
-      {/* Performance Section */}
-      <Performance/>
 
 
       {/* Recent Deliveries */}
