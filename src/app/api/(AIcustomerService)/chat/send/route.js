@@ -87,8 +87,9 @@ if (needsAgent) {
           { $set: { district: detected } }
         );
 
+
         // Find agent for that district
-        const agent = await dbConnect("agents").findOne({ district: detected });
+        const agent = await dbConnect("users").findOne({ district: detected });
 
         if (agent) {
           await dbConnect("supportTickets").insertOne({
@@ -96,6 +97,7 @@ if (needsAgent) {
             conversationId: new ObjectId(conversationId),
             message,
             district: detected,
+            assignedAgentEmail: agent.email,
             assignedAgentId: agent._id,
             status: "Open",
             createdAt: new Date(),
@@ -113,7 +115,7 @@ if (needsAgent) {
       }
     } else {
       // User already has district → find agent
-      const agent = await dbConnect("agents").findOne({ district });
+      const agent = await dbConnect("users").findOne({ district });
       if (agent) {
         await dbConnect("supportTickets").insertOne({
           userId: user._id,
@@ -213,3 +215,48 @@ if (!reply && session) {
     );
   }
 }
+
+/* 
+{
+name: "Shamim Hossen"
+email: "agentjhenaidah@ezidrop.com"
+password: "$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2"
+role: support_agent,
+district: "Jhenaidah",
+createdAt: new Date(),
+updatedAt : new Date(),
+Providers: [{provider: "credentials"}]
+emailVerified: true,
+failedLoginAttempts: 0
+lockUntil: null
+}
+
+
+{
+"name": "Shamim Hossen",
+"email": "agentjhenaidah@ezidrop.com",
+"password": "$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2",
+"role": "support_agent",
+"district": "Jhenaidah",
+"createdAt": 2025-09-24T13:20:52.793+00:00,
+"updatedAt" : 2025-09-24T13:20:52.793+00:00,
+"Providers": [{provider: "credentials"}],
+"emailVerified": true,
+"failedLoginAttempts": 0,
+"lockUntil": null
+}
+
+{
+"name":"Shamim Hossen",
+"email": "agentjhenaidah@ezidrop.com",
+"password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2",
+"role": "support_agent",
+"district": "Jhenaidah",
+"createdAt":{"$date":{"$numberLong":"1758632734086"}},
+"updatedAt":{"$date":{"$numberLong":"1758890539171"}},
+"providers":[{"provider":"credentials"}],
+"emailVerified":true,
+"failedLoginAttempts":{"$numberInt":"0"},
+"lockUntil":null
+}
+*/
