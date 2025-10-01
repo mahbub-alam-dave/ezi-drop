@@ -27,7 +27,7 @@ export default function PaymentPage() {
           setFormData({
             amount: data.cost || "",
             customer_name: data.senderName || "",
-            customer_email: "",
+            customer_email: data.senderEmail || "",
             customer_phone: data.senderPhone || "",
             customer_address: data.pickupAddress || "",
           });
@@ -43,11 +43,7 @@ export default function PaymentPage() {
 const handlePayment = async (e) => {
   e.preventDefault();
   setLoading(true);
-  if (!formData.customer_email || !/\S+@\S+\.\S+/.test(formData.customer_email)) {
-    alert("Please enter a valid email before proceeding!");
-    setLoading(false);
-    return;
-  }
+ 
   if (paymentMethod === "SSLCommerz") {
     // SSLCommerz Payment
     const res = await fetch("/api/payment", {
@@ -108,19 +104,6 @@ const handlePayment = async (e) => {
 
         </select>
 
-        
-         
-            <label className="block mb-2 text-color-soft">Email</label>
-            <input
-              type="email"
-              name="customer_email"
-              value={formData.customer_email}
-              onChange={handleChange}
-              className="input-style mb-4 w-full"
-              required
-            />
-         
-       
 
         <button
           type="submit"

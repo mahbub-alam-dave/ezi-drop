@@ -7,13 +7,7 @@ export async function POST(req) {
     const body = await req.json();
     const { amount, customer_email } = body;
 
-    // Email validation
-    if (!customer_email || !/\S+@\S+\.\S+/.test(customer_email)) {
-      return new Response(
-        JSON.stringify({ error: "Invalid email. Please try again." }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
+    
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
