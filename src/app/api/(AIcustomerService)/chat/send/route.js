@@ -1,6 +1,8 @@
 // /api/chat/route.js
+import { authOptions } from "@/lib/authOptions";
 import { dbConnect } from "@/lib/dbConnect";
 import { ObjectId } from "mongodb";
+import { getServerSession } from "next-auth";
 import OpenAI from "openai";
 
 // Initialize OpenAI client
@@ -13,6 +15,8 @@ const faqResponses = {
   "what are your working hours": "Our working hours are Monday-Friday, 9am to 6pm.",
 };
 
+const agentKeywords = ["complaint", "damaged", "refund", "cancel", "lose", "lost", "issue"];
+
 // Detect parcel query like "check my parcel ezi-drop-001"
 function extractParcelId(message) {
   const regex = /(ezi-drop-\d+)/i;
@@ -20,12 +24,27 @@ function extractParcelId(message) {
   return match ? match[1] : null;
 }
 
+const districts = [
+  "Bagerhat","Bandarban","Barguna","Barisal","Bhola","Bogra","Brahmanbaria","Chandpur","Chapai Nawabganj",
+  "Chattogram","Chuadanga","Cox's Bazar","Cumilla","Dhaka","Dinajpur","Faridpur","Feni","Gaibandha",
+  "Gazipur","Gopalganj","Habiganj","Jamalpur","Jashore","Jhalokati","Jhenaidah","Joypurhat","Khagrachhari",
+  "Khulna","Kishoreganj","Kurigram","Kushtia","Lakshmipur","Lalmonirhat","Madaripur","Magura","Manikganj",
+  "Meherpur","Moulvibazar","Munshiganj","Mymensingh","Naogaon","Narail","Narayanganj","Narsingdi",
+  "Natore","Netrokona","Nilphamari","Noakhali","Pabna","Panchagarh","Patuakhali","Pirojpur","Rajbari",
+  "Rajshahi","Rangamati","Rangpur","Satkhira","Shariatpur","Sherpur","Sirajganj","Sunamganj","Sylhet",
+  "Tangail","Thakurgaon"
+];
+
+function detectDistrict(text) {
+  const lower = text.toLowerCase();
+  return districts.find(d => lower.includes(d.toLowerCase())) || null;
+}
 
 export async function POST(req) {
+  const session = await getServerSession(authOptions);
+
   try {
     const { conversationId, message } = await req.json();
-    const lower = message.toLowerCase().trim();
-
     const db = dbConnect("CustomerServiceChat");
 
     // add user message to conversation
@@ -43,31 +62,119 @@ export async function POST(req) {
     );
 
     let reply = "";
+    const lower = message.toLowerCase().trim();
+    const needsAgent = agentKeywords.some((word) => lower.includes(word));
 
-    // chect for parcel tracking
-    // const trackMatch = lower.match(/track parcel #?(\d+)/);
+    // ---------------- Agent Handover ----------------
+if (needsAgent) {
+  if (!session) {
+    reply = "⚠️ Please login to get support from our agents.";
+  } else {
+    const user = await dbConnect("users").findOne({
+      email: session.user.email,
+    });
 
-    const parcelId = extractParcelId(lower)
-    if(parcelId) {
-      const order = await dbConnect("parcels").findOne({trackingId: parcelId})
+    let district = user?.district || null;
 
-      if(order) {
-reply = `Your parcel #${parcelId} status: ${order.status}. For full details, please [go to live tracking](https://ezi-drop.vercel.app/tracking/${parcelId}).`;      }
-      else {
-        reply = `Sorry, parcel #${parcelId} not found`
+    if (!district) {
+      // Try detecting from current message
+      const detected = detectDistrict(message);
+
+      if (detected) {
+        // Save detected district to user
+        await dbConnect("users").updateOne(
+          { _id: user._id },
+          { $set: { district: detected } }
+        );
+
+        // Find agent for that district
+        const agent = await dbConnect("agents").findOne({ district: detected });
+
+        if (agent) {
+          await dbConnect("supportTickets").insertOne({
+            userId: user._id,
+            conversationId: new ObjectId(conversationId),
+            message,
+            district: detected,
+            assignedAgentId: agent._id,
+            status: "Open",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            agentReply: "",
+          });
+
+          reply = `✅ I’ve updated your profile with district **${detected}** and connected you to the **${detected} support agent**. Please wait...`;
+        } else {
+          reply = `⚠️ No agent found for ${detected}. Our central support team will assist you soon.`;
+        }
+      } else {
+        // Could not detect district
+        reply = "⚠️ To connect you with the right agent, please type your district (e.g., Dhaka, Khulna).";
+      }
+    } else {
+      // User already has district → find agent
+      const agent = await dbConnect("agents").findOne({ district });
+      if (agent) {
+        await dbConnect("supportTickets").insertOne({
+          userId: user._id,
+          conversationId: new ObjectId(conversationId),
+          message,
+          district,
+          assignedAgentId: agent._id,
+          status: "Open",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          agentReply: "",
+        });
+
+        reply = `✅ I’m connecting you to our **${district} support agent**. Please wait...`;
+      } else {
+        reply = `⚠️ Sorry, no agent found for ${district}. Our support team will reach you soon.`;
+      }
+    }
+  }
+}
+
+// --- EXTRA: District Detection Outside Agent Keywords ---
+if (!reply && session) {
+  const detected = detectDistrict(message);
+  if (detected) {
+    // Update user profile with district
+    await dbConnect("users").updateOne(
+      { email: session.user.email },
+      { $set: { district: detected } }
+    );
+
+    reply = `✅ I’ve updated your profile with district **${detected}**. Now, if you need help with issues like *refund, complain, damage*, I’ll connect you directly to the **${detected} support agent**.`;
+  }
+}
+
+
+    // ---------------- Parcel Tracking ----------------
+    if (!reply) {
+      const parcelId = extractParcelId(lower);
+      if (parcelId) {
+        const order = await dbConnect("parcels").findOne({ trackingId: parcelId });
+        if (order) {
+          reply = `Your parcel #${parcelId} status: ${order.status}. For full details, please [go to live tracking](https://ezi-drop.vercel.app/tracking/${parcelId}).`;
+        } else {
+          reply = `❌ Sorry, parcel #${parcelId} not found.`;
+        }
       }
     }
 
-    // Check FAQs
-        for(const key in faqResponses) {
-      if(lower.includes(key)) {
-        reply = faqResponses[key]
+    // ---------------- FAQ ----------------
+    if (!reply) {
+      for (const key in faqResponses) {
+        if (lower.includes(key)) {
+          reply = faqResponses[key];
+          break;
+        }
       }
     }
 
-
-    // 3️⃣ Fallback to OpenAI
-if (!reply) {
+    // ---------------- OpenAI Fallback ----------------
+    if (!reply) {
       const response = await client.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
@@ -77,13 +184,6 @@ if (!reply) {
       });
       reply = response.choices[0].message.content;
     }
-
-   /*  // 4️⃣ Save conversation in MongoDB
-    await db.insertOne({
-      message,
-      reply,
-      createdAt: new Date(),
-    }); */
 
     // Save bot reply
     await db.updateOne(
@@ -102,18 +202,14 @@ if (!reply) {
     return new Response(JSON.stringify({ reply }), {
       headers: { "Content-Type": "application/json" },
     });
-
-
   } catch (err) {
     console.error(err);
-    return new Response(JSON.stringify({ reply: "⚠️ Sorry, something went wrong." }), {
-      headers: { "Content-Type": "application/json" },
-      status: 500,
-    });
+    return new Response(
+      JSON.stringify({ reply: "⚠️ Sorry, something went wrong." }),
+      {
+        headers: { "Content-Type": "application/json" },
+        status: 500,
+      }
+    );
   }
 }
-
-
-
-// { role: "system", content: "You are a customer support bot for EziDrop Courier. Answer questions about parcel tracking, delivery times, and services clearly and politely." }
-
