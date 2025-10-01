@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import SupportsTicket from '@/components/dashboardComponents/supportAgent(admin)/SupportsTicket';
 
 const AdminOverview = () => {
   // ========== STATES ==========
@@ -497,7 +498,7 @@ const AdminOverview = () => {
       {/* ===== NEW ROW: SUPPORT + BILLING + SERVICE AREAS ===== */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
         {/* 3. SUPPORT TICKETS */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-7 border border-slate-200 dark:border-slate-700 shadow-sm">
+        {/* <div className="bg-white dark:bg-gray-800 rounded-2xl p-7 border border-slate-200 dark:border-slate-700 shadow-sm">
           <div className="flex justify-between items-center mb-5">
             <h2 className="text-xl font-bold text-slate-800 dark:text-white">Support Tickets</h2>
             <button className="text-sm text-blue-600 hover:underline font-medium">View All</button>
@@ -529,7 +530,8 @@ const AdminOverview = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
+        <SupportsTicket supportTickets={supportTickets} />
 
         {/* 4. BILLING SUMMARY */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl p-7 border border-slate-200 dark:border-slate-700 shadow-sm">

@@ -40,6 +40,19 @@ function detectDistrict(text) {
   return districts.find(d => lower.includes(d.toLowerCase())) || null;
 }
 
+
+// for ticket Id (serially)
+async function getNextTicketId() {
+  const counter = await dbConnect("counters").findOneAndUpdate(
+    { _id: "supportTickets" },
+    { $inc: { seq: 1 } },
+    { upsert: true, returnDocument: "after" }
+  );
+
+  const seqNumber = counter.value.seq;
+  return `ezi-tik-${seqNumber.toString().padStart(3, "0")}`;
+}
+
 export async function POST(req) {
   const session = await getServerSession(authOptions);
 
@@ -66,6 +79,7 @@ export async function POST(req) {
     const needsAgent = agentKeywords.some((word) => lower.includes(word));
 
     // ---------------- Agent Handover ----------------
+
 if (needsAgent) {
   if (!session) {
     reply = "⚠️ Please login to get support from our agents.";
@@ -75,6 +89,7 @@ if (needsAgent) {
     });
 
     let district = user?.district || null;
+    const ticketId = getNextTicketId()
 
     if (!district) {
       // Try detecting from current message
@@ -91,10 +106,12 @@ if (needsAgent) {
         // Find agent for that district
         const agent = await dbConnect("users").findOne({ district: detected });
 
+
         if (agent) {
           await dbConnect("supportTickets").insertOne({
             userId: user._id,
             conversationId: new ObjectId(conversationId),
+            ticketId,
             message,
             district: detected,
             assignedAgentEmail: agent.email,
@@ -120,6 +137,7 @@ if (needsAgent) {
         await dbConnect("supportTickets").insertOne({
           userId: user._id,
           conversationId: new ObjectId(conversationId),
+          ticketId,
           message,
           district,
           assignedAgentId: agent._id,
@@ -229,21 +247,6 @@ Providers: [{provider: "credentials"}]
 emailVerified: true,
 failedLoginAttempts: 0
 lockUntil: null
-}
-
-
-{
-"name": "Shamim Hossen",
-"email": "agentjhenaidah@ezidrop.com",
-"password": "$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2",
-"role": "support_agent",
-"district": "Jhenaidah",
-"createdAt": 2025-09-24T13:20:52.793+00:00,
-"updatedAt" : 2025-09-24T13:20:52.793+00:00,
-"Providers": [{provider: "credentials"}],
-"emailVerified": true,
-"failedLoginAttempts": 0,
-"lockUntil": null
 }
 
 {
