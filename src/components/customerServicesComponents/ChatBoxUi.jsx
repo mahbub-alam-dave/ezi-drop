@@ -11,7 +11,6 @@ export default function ChatBoxUi() {
 
   // Helper: detect links and make them clickable
   function formatMessage(text) {
-    console.log(text)
     if (!text || typeof text !== "string") return null; // prevent crash
     const urlRegex = /(https?:\/\/[^\s]+|\/[^\s]+)/g;
     const parts = text.split(urlRegex);
@@ -80,7 +79,6 @@ export default function ChatBoxUi() {
     }
   };
 
-  console.log(messages)
 
   return (
     <>
