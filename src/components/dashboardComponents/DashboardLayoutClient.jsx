@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import {
   FaUserCog,
+  FaComments,
   FaUsers,
   FaMotorcycle,
   FaUserTie,
@@ -13,6 +14,7 @@ import {
   FaTruck,
   FaHistory,
   FaBox,
+  FaComment,
   FaUserPlus,
   FaTachometerAlt,
 } from "react-icons/fa";
@@ -82,6 +84,13 @@ const dashboardLinks = {
         <FaClipboardList className="inline-block mr-2" />
         Manage Order
       </Link>
+      <Link
+        href="/dashboard/chat"
+        className={linkClass("/dashboard/chat")}
+      >
+        <FaComment className="inline-block mr-2"/>
+        Chat
+      </Link>
     </>
   ),
   riderLinks: (
@@ -114,6 +123,13 @@ const dashboardLinks = {
         <FaUser className="inline-block mr-2" />
         Profile
       </Link>
+      <Link
+          href="/dashboard/riderChat"
+          className={linkClass("/dashboard/riderChat")}
+        >
+          <FaComments className="inline-block mr-2" />
+          Chat
+        </Link>
     </>
   ),
   userLinks: (
@@ -153,6 +169,13 @@ const dashboardLinks = {
         >
           <FaUserPlus className="inline-block mr-2" />
           Be A Rider
+        </Link>
+        <Link
+          href="/dashboard/userChat"
+          className={linkClass("/dashboard/userChat")}
+        >
+          <FaComments className="inline-block mr-2" />
+          Chat
         </Link>
     </>
   ),
