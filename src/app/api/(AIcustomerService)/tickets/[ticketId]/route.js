@@ -42,3 +42,32 @@ export async function GET(req, { params }) {
     return new Response(JSON.stringify({ error: "Server error" }), { status: 500 });
   }
 }
+
+
+export async function PATCH(req, { params }) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+
+    const { status } = await req.json(); // "Resolved", "Closed", etc.
+    const ticketId = params.ticketId;
+
+    const agentsCol = dbConnect("agents");
+    const agent = await agentsCol.findOne({ email: session.user.email });
+
+    // only agent or admin can change status
+    if (!agent) return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
+
+    // update
+    await dbConnect("supportTickets").updateOne(
+      { ticketId },
+      { $set: { status, updatedAt: new Date() } }
+    );
+
+    return new Response(JSON.stringify({ ok: true }), { headers: { "Content-Type": "application/json" } });
+  } catch (err) {
+    console.error(err);
+    return new Response(JSON.stringify({ error: "Server error" }), { status: 500 });
+  }
+}
+
