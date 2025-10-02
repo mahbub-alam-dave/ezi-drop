@@ -42,16 +42,12 @@ function detectDistrict(text) {
 
 
 // for ticket Id (serially)
-async function getNextTicketId() {
-  const counter = await dbConnect("counters").findOneAndUpdate(
-    { _id: "supportTickets" },
-    { $inc: { seq: 1 } },
-    { upsert: true, returnDocument: "after" }
-  );
-
-  const seqNumber = counter.value?.seq || 1;
-  return `ezi-tik-${seqNumber.toString().padStart(3, "0")}`;
+function getNextTicketId() {
+  const hex = new ObjectId().toHexString();
+  const num = parseInt(hex.substring(0, 6), 16); // take timestamp part
+  return `ezi-tik-${String(num % 1000).padStart(3, "0")}`;
 }
+
 
 export async function POST(req) {
   const session = await getServerSession(authOptions);
@@ -112,14 +108,20 @@ if (needsAgent) {
             userId: user._id,
             conversationId: new ObjectId(conversationId),
             ticketId,
-            message,
             district: detected,
             assignedAgentEmail: agent.email,
             assignedAgentId: agent._id,
             status: "Open",
             createdAt: new Date(),
             updatedAt: new Date(),
-            agentReply: "",
+            messages: [
+              {
+                senderRole: user.role,
+                senderId: user._id,
+                content: message,
+                timestamp: new Date(),
+              },
+            ]
           });
 
           reply = `✅ I’ve updated your profile with district **${detected}** and connected you to the **${detected} support agent**. Please wait...`;
@@ -135,17 +137,24 @@ if (needsAgent) {
       const agent = await dbConnect("users").findOne({ district });
       if (agent) {
         await dbConnect("supportTickets").insertOne({
-          userId: user._id,
-          conversationId: new ObjectId(conversationId),
-          ticketId,
-          message,
-          district,
-          assignedAgentId: agent._id,
-          status: "Open",
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          agentReply: "",
-        });
+            userId: user._id,
+            conversationId: new ObjectId(conversationId),
+            ticketId,
+            district,
+            assignedAgentEmail: agent.email,
+            assignedAgentId: agent._id,
+            status: "Open",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            messages: [
+              {
+                senderRole: user.role,
+                senderId: user._id,
+                content: message,
+                timestamp: new Date(),
+              },
+            ]
+          });
 
         reply = `✅ I’m connecting you to our **${district} support agent**. Please wait...`;
       } else {
