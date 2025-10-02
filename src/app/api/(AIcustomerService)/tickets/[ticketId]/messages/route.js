@@ -11,15 +11,16 @@ export async function POST(req, { params }) {
     const { senderRole, content } = await req.json(); // senderRole: "agent" or "user"
     if (!content) return new Response(JSON.stringify({ error: "No content" }), { status: 400 });
 
-    const ticketId = params.ticketId;
+    const p = await params;
+    const ticketId = p.ticketId;
+    console.log(ticketId)
     const ticketsCol = dbConnect("supportTickets");
     const ticket = await ticketsCol.findOne({ ticketId });
     if (!ticket) return new Response(JSON.stringify({ error: "Ticket not found" }), { status: 404 });
 
-    const agentsCol = dbConnect("agents");
-    const usersCol = dbConnect("users");
-    const agent = await agentsCol.findOne({ email: session.user.email });
-    const user = await usersCol.findOne({ email: session.user.email });
+    const db = dbConnect("users");
+    const agent = await db.findOne({ email: session.user.email, role: "support_agent" });
+    const user = await db.findOne({ email: session.user.email });
 
     // Authorization rules:
     if (senderRole === "support_agent") {

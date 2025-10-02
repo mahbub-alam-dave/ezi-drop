@@ -79,7 +79,6 @@ export default function ChatBoxUi() {
     }
   };
 
-  console.log(messages)
 
   return (
     <>

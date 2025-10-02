@@ -5,22 +5,23 @@ import { useEffect, useState, useRef } from "react";
 export default function TicketChatClient({ ticketId, setOpenChat }) {
   const [ticket, setTicket] = useState(null);
   const [input, setInput] = useState("");
+  const [uiMessages, setUiMessages] = useState([])
   const refInterval = useRef(null);
 
-  console.log(ticketId)
 
   async function fetchTicket() {
     const res = await fetch(`/api/tickets/${ticketId}`);
     if (res.ok) {
       const { ticket } = await res.json();
       setTicket(ticket);
+      setUiMessages(ticket)
     }
   }
 
   useEffect(() => {
     fetchTicket();
-    refInterval.current = setInterval(fetchTicket, 3000); // poll every 3s
-    return () => clearInterval(refInterval.current);
+    // refInterval.current = setInterval(fetchTicket, 3000); // poll every 3s
+    // return () => clearInterval(refInterval.current);
   }, [ticketId]);
 
   async function sendMessage() {
@@ -28,11 +29,14 @@ export default function TicketChatClient({ ticketId, setOpenChat }) {
     await fetch(`/api/tickets/${ticketId}/messages`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ senderRole: "agent", content: input })
+      body: JSON.stringify({ senderRole: "support_agent", content: input })
     });
+    setUiMessages({senderRole: "support_agent", content: input})
     setInput("");
     fetchTicket(); // refresh immediately
   }
+
+  console.log(input)
 
   if (!ticket) return <div>Loading...</div>;
 
@@ -44,7 +48,7 @@ export default function TicketChatClient({ ticketId, setOpenChat }) {
         </div>
       <div className="h-92 overflow-y-auto p-3 space-y-2 bg-gray-50 dark:bg-gray-900">
         {(ticket.messages || []).map((m, i) => (
-          <div key={i} className={m.senderRole === "agent" ? "text-right" : ""}>
+          <div key={i} className={m.senderRole === "support_agent" ? "text-right" : ""}>
             <div className="inline-block p-2 rounded bg-gray-100 shadow-sm">
               <small>{m.senderRole}</small><br />
               {m.content}
