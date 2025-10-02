@@ -43,13 +43,13 @@ export default function PaymentPage() {
 const handlePayment = async (e) => {
   e.preventDefault();
   setLoading(true);
- 
+ const paymentData = { ...formData, parcelId };
   if (paymentMethod === "SSLCommerz") {
     // SSLCommerz Payment
     const res = await fetch("/api/payment", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(paymentData),
     });
 
     const data = await res.json();
@@ -65,7 +65,7 @@ const handlePayment = async (e) => {
     const res = await fetch("/api/stripe", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(paymentData),
     });
 
     const data = await res.json();

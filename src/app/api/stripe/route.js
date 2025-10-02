@@ -5,7 +5,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { amount, customer_email } = body;
+    const { amount, customer_email , parcelId} = body;
 
     
 
@@ -23,7 +23,7 @@ export async function POST(req) {
           quantity: 1,
         },
       ],
-      success_url: "http://localhost:3000/paymentsystem/success",
+      success_url: `http://localhost:3000/paymentsystem/success?parcelId=${parcelId}`,
       cancel_url: "http://localhost:3000/paymentsystem/cancel",
     });
 
