@@ -8,18 +8,19 @@ export async function GET(req, { params }) {
     const session = await getServerSession(authOptions);
     if (!session) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
 
-    const ticketId = params.ticketId; // e.g. "ezi-tik-001"
+    const p = await params
+
+    const ticketId = p.ticketId; // e.g. "ezi-tik-001"
     const ticketsCol = dbConnect("supportTickets");
     const ticket = await ticketsCol.findOne({ ticketId });
 
     if (!ticket) return new Response(JSON.stringify({ error: "Not found" }), { status: 404 });
 
     // Determine caller role:
-    const agentsCol = dbConnect("agents");
-    const usersCol = dbConnect("users");
+    const db = dbConnect("users");
 
-    const agent = await agentsCol.findOne({ email: session.user.email });
-    const user = await usersCol.findOne({ email: session.user.email });
+    const agent = await db.findOne({ email: session.user.email, role: "support_agent" });
+    const user = await db.findOne({ email: session.user.email });
 
     // Authorization:
     if (agent) {

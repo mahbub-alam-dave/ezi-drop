@@ -42,7 +42,7 @@ function detectDistrict(text) {
 
 
 // for ticket Id (serially)
-function getNextTicketId() {
+async function getNextTicketId() {
   const hex = new ObjectId().toHexString();
   const num = parseInt(hex.substring(0, 6), 16); // take timestamp part
   return `ezi-tik-${String(num % 1000).padStart(3, "0")}`;
@@ -100,7 +100,7 @@ if (needsAgent) {
 
 
         // Find agent for that district
-        const agent = await dbConnect("users").findOne({ district: detected });
+        const agent = await dbConnect("users").findOne({ district: detected, role: "support_agent" });
 
 
         if (agent) {
@@ -134,7 +134,7 @@ if (needsAgent) {
       }
     } else {
       // User already has district → find agent
-      const agent = await dbConnect("users").findOne({ district });
+      const agent = await dbConnect("users").findOne({ district, role: "support_agent" });
       if (agent) {
         await dbConnect("supportTickets").insertOne({
             userId: user._id,

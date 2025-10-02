@@ -1,10 +1,16 @@
 "use client"
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import TicketChatClient from './AgentChatBox';
 
 const SupportsTicket = ({supportTickets}) => { 
 
     const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
+  // const router = useRouter()
+
+  const [openChat, setOpenChat] = useState(false)
+  const [ticketId, setTicketId] = useState(false)
 
   useEffect(() => {
     async function fetchTickets() {
@@ -22,6 +28,11 @@ const SupportsTicket = ({supportTickets}) => {
     fetchTickets();
   }, []);
 
+  const handleAgentChat = (ticketId) => {
+    setTicketId(ticketId)
+    setOpenChat(p => !p)
+  }
+
   if (loading) return <p>Loading tickets...</p>;
 
     return (
@@ -32,7 +43,7 @@ const SupportsTicket = ({supportTickets}) => {
           </div>
           <div className="space-y-4">
             {tickets.map((ticket, i) => (
-              <div key={i} className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl hover:shadow-md transition-shadow">
+              <div onClick={() => handleAgentChat(ticket.ticketId)} key={i} className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl hover:shadow-md transition-shadow">
                 <div className="flex justify-between items-start mb-2">
                   <span className="font-medium text-slate-800 dark:text-white">{ticket?.ticketId}</span>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -54,9 +65,14 @@ const SupportsTicket = ({supportTickets}) => {
                     {ticket.status.replace('_', ' ')}
                   </span>
                 </div>
+
               </div>
             ))}
           </div>
+                          {
+                  openChat &&
+                  <TicketChatClient ticketId={ticketId} setOpenChat={setOpenChat} />
+                }
         </div>
     );
 };
