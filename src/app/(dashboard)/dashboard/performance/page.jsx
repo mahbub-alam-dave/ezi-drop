@@ -46,6 +46,7 @@ export default function PerformancePage() {
   //   100,
   //   Math.round((data.totalPoints / pointsGoal) * 100)
   // );
+  
 
   // 📊 ডেমো ডেটা (পরে API ফেচ করতে পারবেন)
   const data = {
