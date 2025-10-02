@@ -1,15 +1,25 @@
 // Implement By Abu Bokor (Frontend) and Yasin (Backend)
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 
 const BeARider = () => {
   const { register, handleSubmit, reset } = useForm();
+  const [districtData, setDistrictData] = useState({});
+  const districts = Object.keys(districtData);
+
+  // load districts.json (same as SendParcel)
+  useEffect(() => {
+    fetch("/districts.json")
+      .then((res) => res.json())
+      .then((data) => setDistrictData(data))
+      .catch((err) => console.error("District data load failed", err));
+  }, []);
 
   const onSubmit = async (data) => {
-    try {// Send data to database...
+    try {
       const res = await fetch("/api/riders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -34,19 +44,9 @@ const BeARider = () => {
   };
 
   return (
-    <section
-      className="min-h-screen flex justify-center items-center px-4 py-10
-         text-[var(--color-text)] dark:text-[var(--color-text-dark)]"
-    >
-      <div
-        className="w-full max-w-3xl rounded-2xl shadow-xl p-6
-          bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
-          transition-colors duration-300"
-      >
-        <h1
-          className="text-center text-2xl md:text-3xl font-bold mb-8
-             text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]"
-        >
+    <section className="min-h-screen flex justify-center items-center px-4 py-10 text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
+      <div className="w-full max-w-3xl rounded-2xl shadow-xl p-6 bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] transition-colors duration-300">
+        <h1 className="text-center text-2xl md:text-3xl font-bold mb-8 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]">
           Become a Rider
         </h1>
 
@@ -88,6 +88,13 @@ const BeARider = () => {
           <TextAreaField
             label="Educational Qualification"
             register={register("education", { required: true })}
+          />
+
+          {/* Rider District Dropdown */}
+          <SelectField
+            label="Preferred District"
+            register={register("district", { required: true })}
+            options={districts}
           />
 
           {/* Resume/CV (Link or Upload) */}
@@ -155,6 +162,35 @@ const TextAreaField = ({ label, register }) => (
          focus:ring-2 focus:ring-[var(--color-primary)]
          dark:focus:ring-[var(--color-primary-dark)]"
     />
+  </div>
+);
+
+const SelectField = ({ label, register, options = [], disabled = false }) => (
+  <div>
+    <label className="block mb-1 font-medium">{label}</label>
+    <select
+      {...register}
+      disabled={disabled}
+      className="w-full rounded-lg border border-[var(--border-color)]
+         dark:border-[var(--border-color-two)]
+         bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
+         px-4 py-3 focus:outline-none
+         focus:ring-2 focus:ring-[var(--color-primary)]
+         dark:focus:ring-[var(--color-primary-dark)]"
+    >
+      <option value="">Select {label}</option>
+      {options.map((opt) =>
+        typeof opt === "object" ? (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ) : (
+          <option key={opt} value={opt}>
+            {opt}
+          </option>
+        )
+      )}
+    </select>
   </div>
 );
 

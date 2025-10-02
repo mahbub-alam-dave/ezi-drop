@@ -1,4 +1,5 @@
-"use client"
+// ...existing code...
+"use client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,16 +21,11 @@ import {
 } from "react-icons/fa";
 import ThemeToggle from "../sharedComponents/navbar/Toggle";
 
-const DashboardLayoutClient = ({userData, children}) => {
+const DashboardLayoutClient = ({ userData, children }) => {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
-//   const status = "authenticated"
-//   const role = "admin"
-
-  const {data:session, status} = useSession()
-
-
+  const { data: session, status } = useSession();
 
   const linkClass = (path) =>
     `px-6 py-2 rounded-md transition-colors duration-200
@@ -39,101 +35,96 @@ const DashboardLayoutClient = ({userData, children}) => {
          : "hover:bg-blue-200  dark:hover:bg-blue-300"
      }`;
 
-const dashboardLinks = {
-  adminLinks: (
-    <>
-      <Link
-        href="/dashboard/overview"
-        className={linkClass("/dashboard/overview")}
-      >
-        <FaTachometerAlt className="inline-block mr-2" />
-        Overview
-      </Link>
-      <Link
-        href="/dashboard/manage-users"
-        className={linkClass("/dashboard/manage-users")}
-      >
-        <FaUsers className="inline-block mr-2" />
-        Manage Users
-      </Link>
-      <Link
-        href="/assign-riders"
-        className={linkClass("/assign-riders")}
-      >
-        <FaMotorcycle className="inline-block mr-2" />
-        Assign Riders
-      </Link>
-      <Link
-        href="/dashboard/manage-candidates"
-        className={linkClass("/dashboard/manage-candidates")}
-      >
-        <FaUserTie className="inline-block mr-2" />
-        Manage Candidate
-      </Link>
-      <Link
-        href="/dashboard/profile"
-        className={linkClass("/dashboard/profile")}
-      >
-        <FaUser className="inline-block mr-2" />
-        Profile
-      </Link>
-      <Link
-        href="/dashboard/manage-order"
-        className={linkClass("/dashboard/manage-order")}
-      >
-        <FaClipboardList className="inline-block mr-2" />
-        Manage Order
-      </Link>
-      <Link
-        href="/dashboard/chat"
-        className={linkClass("/dashboard/chat")}
-      >
-        <FaComment className="inline-block mr-2"/>
-        Chat
-      </Link>
-    </>
-  ),
-  riderLinks: (
-    <>
-      <Link
-        href="/dashboard/rider-overview"
-        className={linkClass("/dashboard/rider-overview")}
-      >
-        <FaTachometerAlt className="inline-block mr-2" />
-        Rider Dashboard
-      </Link>
-      <Link
-        href="/dashboard/manage-orders"
-        className={linkClass("/dashboard/manage-orders")}
-      >
-        <FaTruck className="inline-block mr-2" />
-        Manage Orders
-      </Link>
-      <Link
-        href="/dashboard/delivery-history"
-        className={linkClass("/dashboard/delivery-history")}
-      >
-        <FaHistory className="inline-block mr-2" />
-        Delivery History
-      </Link>
-      <Link
-        href="/dashboard/profile"
-        className={linkClass("/dashboard/profile")}
-      >
-        <FaUser className="inline-block mr-2" />
-        Profile
-      </Link>
-      <Link
+  // dashboard links for roles — merged so each role has its chat link
+  const dashboardLinks = {
+    adminLinks: (
+      <>
+        <Link
+          href="/dashboard/overview"
+          className={linkClass("/dashboard/overview")}
+        >
+          <FaTachometerAlt className="inline-block mr-2" />
+          Overview
+        </Link>
+        <Link
+          href="/dashboard/manage-users"
+          className={linkClass("/dashboard/manage-users")}
+        >
+          <FaUsers className="inline-block mr-2" />
+          Manage Users
+        </Link>
+        <Link href="/assign-riders" className={linkClass("/assign-riders")}>
+          <FaMotorcycle className="inline-block mr-2" />
+          Assign Riders
+        </Link>
+        <Link
+          href="/dashboard/manage-candidates"
+          className={linkClass("/dashboard/manage-candidates")}
+        >
+          <FaUserTie className="inline-block mr-2" />
+          Manage Candidate
+        </Link>
+        <Link
+          href="/dashboard/profile"
+          className={linkClass("/dashboard/profile")}
+        >
+          <FaUser className="inline-block mr-2" />
+          Profile
+        </Link>
+        <Link
+          href="/dashboard/manage-order"
+          className={linkClass("/dashboard/manage-order")}
+        >
+          <FaClipboardList className="inline-block mr-2" />
+          Manage Order
+        </Link>
+        <Link href="/dashboard/chat" className={linkClass("/dashboard/chat")}>
+          <FaComment className="inline-block mr-2" />
+          Chat
+        </Link>
+      </>
+    ),
+    riderLinks: (
+      <>
+        <Link
+          href="/dashboard/rider-overview"
+          className={linkClass("/dashboard/rider-overview")}
+        >
+          <FaTachometerAlt className="inline-block mr-2" />
+          Rider Dashboard
+        </Link>
+        <Link
+          href="/dashboard/manage-order"
+          className={linkClass("/dashboard/manage-order")}
+        >
+          <FaTruck className="inline-block mr-2" />
+          Manage Orders
+        </Link>
+        <Link
+          href="/dashboard/delivery-history"
+          className={linkClass("/dashboard/delivery-history")}
+        >
+          <FaHistory className="inline-block mr-2" />
+          Delivery History
+        </Link>
+        <Link
+          href="/dashboard/profile"
+          className={linkClass("/dashboard/profile")}
+        >
+          <FaUser className="inline-block mr-2" />
+          Profile
+        </Link>
+        <Link
           href="/dashboard/riderChat"
           className={linkClass("/dashboard/riderChat")}
         >
           <FaComments className="inline-block mr-2" />
           Chat
         </Link>
-    </>
-  ),
-  userLinks: (
-    <>
+      </>
+    ),
+    userLinks: (
+      <>
         <Link
           href="/dashboard/user-overview"
           className={linkClass("/dashboard/user-overview")}
@@ -155,7 +146,6 @@ const dashboardLinks = {
           <FaClipboardList className="inline-block mr-2" />
           Orders History
         </Link>
-
         <Link
           href="/dashboard/profile"
           className={linkClass("/dashboard/profile")}
@@ -177,16 +167,17 @@ const dashboardLinks = {
           <FaComments className="inline-block mr-2" />
           Chat
         </Link>
-    </>
-  ),
-};
+      </>
+    ),
+  };
 
   const renderLinks =
-    status === "authenticated" && userData.role === "admin"
+    (status === "authenticated" && (userData.role === "admin" || userData.role === "support_agent"))
       ? dashboardLinks.adminLinks
       : status === "authenticated" && userData.role === "rider"
       ? dashboardLinks.riderLinks
       : dashboardLinks.userLinks;
+
   return (
     <div className="bg-gray-50 dark:bg-black">
       {/* ---- Topbar / Mobile Nav ---- */}
@@ -207,7 +198,6 @@ const dashboardLinks = {
         {menuOpen && (
           <nav className="flex flex-col relative gap-2 px-4 pb-4">
             {renderLinks}
-            
           </nav>
         )}
       </header>
@@ -222,7 +212,9 @@ const dashboardLinks = {
           <h2 className="text-2xl font-bold text-color">Ezi Drop</h2>
         </Link>
         <nav className="space-y-3 flex flex-col mt-6">{renderLinks}</nav>
-        <div className="px-6 mt-4"><ThemeToggle /></div>
+        <div className="px-6 mt-4">
+          <ThemeToggle />
+        </div>
       </aside>
 
       {/* ---- Main content ---- */}
@@ -234,4 +226,4 @@ const dashboardLinks = {
 };
 
 export default DashboardLayoutClient;
-
+// ...existing code...

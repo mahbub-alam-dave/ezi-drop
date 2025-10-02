@@ -9,6 +9,7 @@ const SendParcel = () => {
   const { register, handleSubmit, reset, watch } = useForm();
   const [districtData, setDistrictData] = useState({});
   const [cost, setCost] = useState(null);
+  const [parcelId, setParcelId] = useState(null);
   const [showModal, setShowModal] = useState(false); // NEW: modal toggle
   const router = useRouter();
 
@@ -54,10 +55,13 @@ const SendParcel = () => {
       const res = await fetch("/api/parcels", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, cost }),
       });
 
-      if (res.ok) {
+      const result = await res.json();
+
+      if (res.ok && result.id) {
+        setParcelId(result.id);
         setShowModal(true); // Show fullscreen modal
         reset();
       } else {
@@ -99,8 +103,10 @@ const SendParcel = () => {
                 See Your Booking
               </button>
               <button
-              // 
-                onClick={() => router.push("/paymentsystem/mainpoint")}
+                //
+                onClick={() =>
+                  router.push(`/paymentsystem/mainpoint?parcelId=${parcelId}`)
+                }
                 className="flex-1 rounded-lg border border-[var(--border-color)]
                  dark:border-[var(--border-color-two)]
                  text-[var(--color-text)] dark:text-[var(--color-text-dark)]
@@ -147,6 +153,12 @@ const SendParcel = () => {
                 placeholder="+8801XXXXXXXXX"
                 register={register("senderPhone", { required: true })}
               />
+              <InputField
+                label="Sender Email"
+                type="email"
+                placeholder="sender@example.com"
+                register={register("senderEmail", { required: true })}
+              />
               <SelectField
                 label="Pickup District"
                 register={register("pickupDistrict", { required: true })}
@@ -179,6 +191,12 @@ const SendParcel = () => {
                 type="tel"
                 placeholder="+8801XXXXXXXXX"
                 register={register("receiverPhone", { required: true })}
+              />
+              <InputField
+                label="Receiver Email"
+                type="email"
+                placeholder="receiver@example.com"
+                register={register("receiverEmail", { required: true })}
               />
               <SelectField
                 label="Delivery District"

@@ -107,7 +107,7 @@ export default function ManageOrders() {
         </div>
 
         {/* Controls Card */}
-        <div className="background-color rounded-2xl shadow-lg p-5 mb-8 border border-[var(--color-border)] dark:border-[var(--color-border)]">
+        <div className="background-color rounded-2xl shadow-lg p-5 mb-5 border border-[var(--color-border)] dark:border-[var(--color-border)]">
           <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
             <div className="relative w-full md:w-96">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
@@ -140,6 +140,17 @@ export default function ManageOrders() {
             </div>
           </div>
         </div>
+
+        {/* Invite Card */}
+        {true && <div className="flex justify-between border bg-[var(--color-primary)] px-6 py-4 mb-4 rounded-2xl text-[var(--color-text-dark)]">
+          <div className="flex justify-center items-center">
+            <p className="font-bold">Your invation</p>
+          </div>
+          <div className="space-x-2 flex justify-center items-center">
+            <button className="border px-2 py-1">Accept</button>
+            <button className="border px-2 py-1">Reject</button>
+          </div>
+        </div>}
 
         {/* Orders Table */}
         <div className="background-color rounded-2xl shadow-lg overflow-hidden border border-[var(--color-border)] dark:border-[var(--color-border)]">
