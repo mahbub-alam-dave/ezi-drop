@@ -9,6 +9,7 @@ export async function POST(req) {
       customer_email,
       customer_phone,
       customer_address,
+        parcelId,
     } = body;
 
     const data = {
@@ -17,7 +18,7 @@ export async function POST(req) {
       total_amount: amount,
       currency: "BDT",
       tran_id: "TRAN_" + new Date().getTime(),
-      success_url: "http://localhost:3000/paymentsystem/success",
+      success_url: `http://localhost:3000/paymentsystem/success?parcelId=${parcelId}`,
       fail_url: "http://localhost:3000/paymentsystem/fail",
       cancel_url: "http://localhost:3000/paymentsystem/cancel",
       ipn_url: "http://localhost:3000/api/ipn",

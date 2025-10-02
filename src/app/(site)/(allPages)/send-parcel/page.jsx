@@ -50,32 +50,29 @@ const SendParcel = () => {
     setCost(baseCost);
   }, [pickupDistrict, deliveryDistrict, parcelType, weight]);
 
- const onSubmit = async (data) => {
-  try {
-    const res = await fetch("/api/parcels", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-     body: JSON.stringify({ ...data, cost }),
-    });
+  const onSubmit = async (data) => {
+    try {
+      const res = await fetch("/api/parcels", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...data, cost }),
+      });
 
-    const result = await res.json();
+      const result = await res.json();
 
-    if (res.ok && result.id) {
-      setParcelId(result.id); 
-      setShowModal(true); // Show fullscreen modal
-      reset();
-
-      
-    } else {
-      const errData = await res.json();
-      alert(errData.message || "Something went wrong");
+      if (res.ok && result.id) {
+        setParcelId(result.id);
+        setShowModal(true); // Show fullscreen modal
+        reset();
+      } else {
+        const errData = await res.json();
+        alert(errData.message || "Something went wrong");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Network error");
     }
-  } catch (err) {
-    console.error(err);
-    alert("Network error");
-  }
-};
-
+  };
 
   const districts = Object.keys(districtData);
 
@@ -106,8 +103,10 @@ const SendParcel = () => {
                 See Your Booking
               </button>
               <button
-              // 
-                onClick={() => router.push(`/paymentsystem/mainpoint?parcelId=${parcelId}`)}
+                //
+                onClick={() =>
+                  router.push(`/paymentsystem/mainpoint?parcelId=${parcelId}`)
+                }
                 className="flex-1 rounded-lg border border-[var(--border-color)]
                  dark:border-[var(--border-color-two)]
                  text-[var(--color-text)] dark:text-[var(--color-text-dark)]
@@ -154,6 +153,12 @@ const SendParcel = () => {
                 placeholder="+8801XXXXXXXXX"
                 register={register("senderPhone", { required: true })}
               />
+              <InputField
+                label="Sender Email"
+                type="email"
+                placeholder="sender@example.com"
+                register={register("senderEmail", { required: true })}
+              />
               <SelectField
                 label="Pickup District"
                 register={register("pickupDistrict", { required: true })}
@@ -186,6 +191,12 @@ const SendParcel = () => {
                 type="tel"
                 placeholder="+8801XXXXXXXXX"
                 register={register("receiverPhone", { required: true })}
+              />
+              <InputField
+                label="Receiver Email"
+                type="email"
+                placeholder="receiver@example.com"
+                register={register("receiverEmail", { required: true })}
               />
               <SelectField
                 label="Delivery District"

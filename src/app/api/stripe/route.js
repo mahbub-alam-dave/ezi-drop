@@ -5,15 +5,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { amount, customer_email } = body;
+    const { amount, customer_email , parcelId} = body;
 
-    // Email validation
-    if (!customer_email || !/\S+@\S+\.\S+/.test(customer_email)) {
-      return new Response(
-        JSON.stringify({ error: "Invalid email. Please try again." }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
+    
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -29,7 +23,7 @@ export async function POST(req) {
           quantity: 1,
         },
       ],
-      success_url: "http://localhost:3000/paymentsystem/success",
+      success_url: `http://localhost:3000/paymentsystem/success?parcelId=${parcelId}`,
       cancel_url: "http://localhost:3000/paymentsystem/cancel",
     });
 
