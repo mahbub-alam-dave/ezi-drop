@@ -34,7 +34,7 @@ const SupportsTicket = ({supportTickets}) => {
             {tickets.map((ticket, i) => (
               <div key={i} className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl hover:shadow-md transition-shadow">
                 <div className="flex justify-between items-start mb-2">
-                  <span className="font-medium text-slate-800 dark:text-white">{ticket._id}</span>
+                  <span className="font-medium text-slate-800 dark:text-white">{ticket?.ticketId}</span>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                     ticket.priority === 'high' ? 'bg-red-100 text-red-800' :
                     ticket.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :

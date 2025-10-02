@@ -49,7 +49,7 @@ async function getNextTicketId() {
     { upsert: true, returnDocument: "after" }
   );
 
-  const seqNumber = counter.value.seq;
+  const seqNumber = counter.value?.seq || 1;
   return `ezi-tik-${seqNumber.toString().padStart(3, "0")}`;
 }
 
@@ -89,7 +89,7 @@ if (needsAgent) {
     });
 
     let district = user?.district || null;
-    const ticketId = getNextTicketId()
+    const ticketId = await getNextTicketId()
 
     if (!district) {
       // Try detecting from current message
@@ -236,20 +236,6 @@ if (!reply && session) {
 
 /* 
 {
-name: "Shamim Hossen"
-email: "agentjhenaidah@ezidrop.com"
-password: "$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2"
-role: support_agent,
-district: "Jhenaidah",
-createdAt: new Date(),
-updatedAt : new Date(),
-Providers: [{provider: "credentials"}]
-emailVerified: true,
-failedLoginAttempts: 0
-lockUntil: null
-}
-
-{
 "name":"Shamim Hossen",
 "email": "agentjhenaidah@ezidrop.com",
 "password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2",
@@ -261,5 +247,21 @@ lockUntil: null
 "emailVerified":true,
 "failedLoginAttempts":{"$numberInt":"0"},
 "lockUntil":null
+}
+
+
+{
+"name":"Abul Bashar",
+"email":"abulbashar@gmail.com",
+"password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2",
+"role":"rider",
+"createdAt":{"$date":{"$numberLong":"1758632734086"}},
+"updatedAt":{"$date":{"$numberLong":"1759242673191"}},
+"providers":[{"provider":"credentials"}],
+"emailVerified":true,
+"failedLoginAttempts":{"$numberInt":"0"},
+"lockUntil":null,
+"delivery_district":"Dhaka"
+"working_status": "duty" (vacation)
 }
 */
