@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -29,6 +29,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
   const { data: session, status } = useSession()
 
 
+  const { data: session, status } = useSession();
 
   const linkClass = (path) =>
     `px-6 py-2 rounded-md transition-colors duration-200
@@ -163,7 +164,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
   };
 
   const renderLinks =
-    status === "authenticated" && userData.role === "admin"
+    status === "authenticated" && userData.role === "admin" || userData.role === "support_agent"
       ? dashboardLinks.adminLinks
       : status === "authenticated" && userData.role === "rider"
         ? dashboardLinks.riderLinks
@@ -188,7 +189,6 @@ const DashboardLayoutClient = ({ userData, children }) => {
         {menuOpen && (
           <nav className="flex flex-col relative gap-2 px-4 pb-4">
             {renderLinks}
-
           </nav>
         )}
       </header>
@@ -203,7 +203,9 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <h2 className="text-2xl font-bold text-color">Ezi Drop</h2>
         </Link>
         <nav className="space-y-3 flex flex-col mt-6">{renderLinks}</nav>
-        <div className="px-6 mt-4"><ThemeToggle /></div>
+        <div className="px-6 mt-4">
+          <ThemeToggle />
+        </div>
       </aside>
 
       {/* ---- Main content ---- */}
@@ -215,4 +217,3 @@ const DashboardLayoutClient = ({ userData, children }) => {
 };
 
 export default DashboardLayoutClient;
-
