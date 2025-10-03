@@ -10,16 +10,19 @@ export default function RiderDashboard() {
   const [modalParcel, setModalParcel] = useState(null);
   const [parcelIdInput, setParcelIdInput] = useState("");
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/pending");
+      const riderRes = await fetch("/api/getRiderId");
+      if (!riderRes.ok) throw new Error("Failed to get Rider ID");
+      const riderData = await riderRes.json();
+
+      const riderId = riderData.riderId;
+
+      const res = await fetch(`/api/pending?riderId=${riderId}`);
       if (!res.ok) throw new Error("Failed to fetch parcels");
       const result = await res.json();
+
       setData(result.data);
     } catch (err) {
       setError(err.message);
@@ -42,6 +45,22 @@ export default function RiderDashboard() {
       alert(err.message);
     }
   };
+
+  // Prevent background scroll when modal is open
+  useEffect(() => {
+    if (showModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [showModal]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   if (loading)
     return (
@@ -157,15 +176,13 @@ export default function RiderDashboard() {
         </table>
       </div>
 
-      {/* Modal */}
       {showModal && modalParcel && (
-        <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 px-4">
+        <div className="fixed inset-x-0 top-[64px] bottom-0 bg-black/70 flex justify-center items-start z-50 px-4 overflow-y-auto">
           <div
-            className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 
-                 p-8 rounded-2xl shadow-2xl max-w-2xl w-full relative border border-gray-200 dark:border-gray-700
-                 max-h-[90vh] overflow-y-auto"
+            className="relative bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800
+           p-8 rounded-2xl shadow-2xl w-full max-w-2xl border border-gray-200 dark:border-gray-700
+           mt-4 max-h-[calc(100vh-64px-40px)] overflow-y-auto"
           >
-            {/* Close Button */}
             <button
               onClick={() => setShowModal(false)}
               className="absolute top-4 right-4 text-gray-500 dark:text-gray-300 hover:text-red-500 text-2xl font-bold"
@@ -173,14 +190,14 @@ export default function RiderDashboard() {
               ×
             </button>
 
-            {/* Modal Header */}
+            {/* Heading */}
             <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">
               📦 Parcel Details
             </h2>
 
-            {/* Modal Content */}
+            {/* Content */}
             <div className="space-y-8">
-              {/* Parcel Info */}
+              {/* Payment */}
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -192,7 +209,7 @@ export default function RiderDashboard() {
                 </div>
               </div>
 
-              {/* Sender Info */}
+              {/* Sender */}
               <div>
                 <h3 className="text-lg font-bold mb-2 text-gray-700 dark:text-gray-200">
                   👤 Sender
@@ -216,7 +233,7 @@ export default function RiderDashboard() {
                 </p>
               </div>
 
-              {/* Receiver Info */}
+              {/* Receiver */}
               <div>
                 <h3 className="text-lg font-bold mb-2 text-gray-700 dark:text-gray-200">
                   📍 Receiver
@@ -257,7 +274,7 @@ export default function RiderDashboard() {
               </div>
             </div>
 
-            {/* Close Button Footer */}
+            {/* Close Button */}
             <div className="mt-8 text-right">
               <button
                 onClick={() => setShowModal(false)}

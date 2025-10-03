@@ -37,6 +37,7 @@ export default function Navbar() {
 
   const navLinks = (
     <>
+    
       <Link href={'/'}>Home</Link>
       <Link href={'/order'}>order</Link>
       <Link href={"/send-parcel"}>Send Parcel</Link>
