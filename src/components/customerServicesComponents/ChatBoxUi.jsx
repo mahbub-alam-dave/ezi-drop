@@ -22,7 +22,7 @@ export default function ChatBoxUi() {
             href={part}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-500 underline"
+            className="text-blue-500 underline break break-all"
           >
             {part}
           </a>
@@ -92,7 +92,7 @@ export default function ChatBoxUi() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-40 right-5 w-80 h-[450px] bg-white dark:bg-gray-800 border rounded-lg shadow-lg flex flex-col z-1000">
+        <div className="fixed bottom-40 right-5 w-96 h-[450px] bg-white dark:bg-gray-800 border rounded-lg shadow-lg flex flex-col z-1000">
           {/* Header */}
           <div className="bg-blue-600 text-white px-4 py-2 flex justify-between items-center rounded-t-lg">
             <span className="font-semibold">Customer Support</span>
@@ -108,14 +108,17 @@ export default function ChatBoxUi() {
                   msg.role === "user" ? "justify-end" : "justify-start"
                 }`}
               >
+                <div className="max-w-[78%]">
+                <p className={`${msg.role === "user" ? "text-right" :"text-left"} text-sm mb-2`}>{msg.role === "user" ? "you" : msg.role}</p>
                 <div
-                  className={`px-3 py-2 rounded-lg max-w-[78%] text-sm ${
+                  className={`px-3 py-2 rounded-lg w-full text-sm ${
                     msg.role === "user"
                       ? "bg-blue-400 dark:bg-blue-600 text-white rounded-br-none"
                       : "bg-gray-300 dark:bg-gray-700 text-black dark:text-white  rounded-bl-none"
                   }`}
                 >
                   {formatMessage(msg.content)}
+                </div>
                 </div>
               </div>
             ))}
