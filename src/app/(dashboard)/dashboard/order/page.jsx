@@ -1,4 +1,3 @@
-// src>app>(s)ite>(allPages)>order>page.jsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -10,7 +9,8 @@ export default function RiderDashboard() {
   const [showModal, setShowModal] = useState(false);
   const [modalParcel, setModalParcel] = useState(null);
   const [parcelIdInput, setParcelIdInput] = useState("");
-  const [riderId, setRiderId] = useState("");
+  const [invitedRiderId, setInvitedRiderId] = useState("");
+  const [myRiderId, setMyRiderId] = useState(""); 
 
   const fetchData = async () => {
     setLoading(true);
@@ -20,6 +20,7 @@ export default function RiderDashboard() {
       const riderData = await riderRes.json();
 
       const riderId = riderData.riderId;
+      setMyRiderId(riderId); 
 
       const res = await fetch(`/api/pending?riderId=${riderId}`);
       if (!res.ok) throw new Error("Failed to fetch parcels");
@@ -38,7 +39,7 @@ export default function RiderDashboard() {
       const res = await fetch("/api/updatestatus", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ parcelId: parcelIdInput }),
+        body: JSON.stringify({ parcelId: parcelIdInput, riderId: myRiderId }), 
       });
       if (!res.ok) throw new Error("Failed to update parcel status");
       setParcelIdInput("");
@@ -49,49 +50,59 @@ export default function RiderDashboard() {
   };
 
   // Parcel Hand over function
-  const parcelHanaover = async () => {
+  const parcelHanaover = async (parcelId, invitedId) => {
+    
+    if (!invitedId) return alert("Please enter the Rider ID to hand over to.");
     try {
       const res = await fetch("/api/parcelHandover", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ parcelId: parcelIdInput }),
+        body: JSON.stringify({
+          parcelId: parcelId,
+          currentRiderId: myRiderId, 
+          invitedRiderId: invitedId, 
+        }),
       });
       if (!res.ok) throw new Error("Failed to hand over parcel");
-      setParcelIdInput("");
-      fetchData();
-    } catch (err) {
-      alert(err.message);
-    }
-  };
-  // Invitation accept function
-  const acceptInvitation = async () => {
-    try {
-      const res = await fetch("/api/acceptInvitation", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ riderId }),
-      });
-      if (!res.ok) throw new Error("Failed to accept invitation");
+      alert("Handover invitation sent successfully.");
+      setInvitedRiderId("");
+      setShowModal(false);
       fetchData();
     } catch (err) {
       alert(err.message);
     }
   };
 
-  // Invitation reject function
-  const rejectInvitation = async () => {
+  // Invitation/Auto-Assignment accept function (Accept/Confirm)
+  const acceptInvitation = async (parcelId) => {
     try {
-      const res = await fetch("/api/rejectInvitation", {
+      const res = await fetch("/api/acceptInvitation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ riderId }),
+        body: JSON.stringify({ parcelId, riderId: myRiderId }), // parcelId এবং myRiderId পাঠানো হচ্ছে
       });
-      if (!res.ok) throw new Error("Failed to reject invitation");
+      if (!res.ok) throw new Error("Failed to accept assignment/invitation");
       fetchData();
     } catch (err) {
       alert(err.message);
     }
   };
+
+  // Invitation/Auto-Assignment reject function (Reject)
+  const rejectInvitation = async (parcelId) => {
+    try {
+      const res = await fetch("/api/rejectInvitation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ parcelId, riderId: myRiderId }), // parcelId এবং myRiderId পাঠানো হচ্ছে
+      });
+      if (!res.ok) throw new Error("Failed to reject assignment/invitation");
+      fetchData();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   // Prevent background scroll when modal is open
   useEffect(() => {
     if (showModal) {
@@ -124,6 +135,21 @@ export default function RiderDashboard() {
 
   const riderStatus = data.pendingCount > 0 ? "busy" : "active";
 
+  const parcelsToRespond = data.pendingParcels.filter(
+    (parcel) =>
+      parcel.assignedRider.status === "auto_assigned" ||
+      (parcel.assignedRider.handoverInvitedRider?.riderId ===
+        myRiderId.toString() &&
+        parcel.assignedRider.handoverInvitedRider?.status === "invited")
+  );
+
+  const hasHandoverInvitation = parcelsToRespond.find(
+    (parcel) =>
+      parcel.assignedRider.handoverInvitedRider?.riderId ===
+        myRiderId.toString() &&
+      parcel.assignedRider.handoverInvitedRider?.status === "invited"
+  );
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 p-6">
       <h1 className="text-4xl font-bold mb-6 border-b pb-2">
@@ -152,20 +178,49 @@ export default function RiderDashboard() {
         </div>
       </div>
 
-      {/* Invite Card */}
-      {true && (
-        <div className="flex justify-between border bg-[var(--color-primary)] px-6 py-4 mb-4 rounded-2xl text-[var(--color-text-dark)]">
-          <div className="flex justify-center items-center">
-            <p className="font-bold">Your invation</p>
-          </div>
-          <div className="space-x-2 flex justify-center items-center">
-            <button onClick={acceptInvitation} className="border px-2 py-1">
-              Accept
-            </button>
-            <button onClick={rejectInvitation} className="border px-2 py-1">
-              Reject
-            </button>
-          </div>
+      {/* Auto-Assigned Parcel/Handover Invitation Actions Card: Accept/Reject */}
+      {parcelsToRespond.length > 0 && (
+        <div className="mb-8 p-6 bg-red-100 dark:bg-red-900 border border-red-300 dark:border-red-700 rounded-xl shadow-lg">
+          <h2 className="text-xl font-bold mb-4 text-red-700 dark:text-red-300">
+            ⏰ New Action Required Parcels
+          </h2>
+          {parcelsToRespond.map((parcel) => (
+            <div
+              key={parcel._id}
+              className="flex justify-between items-center bg-white dark:bg-gray-800 p-4 mb-3 rounded-lg border border-red-200 dark:border-red-600"
+            >
+              <p className="font-semibold text-gray-700 dark:text-gray-200">
+                Parcel ID:{" "}
+                <span className="text-blue-600 dark:text-blue-400">
+                  {parcel.parcelId}
+                </span>{" "}
+                -{" "}
+                {parcel.assignedRider.status === "auto_assigned"
+                  ? "Auto-Assigned"
+                  : "Handover Invitation"}
+              </p>
+              <div className="space-x-2">
+                <button
+                  onClick={() => acceptInvitation(parcel._id)}
+                  className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition duration-150"
+                >
+                  Accept
+                </button>
+                <button
+                  onClick={() => rejectInvitation(parcel._id)}
+                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition duration-150"
+                >
+                  Reject
+                </button>
+              </div>
+            </div>
+          ))}
+          {!hasHandoverInvitation && (
+            <p className="text-sm text-red-600 dark:text-red-400 mt-4">
+              *You have 1 hour to respond to an auto-assigned parcel, or it will
+              be reassigned, and you will receive a -100 penalty.
+            </p>
+          )}
         </div>
       )}
 
@@ -213,7 +268,9 @@ export default function RiderDashboard() {
                   <td className="px-4 py-2">
                     <span
                       className={`px-2 py-1 rounded-full text-white ${
-                        parcel.assignedRider.status === "pending"
+                        parcel.assignedRider.status === "auto_assigned"
+                          ? "bg-red-500" 
+                          : parcel.assignedRider.status === "pending"
                           ? "bg-yellow-500"
                           : "bg-green-500"
                       }`}
@@ -226,6 +283,7 @@ export default function RiderDashboard() {
                       onClick={() => {
                         setModalParcel(parcel);
                         setShowModal(true);
+                        setInvitedRiderId(""); // Modal input reset
                       }}
                       className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600"
                     >
@@ -320,22 +378,27 @@ export default function RiderDashboard() {
                 </p>
               </div>
 
-              {/* Percel Handover */}
-              <div className="mb-8 flex flex-col md:flex-row gap-4 items-center">
-                <input
-                  type="text"
-                  placeholder="Enter Rider ID"
-                  value={parcelIdInput}
-                  onClick={(e) => setRiderId(e.target.value)}
-                  className="border rounded px-4 py-2 w-full md:w-1/3"
-                />
-                <button
-                  onClick={parcelHanaover}
-                  className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-                >
-                  Hand Over
-                </button>
-              </div>
+              {/* Percel Handover - Manual handover option */}
+              {modalParcel.assignedRider.status === "pending" && ( 
+                <div className="mb-8 flex flex-col md:flex-row gap-4 items-center">
+                  <input
+                    type="text"
+                    placeholder="Enter Rider ID to Hand Over To"
+                    value={invitedRiderId} 
+                    onChange={(e) => setInvitedRiderId(e.target.value)} 
+                    className="border rounded px-4 py-2 w-full"
+                  />
+                  <button
+                    onClick={() =>
+                      parcelHanaover(modalParcel._id, invitedRiderId)
+                    } 
+                    className="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 whitespace-nowrap"
+                    disabled={!invitedRiderId}
+                  >
+                    Hand Over Parcel
+                  </button>
+                </div>
+              )}
 
               {/* Status */}
               <div>
@@ -344,13 +407,26 @@ export default function RiderDashboard() {
                 </h3>
                 <span
                   className={`px-3 py-1 rounded-full text-sm font-bold ${
-                    modalParcel.assignedRider.status === "pending"
+                    modalParcel.assignedRider.status === "auto_assigned"
+                      ? "bg-red-400 text-red-900"
+                      : modalParcel.assignedRider.status === "pending"
                       ? "bg-yellow-400 text-yellow-900"
                       : "bg-green-500 text-white"
                   }`}
                 >
                   {modalParcel.assignedRider.status.toUpperCase()}
                 </span>
+                {modalParcel.assignedRider.handoverInvitedRider && (
+                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    Handover Invited:{" "}
+                    <span className="font-semibold">
+                      {modalParcel.assignedRider.handoverInvitedRider.riderName}
+                    </span>{" "}
+                    (Status:{" "}
+                    {modalParcel.assignedRider.handoverInvitedRider.status.toUpperCase()}
+                    )
+                  </p>
+                )}
               </div>
             </div>
 
