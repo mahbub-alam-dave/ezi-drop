@@ -9,6 +9,7 @@ export default function RiderDashboard() {
   const [showModal, setShowModal] = useState(false);
   const [modalParcel, setModalParcel] = useState(null);
   const [parcelIdInput, setParcelIdInput] = useState("");
+  const [riderId, setRiderId] = useState("");
 
   const fetchData = async () => {
     setLoading(true);
@@ -46,6 +47,50 @@ export default function RiderDashboard() {
     }
   };
 
+  // Parcel Hand over function
+  const parcelHanaover = async () => {
+    try {
+      const res = await fetch("/api/parcelHandover", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ parcelId: parcelIdInput }),
+      });
+      if (!res.ok) throw new Error("Failed to hand over parcel");
+      setParcelIdInput("");
+      fetchData();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+  // Invitation accept function
+  const acceptInvitation = async () => {
+    try {
+      const res = await fetch("/api/acceptInvitation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ riderId }),
+      });
+      if (!res.ok) throw new Error("Failed to accept invitation");
+      fetchData();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  // Invitation reject function
+  const rejectInvitation = async () => {
+    try {
+      const res = await fetch("/api/rejectInvitation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ riderId }),
+      });
+      if (!res.ok) throw new Error("Failed to reject invitation");
+      fetchData();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
   // Prevent background scroll when modal is open
   useEffect(() => {
     if (showModal) {
@@ -113,8 +158,12 @@ export default function RiderDashboard() {
             <p className="font-bold">Your invation</p>
           </div>
           <div className="space-x-2 flex justify-center items-center">
-            <button className="border px-2 py-1">Accept</button>
-            <button className="border px-2 py-1">Reject</button>
+            <button onClick={acceptInvitation} className="border px-2 py-1">
+              Accept
+            </button>
+            <button onClick={rejectInvitation} className="border px-2 py-1">
+              Reject
+            </button>
           </div>
         </div>
       )}
@@ -276,11 +325,11 @@ export default function RiderDashboard() {
                   type="text"
                   placeholder="Enter Rider ID"
                   value={parcelIdInput}
-                  onClick={(e) => setParcelIdInput(e.target.value)}
+                  onClick={(e) => setRiderId(e.target.value)}
                   className="border rounded px-4 py-2 w-full md:w-1/3"
                 />
                 <button
-                  onClick={markParcelDone}
+                  onClick={parcelHanaover}
                   className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
                 >
                   Hand Over
