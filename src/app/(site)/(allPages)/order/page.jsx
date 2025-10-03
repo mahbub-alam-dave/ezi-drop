@@ -106,6 +106,19 @@ export default function RiderDashboard() {
         </div>
       </div>
 
+      {/* Invite Card */}
+      {true && (
+        <div className="flex justify-between border bg-[var(--color-primary)] px-6 py-4 mb-4 rounded-2xl text-[var(--color-text-dark)]">
+          <div className="flex justify-center items-center">
+            <p className="font-bold">Your invation</p>
+          </div>
+          <div className="space-x-2 flex justify-center items-center">
+            <button className="border px-2 py-1">Accept</button>
+            <button className="border px-2 py-1">Reject</button>
+          </div>
+        </div>
+      )}
+
       {/* Mark Parcel Done */}
       <div className="mb-8 flex flex-col md:flex-row gap-4 items-center">
         <input
@@ -255,6 +268,23 @@ export default function RiderDashboard() {
                   {modalParcel.deliveryAddress}, {modalParcel.deliveryUpazila},{" "}
                   {modalParcel.deliveryDistrict}
                 </p>
+              </div>
+
+              {/* Percel Handover */}
+              <div className="mb-8 flex flex-col md:flex-row gap-4 items-center">
+                <input
+                  type="text"
+                  placeholder="Enter Rider ID"
+                  value={parcelIdInput}
+                  onClick={(e) => setParcelIdInput(e.target.value)}
+                  className="border rounded px-4 py-2 w-full md:w-1/3"
+                />
+                <button
+                  onClick={markParcelDone}
+                  className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+                >
+                  Hand Over
+                </button>
               </div>
 
               {/* Status */}

@@ -141,17 +141,6 @@ export default function ManageOrders() {
           </div>
         </div>
 
-        {/* Invite Card */}
-        {true && <div className="flex justify-between border bg-[var(--color-primary)] px-6 py-4 mb-4 rounded-2xl text-[var(--color-text-dark)]">
-          <div className="flex justify-center items-center">
-            <p className="font-bold">Your invation</p>
-          </div>
-          <div className="space-x-2 flex justify-center items-center">
-            <button className="border px-2 py-1">Accept</button>
-            <button className="border px-2 py-1">Reject</button>
-          </div>
-        </div>}
-
         {/* Orders Table */}
         <div className="background-color rounded-2xl shadow-lg overflow-hidden border border-[var(--color-border)] dark:border-[var(--color-border)]">
           <div className="overflow-x-auto">
