@@ -7,7 +7,7 @@ export default function TicketChatClient({
   setOpenChat,
   currentRole,
 }) {
-  const [ticket, setTicket] = useState(null);
+  const [ticket, setTicket] = useState({});
   const [input, setInput] = useState("");
   const [uiMessages, setUiMessages] = useState([]);
   const refInterval = useRef(null);
@@ -50,7 +50,7 @@ export default function TicketChatClient({
 
   console.log(input);
 
-  if (!ticket) return <div>Loading...</div>;
+  // if (!ticket) return <div className="">Loading...</div>;
 
   return (
     <div className="fixed max-w-96 w-full  bottom-60 right-5 z-5000 bg-white dark:bg-gray-800 border rounded-lg shadow-lg">
