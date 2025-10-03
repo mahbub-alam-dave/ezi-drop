@@ -7,6 +7,7 @@ const SupportsTicket = ({supportTickets}) => {
 
     const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [role, setRole] = useState("")
   // const router = useRouter()
 
   const [openChat, setOpenChat] = useState(false)
@@ -18,6 +19,7 @@ const SupportsTicket = ({supportTickets}) => {
         const res = await fetch("/api/support-agent/tickets");
         const data = await res.json();
         setTickets(data.tickets);
+        setRole(data.role)
       } catch (err) {
         console.error("Error fetching tickets:", err);
       } finally {
@@ -71,7 +73,7 @@ const SupportsTicket = ({supportTickets}) => {
           </div>
                           {
                   openChat &&
-                  <TicketChatClient ticketId={ticketId} setOpenChat={setOpenChat} />
+                  <TicketChatClient ticketId={ticketId} setOpenChat={setOpenChat} currentRole={role} />
                 }
         </div>
     );
