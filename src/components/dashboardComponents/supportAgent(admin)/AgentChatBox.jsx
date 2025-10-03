@@ -2,7 +2,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 
-export default function TicketChatClient({ ticketId, setOpenChat }) {
+export default function TicketChatClient({ ticketId, setOpenChat, currentRole }) {
   const [ticket, setTicket] = useState(null);
   const [input, setInput] = useState("");
   const [uiMessages, setUiMessages] = useState([])
@@ -29,7 +29,7 @@ export default function TicketChatClient({ ticketId, setOpenChat }) {
     await fetch(`/api/tickets/${ticketId}/messages`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ senderRole: "support_agent", content: input })
+      body: JSON.stringify({ senderRole: currentRole, content: input })
     });
     setUiMessages({senderRole: "support_agent", content: input})
     setInput("");

@@ -10,6 +10,13 @@ async function getNextTicketId() {
 
 export async function POST(req) {
     const session = await getServerSession(authOptions);
+    
+    if (!session) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { "Content-Type": "application/json" } }
+      );
+    }
   try {
     
     const db = dbConnect("supportTickets")

@@ -1,17 +1,20 @@
 "use client";
 import { useEffect, useState } from "react";
-import TicketChatClient from "@/components/TicketChatClient";
+import TicketChatClient from "./supportAgent(admin)/AgentChatBox";
+
 
 export default function UserTickets({ userId }) {
   const [tickets, setTickets] = useState([]);
   const [openChat, setOpenChat] = useState(false);
   const [activeTicket, setActiveTicket] = useState(null);
+  const [role, setRole] = useState("")
 
   async function fetchTickets() {
-    const res = await fetch(`/api/tickets/user/${userId}`);
+    const res = await fetch(`/api/tickets/user-tickets`);
     if (res.ok) {
       const data = await res.json();
       setTickets(data.tickets);
+      setRole(data.role)
     }
   }
 
@@ -78,8 +81,9 @@ export default function UserTickets({ userId }) {
       {/* Chat window */}
       {openChat && activeTicket && (
         <TicketChatClient
-          ticketId={activeTicket._id}
+          ticketId={activeTicket.ticketId}
           setOpenChat={setOpenChat}
+          currentRole={role}
         />
       )}
     </div>
