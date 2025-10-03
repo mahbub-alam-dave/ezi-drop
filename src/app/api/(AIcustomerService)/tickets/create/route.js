@@ -1,4 +1,7 @@
-import dbConnect from "@/lib/dbConnect";
+import { authOptions } from "@/lib/authOptions";
+import { dbConnect } from "@/lib/dbConnect";
+import { ObjectId } from "mongodb";
+import { getServerSession } from "next-auth";
 
 
 // for ticket Id (serially)
@@ -20,10 +23,10 @@ export async function POST(req) {
   try {
     
     const db = dbConnect("supportTickets")
-    const body = await req.json();
-    const { subject, userDistrict } = body;
+    const { subject } = await req.json();
 
-    const user = dbConnect("users").findOne({email: session.user.email})
+
+    const user = await dbConnect("users").findOne({email: session.user.email})
 
     if (!user) {
       return new Response(
@@ -34,8 +37,8 @@ export async function POST(req) {
 
     // check if already an open ticket
     const existing = await db.findOne({
-      userId: user._id,
-      status: { $ne: "resolved" }
+      userId: new ObjectId(user._id),
+      status: { $ne: "resolved"}
     });
 
     if (existing) {
@@ -50,13 +53,14 @@ export async function POST(req) {
 
     const ticketId = await getNextTicketId();
 
-    const agent = await dbConnect("users").findOne({role: "support_agent", district: userDistrict})
+    const agent = await dbConnect("users").findOne({role: "support_agent", district: user.district})
 
-    const newTicket = await db.create({
+
+    const newTicket = await db.insertOne({
       ticketId,
       userId: user._id,
       status: "open",
-      district: userDistrict,
+      district: agent.district,
       assignedAgentEmail: agent.email,
       assignedAgentId: agent._id,
       createdAt: new Date(),
