@@ -26,9 +26,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
   //   const status = "authenticated"
   //   const role = "admin"
 
-  const { data: session, status } = useSession()
-
-
+ // ✅ শুধু একবার useSession()
   const { data: session, status } = useSession();
 
   const linkClass = (path) =>
