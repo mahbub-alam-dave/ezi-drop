@@ -32,7 +32,9 @@ export async function GET(req) {
       .sort({ createdAt: -1 })
       .toArray();
 
-    return new Response(JSON.stringify({ tickets }), {
+      // const agentSideData = {...tickets, agentRole: agent.role}
+
+    return new Response(JSON.stringify({ tickets, role: agent.role }), {
       headers: { "Content-Type": "application/json" },
     });
   } catch (err) {

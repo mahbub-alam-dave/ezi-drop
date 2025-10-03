@@ -84,59 +84,72 @@ if (needsAgent) {
       email: session.user.email,
     });
 
-    let district = user?.district || null;
-    const ticketId = await getNextTicketId()
+    // check if already an open ticket (anything not Resolved or Closed)
+    const existing = await dbConnect("supportTickets").findOne({
+      userId: new ObjectId(user._id),
+      status: { $in: ["Open", "InProgress"] }
+    });
 
-    if (!district) {
-      // Try detecting from current message
-      const detected = detectDistrict(message);
+    if (existing) {
+      // Just set reply, don’t break with error response
+      reply = `⚠️ You already have an active support ticket (#${existing.ticketId}). 
+👉 [Go to Support Tickets](https://ezi-drop.vercel.app/dashboard/tickets/${existing.ticketId})`;
+    } else {
+      let district = user?.district || null;
+      const ticketId = await getNextTicketId();
 
-      if (detected) {
-        // Save detected district to user
-        await dbConnect("users").updateOne(
-          { _id: user._id },
-          { $set: { district: detected } }
-        );
+      if (!district) {
+        // Try detecting from current message
+        const detected = detectDistrict(message);
 
+        if (detected) {
+          // Save detected district to user
+          await dbConnect("users").updateOne(
+            { _id: user._id },
+            { $set: { district: detected } }
+          );
 
-        // Find agent for that district
-        const agent = await dbConnect("users").findOne({ district: detected, role: "support_agent" });
-
-
-        if (agent) {
-          await dbConnect("supportTickets").insertOne({
-            userId: user._id,
-            conversationId: new ObjectId(conversationId),
-            ticketId,
+          // Find agent for that district
+          const agent = await dbConnect("users").findOne({
             district: detected,
-            assignedAgentEmail: agent.email,
-            assignedAgentId: agent._id,
-            status: "Open",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            messages: [
-              {
-                senderRole: user.role,
-                senderId: user._id,
-                content: message,
-                timestamp: new Date(),
-              },
-            ]
+            role: "support_agent"
           });
 
-          reply = `✅ I’ve updated your profile with district **${detected}** and connected you to the **${detected} support agent**. Please wait...`;
+          if (agent) {
+            await dbConnect("supportTickets").insertOne({
+              userId: user._id,
+              conversationId: new ObjectId(conversationId),
+              ticketId,
+              district: detected,
+              assignedAgentEmail: agent.email,
+              assignedAgentId: agent._id,
+              status: "Open",
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              messages: [
+                {
+                  senderRole: user.role,
+                  senderId: user._id,
+                  content: message,
+                  timestamp: new Date(),
+                },
+              ]
+            });
+
+            reply = `✅ We’ve created a support ticket (#${ticketId}) for your issue. 
+👉 [Go to Support Tickets](https://ezi-drop.vercel.app/dashboard/tickets/${ticketId})`;
+
+          } else {
+            reply = `⚠️ No agent found for ${detected}. Our central support team will assist you soon.`;
+          }
         } else {
-          reply = `⚠️ No agent found for ${detected}. Our central support team will assist you soon.`;
+          reply = "⚠️ To connect you with the right agent, please type your district (e.g., Dhaka, Khulna).";
         }
       } else {
-        // Could not detect district
-        reply = "⚠️ To connect you with the right agent, please type your district (e.g., Dhaka, Khulna).";
-      }
-    } else {
-      // User already has district → find agent
-      const agent = await dbConnect("users").findOne({ district, role: "support_agent" });
-      if (agent) {
-        await dbConnect("supportTickets").insertOne({
+        // User already has district → find agent
+        const agent = await dbConnect("users").findOne({ district, role: "support_agent" });
+        if (agent) {
+          await dbConnect("supportTickets").insertOne({
             userId: user._id,
             conversationId: new ObjectId(conversationId),
             ticketId,
@@ -156,13 +169,17 @@ if (needsAgent) {
             ]
           });
 
-        reply = `✅ I’m connecting you to our **${district} support agent**. Please wait...`;
-      } else {
-        reply = `⚠️ Sorry, no agent found for ${district}. Our support team will reach you soon.`;
+          reply = `✅ We’ve created a support ticket (#${ticketId}) for your issue. 
+👉 [Go to Support Tickets](https://ezi-drop.vercel.app/dashboard/tickets/${ticketId})`;
+
+        } else {
+          reply = `⚠️ Sorry, no agent found for ${district}. Our support team will reach you soon.`;
+        }
       }
     }
   }
 }
+
 
 // --- EXTRA: District Detection Outside Agent Keywords ---
 if (!reply && session) {
