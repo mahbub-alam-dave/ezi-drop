@@ -40,10 +40,10 @@ export default function TicketChatClient({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ senderRole: currentRole, content: input }),
     });
-    setUiMessages((prev) => [
+/*     setUiMessages((prev) => [
       ...prev,
       { senderRole: currentRole, content: input, timestamp: new Date() },
-    ]);
+    ]); */
     setInput("");
     fetchTicket(); // refresh immediately
   }

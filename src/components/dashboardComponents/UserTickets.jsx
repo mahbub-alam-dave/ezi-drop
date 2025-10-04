@@ -92,7 +92,7 @@ export default function UserTickets({ userId }) {
         const res = await fetch("/api/tickets/create", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId, subject: issue })
+          body: JSON.stringify({ subject: issue })
         });
 
         if (res.ok) {

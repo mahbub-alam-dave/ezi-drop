@@ -45,13 +45,17 @@ export async function POST(req, { params }) {
       timestamp: new Date(),
     };
 
-    await ticketsCol.updateOne(
-      { ticketId },
-      {
-        $push: { messages: message },
-        $set: { updatedAt: new Date() }
-      }
-    );
+  const updateMessage = {
+  $push: { messages: message },
+  $set: { updatedAt: new Date() }
+};
+
+// If agent replies → set status = InProgress (only if not already Resolved/Closed)
+if (senderRole === "support_agent" && ticket.status === "open") {
+  updateMessage.$set.status = "in_progress";
+}
+
+    await ticketsCol.updateOne({ ticketId }, updateMessage);
 
     // Optionally: return the appended message
     return new Response(JSON.stringify({ ok: true, message }), { headers: { "Content-Type": "application/json" } });

@@ -50,11 +50,13 @@ export async function PATCH(req, { params }) {
     const session = await getServerSession(authOptions);
     if (!session) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
 
-    const { status } = await req.json(); // "Resolved", "Closed", etc.
+    // const { status } = await req.json(); // "Resolved", "Closed", etc.
+    // const { ticketId } = await req.json();
     const ticketId = params.ticketId;
 
-    const agentsCol = dbConnect("agents");
-    const agent = await agentsCol.findOne({ email: session.user.email });
+    const ticketInfo = await dbConnect("supportTickets").findOne({ticketId})
+
+    const agent = await dbConnect("users").findOne({ email: session.user.email, role: "support_agent", district: ticketInfo.district });
 
     // only agent or admin can change status
     if (!agent) return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
@@ -62,7 +64,7 @@ export async function PATCH(req, { params }) {
     // update
     await dbConnect("supportTickets").updateOne(
       { ticketId },
-      { $set: { status, updatedAt: new Date() } }
+      { $set: { status: "resolved", updatedAt: new Date() } }
     );
 
     return new Response(JSON.stringify({ ok: true }), { headers: { "Content-Type": "application/json" } });

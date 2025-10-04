@@ -2,11 +2,14 @@
 import { dbConnect } from "@/lib/dbConnect";
 import { authOptions } from "@/lib/authOptions";
 import { getServerSession } from "next-auth";
+import { ObjectId } from "mongodb";
 
 export async function GET(req) {
-  try {
-    const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
+  const { searchParams } = new URL(req.url);
+  const status = searchParams.get("status"); // "Open" or null
 
+  try {
     if (!session) {
       return new Response(
         JSON.stringify({ error: "Unauthorized" }),
@@ -26,9 +29,17 @@ export async function GET(req) {
       );
     }
 
+  let query = {
+    district: agent.district,
+    assignedAgentId: new ObjectId(agent._id)
+  };
+  if (status) {
+    query.status = status;
+  }
+
     // Fetch tickets only for agent's district
     const tickets = await dbConnect("supportTickets")
-      .find({ district: agent.district })
+      .find(query)
       .sort({ createdAt: -1 })
       .toArray();
 
