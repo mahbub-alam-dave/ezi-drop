@@ -1,3 +1,4 @@
+// ...existing code...
 "use client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -5,6 +6,7 @@ import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import {
   FaUserCog,
+  FaComments,
   FaUsers,
   FaMotorcycle,
   FaUserTie,
@@ -13,6 +15,7 @@ import {
   FaTruck,
   FaHistory,
   FaBox,
+  FaComment,
   FaUserPlus,
   FaTachometerAlt,
 } from "react-icons/fa";
@@ -21,9 +24,6 @@ import ThemeToggle from "../sharedComponents/navbar/Toggle";
 const DashboardLayoutClient = ({ userData, children }) => {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-
-  //   const status = "authenticated"
-  //   const role = "admin"
 
   const { data: session, status } = useSession();
 
@@ -35,6 +35,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
          : "hover:bg-blue-200  dark:hover:bg-blue-300"
      }`;
 
+  // dashboard links for roles — merged so each role has its chat link
   const dashboardLinks = {
     adminLinks: (
       <>
@@ -77,6 +78,10 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaClipboardList className="inline-block mr-2" />
           Manage Order
         </Link>
+        <Link href="/dashboard/chat" className={linkClass("/dashboard/chat")}>
+          <FaComment className="inline-block mr-2" />
+          Chat
+        </Link>
       </>
     ),
     riderLinks: (
@@ -106,6 +111,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaUser className="inline-block mr-2" />
           Profile
         </Link>
+        <Link
+          href="/dashboard/riderChat"
+          className={linkClass("/dashboard/riderChat")}
+        >
+          <FaComments className="inline-block mr-2" />
+          Chat
+        </Link>
       </>
     ),
     userLinks: (
@@ -131,7 +143,6 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaClipboardList className="inline-block mr-2" />
           Orders History
         </Link>
-
         <Link
           href="/dashboard/profile"
           className={linkClass("/dashboard/profile")}
@@ -146,6 +157,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaUserPlus className="inline-block mr-2" />
           Be A Rider
         </Link>
+        <Link
+          href="/dashboard/userChat"
+          className={linkClass("/dashboard/userChat")}
+        >
+          <FaComments className="inline-block mr-2" />
+          Chat
+        </Link>
       </>
     ),
   };
@@ -153,10 +171,12 @@ const DashboardLayoutClient = ({ userData, children }) => {
   const renderLinks =
     (status === "authenticated" && userData.role === "admin") ||
     userData.role === "support_agent"
+    (status === "authenticated" && (userData.role === "admin" || userData.role === "support_agent"))
       ? dashboardLinks.adminLinks
       : status === "authenticated" && userData.role === "rider"
       ? dashboardLinks.riderLinks
       : dashboardLinks.userLinks;
+
   return (
     <div className="bg-gray-50 dark:bg-black">
       {/* ---- Topbar / Mobile Nav ---- */}
@@ -205,3 +225,4 @@ const DashboardLayoutClient = ({ userData, children }) => {
 };
 
 export default DashboardLayoutClient;
+// ...existing code...
