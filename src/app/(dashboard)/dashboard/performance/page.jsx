@@ -1,7 +1,7 @@
 "use client";
 
-import React, {  useMemo } from "react";
-import { Star, CheckCircle, Trophy, Hash } from "lucide-react";
+import React, {  useMemo, useState } from "react";
+import { Star, CheckCircle, Trophy, Hash, Star as StarIcon } from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -13,6 +13,7 @@ import {
   Line,
   CartesianGrid,
 } from "recharts";
+import UserRating from "@/components/UserRating/UserRating";
 // import useLoadingSpinner from "@/hooks/useLoadingSpinner";
 
 export default function PerformancePage() {
@@ -199,3 +200,9 @@ function Breakdown({ label, value }) {
     </div>
   );
 }
+
+{/* ⭐ User Rating Section */}
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-4 mt-6">
+        <h3 className="font-semibold mb-4">Rate Your Experience</h3>
+        <UserRating /> 
+      </div>
