@@ -93,12 +93,9 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaTachometerAlt className="inline-block mr-2" />
           Rider Dashboard
         </Link>
-        <Link
-          href="/dashboard/manage-order"
-          className={linkClass("/dashboard/manage-order")}
-        >
+        <Link href="/dashboard/order" className={linkClass("/dashboard/order")}>
           <FaTruck className="inline-block mr-2" />
-          Manage Orders
+          Order
         </Link>
         <Link
           href="/dashboard/delivery-history"
@@ -172,6 +169,8 @@ const DashboardLayoutClient = ({ userData, children }) => {
   };
 
   const renderLinks =
+    (status === "authenticated" && userData.role === "admin") ||
+    userData.role === "support_agent"
     (status === "authenticated" && (userData.role === "admin" || userData.role === "support_agent"))
       ? dashboardLinks.adminLinks
       : status === "authenticated" && userData.role === "rider"
