@@ -531,7 +531,7 @@ const AdminOverview = () => {
             ))}
           </div>
         </div> */}
-        <SupportsTicket supportTickets={supportTickets} />
+        <SupportsTicket displayArea={"page"} />
 
         {/* 4. BILLING SUMMARY */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl p-7 border border-slate-200 dark:border-slate-700 shadow-sm">
