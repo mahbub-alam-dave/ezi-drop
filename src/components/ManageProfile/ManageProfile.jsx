@@ -1,12 +1,60 @@
 // src/components/ManageProfile/ManageProfile.jsx
 "use client";
 
-import { useState } from 'react';
+import { uploadToImgBB } from '@/lib/imgbbUpload';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { CiCamera } from "react-icons/ci";
 
-export default function ManageProfile({ role }) {
+export default function ManageProfile({ userData }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [districts, setDistricts] = useState([])
+  const [preview, setPreview] = useState(userData?.image || null);
+  const {data: session, status} = useSession();
+  const [error, setError] = useState(null)
+  const router = useRouter()
+
+  const role = userData.role;
+   const allDistricts = []
+
+  useEffect(() => {
+    async function fetchDistricts() {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const res = await fetch("/api/service-areas"); // calls your API
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.error || "Failed to fetch");
+        }
+        const data = await res.json();
+        setDistricts(data.districts)
+
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    if (status === "authenticated") {
+      fetchDistricts();
+    }
+  }, [status]);
+
+  if (status === "loading") return <p>Checking login...</p>;
+  if(status === "unauthenticated"){
+    router.push("/login")
+  }
+  
+  districts?.map(d => allDistricts.push(d.district)) 
+
+ 
+ 
 
   // Sample data for different roles
   const profileData = {
@@ -141,7 +189,7 @@ export default function ManageProfile({ role }) {
   };
 
   // Get data based on role prop
-  const data = profileData[role] || profileData.user;
+  const data = profileData[role] || profileData.user ;
 
   // Role-based configuration
   const roleConfig = {
@@ -151,10 +199,13 @@ export default function ManageProfile({ role }) {
       stats: data.deliveryStats,
       statTitle: 'Delivery Statistics',
       formFields: [
-        { name: 'name', label: 'Full Name', type: 'text', required: true },
-        { name: 'email', label: 'Email Address', type: 'email', required: true },
+        { name: 'image', label: '', type: 'file', },
+        // { name: 'image', label: 'Full Name', type: 'file', },
+        { name: 'name', label: 'Full Name', type: 'text', readonly: true },
+        { name: 'email', label: 'Email Address', type: 'email', readonly: true },
         { name: 'phone', label: 'Phone Number', type: 'tel', required: true },
         { name: 'company', label: 'Company', type: 'text' },
+        { name: 'district', label: 'Your District', type: 'select', options: allDistricts, required: true },
         { name: 'birthDate', label: 'Birth Date', type: 'date' },
         { name: 'address', label: 'Delivery Address', type: 'textarea' },
         { name: 'deliveryPreferences', label: 'Delivery Preferences', type: 'select', options: ['Morning', 'Afternoon', 'Evening', 'Anytime'] },
@@ -168,8 +219,8 @@ export default function ManageProfile({ role }) {
       stats: data.systemStats,
       statTitle: 'System Overview',
       formFields: [
-        { name: 'name', label: 'Full Name', type: 'text', required: true },
-        { name: 'email', label: 'Email Address', type: 'email', required: true },
+        { name: 'name', label: 'Full Name', type: 'text', readonly: true },
+        { name: 'email', label: 'Email Address', type: 'email', readonly: true },
         { name: 'phone', label: 'Phone Number', type: 'tel', required: true },
         { name: 'department', label: 'Department', type: 'text', required: true },
         { name: 'accessLevel', label: 'Access Level', type: 'select', options: ['View Only', 'Standard Admin', 'Super Admin'] },
@@ -183,8 +234,8 @@ export default function ManageProfile({ role }) {
       stats: data.riderStats,
       statTitle: 'Today\'s Performance',
       formFields: [
-        { name: 'name', label: 'Full Name', type: 'text', required: true },
-        { name: 'email', label: 'Email Address', type: 'email', required: true },
+        { name: 'name', label: 'Full Name', type: 'text', readonly: true },
+        { name: 'email', label: 'Email Address', type: 'email', readonly: true },
         { name: 'phone', label: 'Phone Number', type: 'tel', required: true },
         { name: 'vehicleType', label: 'Vehicle Type', type: 'select', options: ['Motorcycle', 'Bicycle', 'Car', 'Scooter'] },
         { name: 'licensePlate', label: 'License Plate', type: 'text' },
@@ -198,7 +249,7 @@ export default function ManageProfile({ role }) {
 
   // Initialize form data when modal opens
   const openEditModal = () => {
-    setFormData(data);
+    setFormData(userData);
     setIsEditModalOpen(true);
   };
 
@@ -214,6 +265,38 @@ export default function ManageProfile({ role }) {
       [name]: type === 'checkbox' ? checked : value
     }));
   };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // preview instantly
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    setIsLoading(true)
+    // Upload to backend
+  try {
+    const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = async () => {
+    const base64 = reader.result.split(",")[1]; // remove prefix
+    const res = await fetch("/api/upload-image", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ image: base64 }),
+    });
+    const data = await res.json();
+    if (data.url) setPreview(data.url);
+  };
+  } catch (err) {
+    console.error(err);
+    alert("Upload error");
+  } finally {
+    setIsLoading(false)
+  }
+  }
+
+  console.log(preview)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -277,6 +360,27 @@ export default function ManageProfile({ role }) {
             <span className="text-color text-sm">Enable {field.label}</span>
           </label>
         );
+
+      case "file" :
+        return (
+        <div className='relative w-20 h-20'>
+        <img
+        src={preview || "https://i.ibb.co.com/twbgmXWg/user-4.png"} // fallback avatar
+        alt="Avatar"
+        className="w-20 h-20 rounded-full border object-cover"
+      />
+       <label className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 hover:opacity-100 cursor-pointer transition">
+       <CiCamera className="text-white w-6 h-6"/>
+          <input 
+          type='file'
+          name={field.name}
+          onChange={handleImageChange}
+          className='hidden'
+          />
+          </label>
+          </div>
+          
+        )
       
       default:
         return (
@@ -286,6 +390,7 @@ export default function ManageProfile({ role }) {
             value={formData[field.name] || ''}
             onChange={handleInputChange}
             className="input-style"
+            readOnly={field.readonly}
             placeholder={`Enter ${field.label.toLowerCase()}`}
             required={field.required}
           />
