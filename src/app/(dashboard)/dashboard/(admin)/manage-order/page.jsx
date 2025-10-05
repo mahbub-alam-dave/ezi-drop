@@ -1,8 +1,9 @@
 "use client";
 import React, { useState, useMemo } from "react";
 
-export default function ManageOrders() {
+export default async function ManageOrders() {
   // Fake order data
+  // const orders = await fetch("/api/parcels").then((res) => res.json()).then(data => data.data);
   const orders = [
     {
       id: "1001",
@@ -140,17 +141,6 @@ export default function ManageOrders() {
             </div>
           </div>
         </div>
-
-        {/* Invite Card */}
-        {true && <div className="flex justify-between border bg-[var(--color-primary)] px-6 py-4 mb-4 rounded-2xl text-[var(--color-text-dark)]">
-          <div className="flex justify-center items-center">
-            <p className="font-bold">Your invation</p>
-          </div>
-          <div className="space-x-2 flex justify-center items-center">
-            <button className="border px-2 py-1">Accept</button>
-            <button className="border px-2 py-1">Reject</button>
-          </div>
-        </div>}
 
         {/* Orders Table */}
         <div className="background-color rounded-2xl shadow-lg overflow-hidden border border-[var(--color-border)] dark:border-[var(--color-border)]">

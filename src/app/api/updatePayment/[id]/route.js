@@ -8,7 +8,7 @@ export async function PUT(req, { params }) {
     const parcels = await dbConnect("parcels");
     const riders = await dbConnect("rider-applications");
 
-    // Parcel খুঁজে বের করো
+    // Parcel searching
     const parcel = await parcels.findOne({ _id: new ObjectId(params.id) });
     if (!parcel) {
       return NextResponse.json(
@@ -37,8 +37,8 @@ export async function PUT(req, { params }) {
         riderId: rider._id,
         riderName: rider.applicantName,
         riderEmail: rider.applicantEmail,
-        assignedAt: new Date(),
-        status: "pending",
+        autoAssignedAt: new Date(), 
+        status: "auto_assigned", 
       };
     }
 

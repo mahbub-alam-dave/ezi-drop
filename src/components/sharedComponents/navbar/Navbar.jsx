@@ -39,7 +39,6 @@ export default function Navbar() {
     <>
     
       <Link href={'/'}>Home</Link>
-      <Link href={'/order'}>order</Link>
       <Link href={"/send-parcel"}>Send Parcel</Link>
       {
          status==="authenticated" &&
