@@ -1,7 +1,5 @@
 // src/components/ManageProfile/ManageProfile.jsx
 "use client";
-
-import { uploadToImgBB } from '@/lib/imgbbUpload';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -12,7 +10,8 @@ export default function ManageProfile({ userData }) {
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [districts, setDistricts] = useState([])
-  const [preview, setPreview] = useState(userData?.image || null);
+  const [preview, setPreview] = useState(userData?.image || "https://i.ibb.co.com/twbgmXWg/user-4.png");
+  const [imageUrl, setImageUrl] = useState("")
   const {data: session, status} = useSession();
   const [error, setError] = useState(null)
   const router = useRouter()
@@ -286,7 +285,10 @@ export default function ManageProfile({ userData }) {
       body: JSON.stringify({ image: base64 }),
     });
     const data = await res.json();
-    if (data.url) setPreview(data.url);
+    if (data.url) {
+      setImageUrl(data.url);
+      setPreview(data.url);;
+    } 
   };
   } catch (err) {
     console.error(err);
@@ -301,14 +303,16 @@ export default function ManageProfile({ userData }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
     // Simulate API call
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('Profile updated:', formData);
+      // console.log('Profile updated:', formData);
+          const updatedData ={...formData, image: imageUrl}
+
+    console.log(updatedData)
       // Here you would typically make an API call to update the profile
       alert('Profile updated successfully!');
-      closeEditModal();
+      // closeEditModal();
     } catch (error) {
       console.error('Error updating profile:', error);
       alert('Error updating profile. Please try again.');
@@ -365,7 +369,7 @@ export default function ManageProfile({ userData }) {
         return (
         <div className='relative w-20 h-20'>
         <img
-        src={preview || "https://i.ibb.co.com/twbgmXWg/user-4.png"} // fallback avatar
+        src={preview} // fallback avatar
         alt="Avatar"
         className="w-20 h-20 rounded-full border object-cover"
       />

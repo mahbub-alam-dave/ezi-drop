@@ -3,9 +3,7 @@ import { getCurrentUser } from "@/lib/api";
 
 export default async function Page() {
   const user = await getCurrentUser()
-  const userRole =user.role;
-  const {password, providers, _id, failedLoginAttempts, lockUntil, ...userData} = user
-  console.log(userData)
+  const {password, providers, _id, failedLoginAttempts, createdAt, updatedAt, lockUntil, ...userData} = user
   return (
     <div className="md:p-8">
       <ManageProfile userData={userData} />
