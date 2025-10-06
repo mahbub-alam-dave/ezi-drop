@@ -49,26 +49,56 @@ const SendParcel = () => {
     setCost(baseCost);
   }, [pickupDistrict, deliveryDistrict, parcelType, weight]);
 
-  const onSubmit = async (data) => {
-    try {
-      const res = await fetch("/api/parcels", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (res.ok) {
-        setShowModal(true); // Show fullscreen modal
-        reset();
-      } else {
-        const errData = await res.json();
-        alert(errData.message || "Something went wrong");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Network error");
+const onSubmit = async (data) => {
+  try {
+    // Pickup location
+    const pickupRes = await fetch(`/api/geocode?address=${encodeURIComponent(data.pickupUpazila + ", " + data.pickupDistrict)}`);
+    if (!pickupRes.ok) {
+      const err = await pickupRes.json();
+      throw new Error(err.error || "Pickup location fetch failed");
     }
-  };
+    const pickupData = await pickupRes.json();
+
+    // Delivery location
+    const deliveryRes = await fetch(`/api/geocode?address=${encodeURIComponent(data.deliveryUpazila + ", " + data.deliveryDistrict)}`);
+    if (!deliveryRes.ok) {
+      const err = await deliveryRes.json();
+      throw new Error(err.error || "Delivery location fetch failed");
+    }
+    const deliveryData = await deliveryRes.json();
+
+    // Parcel submit
+    const parcelRes = await fetch("/api/parcels", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...data,
+        pickupLocation: {
+          lat: pickupData.lat,
+          lon: pickupData.lon,
+          display_name: pickupData.display_name,
+        },
+        deliveryLocation: {
+          lat: deliveryData.lat,
+          lon: deliveryData.lon,
+          display_name: deliveryData.display_name,
+        },
+      }),
+    });
+
+    if (parcelRes.ok) {
+      alert("Parcel submitted successfully!");
+      reset();
+    } else {
+      const errData = await parcelRes.json();
+      alert(errData.message || "Something went wrong");
+    }
+  } catch (err) {
+    console.error(err);
+    alert(err.message || "Failed to fetch location");
+  }
+};
+
 
   const districts = Object.keys(districtData);
 
