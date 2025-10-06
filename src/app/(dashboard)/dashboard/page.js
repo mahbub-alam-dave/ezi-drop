@@ -8,8 +8,11 @@ const Dashboard = async () => {
     if(!user) {
         redirect("/login")
     }
-    if(user.role === "admin" || user.role === "support_agent") {
+    if(user.role === "admin") {
         redirect("/dashboard/overview")
+    }
+    else if(user.role === "support_agent") {
+        redirect("/dashboard/district-agent/overview")
     }
     else if(user.role === "rider") {
         redirect("/dashboard/rider-overview")
