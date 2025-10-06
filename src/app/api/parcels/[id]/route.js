@@ -10,7 +10,7 @@ export async function GET(req, { params }) {
     if (!parcel) {
       return NextResponse.json({ error: "Parcel not found" }, { status: 404 });
     }
-
+    console.log(parcel)
     return NextResponse.json(parcel);
   } catch (error) {
     console.error(error);

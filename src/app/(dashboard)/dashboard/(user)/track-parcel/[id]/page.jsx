@@ -26,9 +26,9 @@ export default function ParcelMapPage() {
   useEffect(() => {
     const fetchParcel = async () => {
       try {
-        const res = await fetch("/api/parcels");
+        const res = await fetch(`/api/parcels/${id}`);
         const data = await res.json();
-        const foundParcel = data.find((p) => p._id === id);
+        const foundParcel = data
         setParcel(foundParcel);
 
         if (foundParcel?.pickupLocation && foundParcel?.deliveryLocation) {
@@ -65,7 +65,7 @@ export default function ParcelMapPage() {
   const deliveryLon = parseFloat(parcel.deliveryLocation.lon);
 
   const centerLat = (pickupLat + deliveryLat) / 2;
-  const centerLon = (pickupLon + deliveryLon) / 2; 
+  const centerLon = (pickupLon + deliveryLon) / 2;
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Parcel Tracking for {parcel.receiverName}{parcel.status}</h1>

@@ -18,6 +18,7 @@ import {
   FaComment,
   FaUserPlus,
   FaTachometerAlt,
+  FaSearch,
 } from "react-icons/fa";
 import { VscCommentUnresolved } from "react-icons/vsc";
 import ThemeToggle from "../sharedComponents/navbar/Toggle";
@@ -27,16 +28,15 @@ const DashboardLayoutClient = ({ userData, children }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const { data: session, status } = useSession();
-
+  console.log(session, status)
   console.log(session?.user?.role, session?.user?.district)
 
   const linkClass = (path) =>
     `px-6 py-2 rounded-md transition-colors duration-200
-     ${
-       pathname === path
-         ? "bg-[var(--color-primary)] text-white dark:bg-[var(--color-primary-dark)]"
-         : "hover:bg-blue-200  dark:hover:bg-blue-300"
-     }`;
+     ${pathname === path
+      ? "bg-[var(--color-primary)] text-white dark:bg-[var(--color-primary-dark)]"
+      : "hover:bg-blue-200  dark:hover:bg-blue-300"
+    }`;
 
   // dashboard links for roles — merged so each role has its chat link
   const dashboardLinks = {
@@ -139,6 +139,14 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaBox className="inline-block mr-2" />
           Send Parcel
         </Link>
+        {/* Track Parcel */}
+        <Link
+          href="/dashboard/track-parcel"
+          className={linkClass("/dashboard/track-parcel")}
+        >
+          <FaSearch className="inline-block mr-2" />
+          Track Parcel
+        </Link>
         <Link
           href="/dashboard/orders-history"
           className={linkClass("/dashboard/orders-history")}
@@ -153,7 +161,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaUser className="inline-block mr-2" />
           Profile
         </Link>
-          <Link
+        <Link
           href="/dashboard/resulation-center"
           className={linkClass("/dashboard/resulation-center")}
         >
@@ -214,10 +222,10 @@ const DashboardLayoutClient = ({ userData, children }) => {
     (status === "authenticated" && userData.role === "admin")
       ? dashboardLinks.adminLinks
       : status === "authenticated" && userData.role === "rider"
-      ? dashboardLinks.riderLinks
-      : status === "authenticated" && userData.role === "support_agent" 
-      ? dashboardLinks.districtAgentLinks
-      : dashboardLinks.userLinks;
+        ? dashboardLinks.riderLinks
+        : status === "authenticated" && userData.role === "support_agent"
+          ? dashboardLinks.districtAgentLinks
+          : dashboardLinks.userLinks;
 
   return (
     <div className="bg-gray-50 dark:bg-black">
