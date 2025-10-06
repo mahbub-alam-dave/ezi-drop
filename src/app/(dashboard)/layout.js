@@ -12,9 +12,9 @@ export default async function DashboardLayout({ children }) {
 
   const user = await getCurrentUser()
 
-  if(!user) {
+/*   if(!user) {
     redirect("/login")
-  }
+  } */
 
   const userData = {
     name: user.name,

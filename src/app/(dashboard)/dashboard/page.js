@@ -5,9 +5,9 @@ import React from 'react';
 const Dashboard = async () => {
     const user = await getCurrentUser()
 
-    if(!user) {
+/*     if(!user) {
         redirect("/login")
-    }
+    } */
     if(user.role === "admin") {
         redirect("/dashboard/overview")
     }
