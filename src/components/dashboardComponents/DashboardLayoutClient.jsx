@@ -166,13 +166,40 @@ const DashboardLayoutClient = ({ userData, children }) => {
         </Link>
       </>
     ),
+    districtAgentLinks: (
+      <>
+        <Link
+          href="/dashboard/district-agent/overview"
+          className={linkClass("/dashboard/district-agent/overview")}
+        >
+          <FaTachometerAlt className="inline-block mr-2" />
+          Overview
+        </Link>
+        <Link
+          href="/dashboard/district-agent/check-wire-houses"
+          className={linkClass("/dashboard/district-agent/check-wire-houses")}
+        >
+          <FaClipboardList className="inline-block mr-2" />
+          Check Wire-houses
+        </Link>
+        <Link
+          href="/dashboard/district-agent/profile"
+          className={linkClass("/dashboard/district-agent/profile")}
+        >
+          <FaUser className="inline-block mr-2" />
+          Profile
+        </Link>
+      </>
+    )
   };
 
   const renderLinks =
-    (status === "authenticated" && (userData.role === "admin" || userData.role === "support_agent"))
+    (status === "authenticated" && userData.role === "admin")
       ? dashboardLinks.adminLinks
       : status === "authenticated" && userData.role === "rider"
       ? dashboardLinks.riderLinks
+      : status === "authenticated" && userData.role === "support_agent" 
+      ? dashboardLinks.districtAgentLinks
       : dashboardLinks.userLinks;
 
   return (
