@@ -3,6 +3,9 @@ import "./globals.css";
 // import Navbar from "@/components/sharedComponents/navbar/Navbar";
 // import Footer from "@/components/sharedComponents/footer/Footer";
 import NextAuthProvider from "@/providers/NextAuthProvider";
+import ChatBoxUi from "@/components/customerServicesComponents/ChatBoxUi";
+import { Suspense } from "react";
+import SiteSkeleton from "@/components/loaders/skeletons/SiteSkeleton";
 
 
 
@@ -30,9 +33,12 @@ export default function RootLayout({ children }) {
       <body
         className={`${poppins.className} antialiased`}
       >
+        <Suspense fallback={<SiteSkeleton />}>
         <NextAuthProvider>
         {children}
+        <ChatBoxUi />
         </NextAuthProvider>
+        </Suspense>
       </body>
     </html>
   );

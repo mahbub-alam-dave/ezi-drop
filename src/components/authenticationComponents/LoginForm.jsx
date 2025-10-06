@@ -12,6 +12,7 @@ const LoginForm = () => {
   const [loading, setLoading] = useState(false);
     const [showOtpModal, setShowOtpModal] = useState(false)
     const [otpModalData, setOtpModalData] = useState({})
+    const [error, setError] =useState("")
 
   const router = useRouter()
   const { update } = useSession();
@@ -58,16 +59,22 @@ const LoginForm = () => {
       redirect: false,
     });
 
+    if (response.error) {
+  setError(response.error); // Will show "Account locked. Try again later."
+}
+
     if (response?.ok) {
+      
       Swal.fire({
         position: "center",
         icon: "success",
         title: "Logged In successfully",
         showConfirmButton: false,
         timer: 1500,
-      }).then(() => {
+      }).then(() =>  {
         router.push("/");
         form.reset();
+        update()
       });
     } else {
       Swal.fire({ icon: "error", title: "Oops...", text: "Invalid credentials" });
@@ -104,6 +111,9 @@ const LoginForm = () => {
           placeholder="Enter password (6 characters)"
         />
       </div>
+  
+      <p className="text-red-600">{error}</p>
+
       <button
         type="submit"
         className="bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] px-6 py-3 cursor-pointer rounded-full mt-4 w-full text-white font-medium text-lg"
