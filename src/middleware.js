@@ -15,14 +15,14 @@ export async function middleware(req) {
     // If support_agent → allow (district filtering happens in API layer)
     if (pathname.startsWith("/dashboard/district-agent")) {
       if (token.role !== "support_agent") {
-        return NextResponse.redirect(new URL("/403", req.url));
+        return NextResponse.redirect(new URL("/404", req.url)); {/* will be 403 */}
       }
     }
 
     // Example: if you want admins to access /dashboard/admin
     if (pathname.startsWith("/dashboard/admin")) {
       if (token.role !== "admin") {
-        return NextResponse.redirect(new URL("/403", req.url));
+        return NextResponse.redirect(new URL("/404", req.url)); {/* will be 403 */}
       }
     }
   }
