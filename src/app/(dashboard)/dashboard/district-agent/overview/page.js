@@ -12,7 +12,8 @@ import SupportsTicket from "@/components/dashboardComponents/adminOverview/suppo
 import TopCouriers from "@/components/dashboardComponents/adminOverview/TopCouriers";
 import React from "react";
 
-const DistrictAgentOverview = () => {
+const DistrictAgentOverview = async () => {
+
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen text-slate-800 dark:text-white">
       {/* header */}

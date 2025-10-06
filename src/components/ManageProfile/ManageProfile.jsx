@@ -190,6 +190,72 @@ export default function ManageProfile({ userData }) {
         },
       ],
     },
+      support_agent: {
+      name: "MD Abdul Halim",
+      role: "System Administrator",
+      email: "abdulhalim1100@gmail.com",
+      phone: "018229XXXXX",
+      company: "DeliveryPro Inc.",
+      joinDate: "January 10, 2019",
+      birthDate: "2005-05-15",
+      employmentType: "Full-Time",
+      status: "Active",
+      department: "IT Management",
+      accessLevel: "Super Admin",
+      agentStats: {
+        totalUsers: 2547,
+        activeRiders: 100,
+        pendingIssues: 12,
+      },
+      upcomingDeliveries: [
+        {
+          date: "July 24, 2020",
+          time: "9:00 AM — 11:00 AM",
+          type: "System maintenance",
+          address: "Data Center - Server Room A",
+          status: "Scheduled",
+          priority: "Critical",
+        },
+        {
+          date: "July 25, 2020",
+          time: "3:00 PM — 5:00 PM",
+          type: "Team meeting",
+          address: "Conference Room A - HQ",
+          status: "Confirmed",
+          priority: "Medium",
+        },
+      ],
+      tasks: [
+        {
+          task: "Review rider performance",
+          assigned: "System Admin",
+          due: "07/24/2020",
+          attachments: "performance.zip",
+          completed: false,
+        },
+        {
+          task: "Update delivery zones",
+          assigned: "System Admin",
+          due: "07/24/2020",
+          attachments: "zones.zip",
+          completed: true,
+        },
+        {
+          task: "Monthly report generation",
+          assigned: "Finance Team",
+          due: "07/24/2020",
+          attachments: "reports.zip",
+          completed: true,
+        },
+        {
+          task: "Security audit",
+          assigned: "Security Team",
+          due: "07/24/2020",
+          attachments: "audit.zip",
+          completed: true,
+        },
+      ],
+    },
     rider: {
       name: "David Chen",
       role: "Senior Delivery Rider",
@@ -311,6 +377,41 @@ export default function ManageProfile({ userData }) {
       title: "Admin Profile",
       icon: "⚙️",
       stats: data.systemStats,
+      statTitle: "System Overview",
+      formFields: [
+        { name: "name", label: "Full Name", type: "text", readonly: true },
+        {
+          name: "email",
+          label: "Email Address",
+          type: "email",
+          readonly: true,
+        },
+        { name: "phone", label: "Phone Number", type: "tel", required: true },
+        {
+          name: "department",
+          label: "Department",
+          type: "text",
+          required: true,
+        },
+        {
+          name: "accessLevel",
+          label: "Access Level",
+          type: "select",
+          options: ["View Only", "Standard Admin", "Super Admin"],
+        },
+        { name: "birthDate", label: "Birth Date", type: "date" },
+        {
+          name: "employmentType",
+          label: "Employment Type",
+          type: "select",
+          options: ["Full-Time", "Part-Time", "Contract"],
+        },
+      ],
+    },
+    support_agent: {
+      title: "Admin Profile",
+      icon: "⚙️",
+      stats: data.agentStats,
       statTitle: "System Overview",
       formFields: [
         { name: "name", label: "Full Name", type: "text", readonly: true },
@@ -555,13 +656,18 @@ export default function ManageProfile({ userData }) {
 
   return (
     <div className="min-h-screen background-color text-color p-2 md:p-4">
-      <div className="max-w-7xl mx-auto">
+      <div className="w-full pt-8">  {/* max-w-7xl mx-auto */}
         {/* Header Section */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
           <div>
             <h1 className="text-3xl font-bold text-color flex items-center gap-3">
               <span>{config.icon}</span>
-              {config.title}
+              {
+              userDetails.role === "admin" ? "Admin Profile" 
+              : userDetails.role === "rider" ? "Rider Profile"
+              : userDetails.role === "support_agent" ? "Support Agent Profile"
+              : "User Profile"
+              }
             </h1>
             <p className="text-color-soft mt-2">
               Manage your delivery profile and preferences
@@ -891,7 +997,7 @@ export default function ManageProfile({ userData }) {
 
       {/* Edit Profile Modal */}
       {isEditModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-gray-300 dark:bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex justify-between items-center p-6 border-b border-color-border dark:border-gray-700">
