@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useMemo } from "react";
 
-export default async function ManageOrders() {
+export default function ManageOrders() {
   // Fake order data
   // const orders = await fetch("/api/parcels").then((res) => res.json()).then(data => data.data);
   const orders = [
