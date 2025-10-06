@@ -19,6 +19,7 @@ import {
   FaUserPlus,
   FaTachometerAlt,
 } from "react-icons/fa";
+import { VscCommentUnresolved } from "react-icons/vsc";
 import ThemeToggle from "../sharedComponents/navbar/Toggle";
 
 const DashboardLayoutClient = ({ userData, children }) => {
@@ -150,6 +151,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaUser className="inline-block mr-2" />
           Profile
         </Link>
+          <Link
+          href="/dashboard/resulation-center"
+          className={linkClass("/dashboard/resulation-center")}
+        >
+          <VscCommentUnresolved className="inline-block mr-2" />
+          Resulation Center
+        </Link>
         <Link
           href="/dashboard/be-a-rider"
           className={linkClass("/dashboard/be-a-rider")}
@@ -188,6 +196,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
         >
           <FaUser className="inline-block mr-2" />
           Profile
+        </Link>
+        <Link
+          href="/dashboard/district-agent/resulation-center"
+          className={linkClass("/dashboard/district-agent/resulation-center")}
+        >
+          <VscCommentUnresolved className="inline-block mr-2" />
+          Resulation Center
         </Link>
       </>
     )
