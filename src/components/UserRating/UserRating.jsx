@@ -55,6 +55,7 @@ export default function UserRating() {
   if (loading)
     return useLoadingSpinner
 
+  
   return (
     <div className="flex flex-col items-center space-y-3">
       <div className="flex space-x-2">
