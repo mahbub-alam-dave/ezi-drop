@@ -1,4 +1,4 @@
-import SupportsTicket from '@/components/dashboardComponents/supportAgent(admin)/SupportsTicket';
+import SupportsTicket from '@/components/dashboardComponents/adminOverview/supportAgent(admin)/SupportsTicket';
 import React from 'react';
 
 const ResulationPage = () => {
