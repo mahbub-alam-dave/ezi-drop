@@ -64,15 +64,17 @@ const LoginForm = () => {
 }
 
     if (response?.ok) {
+      
       Swal.fire({
         position: "center",
         icon: "success",
         title: "Logged In successfully",
         showConfirmButton: false,
         timer: 1500,
-      }).then(() => {
+      }).then(() =>  {
         router.push("/");
         form.reset();
+        update()
       });
     } else {
       Swal.fire({ icon: "error", title: "Oops...", text: "Invalid credentials" });

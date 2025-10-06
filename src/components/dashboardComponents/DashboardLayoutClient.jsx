@@ -20,6 +20,7 @@ import {
   FaTachometerAlt,
   FaChartLine,
 } from "react-icons/fa";
+import { VscCommentUnresolved } from "react-icons/vsc";
 import ThemeToggle from "../sharedComponents/navbar/Toggle";
 
 const DashboardLayoutClient = ({ userData, children }) => {
@@ -31,6 +32,8 @@ const DashboardLayoutClient = ({ userData, children }) => {
 
  // ✅ শুধু একবার useSession()
   const { data: session, status } = useSession();
+
+  console.log(session?.user?.role, session?.user?.district)
 
   const linkClass = (path) =>
     `px-6 py-2 rounded-md transition-colors duration-200
@@ -104,12 +107,10 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaChartLine className="inline-block mr-2" />
           Performance
         </Link>
-        <Link
-          href="/dashboard/manage-orders"
-          className={linkClass("/dashboard/manage-orders")}
-        >
+        
+        <Link href="/dashboard/order" className={linkClass("/dashboard/order")}>
           <FaTruck className="inline-block mr-2" />
-          Manage Orders
+          Order
         </Link>
         <Link
           href="/dashboard/delivery-history"
@@ -164,6 +165,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaUser className="inline-block mr-2" />
           Profile
         </Link>
+          <Link
+          href="/dashboard/resulation-center"
+          className={linkClass("/dashboard/resulation-center")}
+        >
+          <VscCommentUnresolved className="inline-block mr-2" />
+          Resulation Center
+        </Link>
         <Link
           href="/dashboard/be-a-rider"
           className={linkClass("/dashboard/be-a-rider")}
@@ -180,10 +188,42 @@ const DashboardLayoutClient = ({ userData, children }) => {
         </Link>
       </>
     ),
+    districtAgentLinks: (
+      <>
+        <Link
+          href="/dashboard/district-agent/overview"
+          className={linkClass("/dashboard/district-agent/overview")}
+        >
+          <FaTachometerAlt className="inline-block mr-2" />
+          Overview
+        </Link>
+        <Link
+          href="/dashboard/district-agent/check-wire-houses"
+          className={linkClass("/dashboard/district-agent/check-wire-houses")}
+        >
+          <FaClipboardList className="inline-block mr-2" />
+          Check Wire-houses
+        </Link>
+        <Link
+          href="/dashboard/district-agent/profile"
+          className={linkClass("/dashboard/district-agent/profile")}
+        >
+          <FaUser className="inline-block mr-2" />
+          Profile
+        </Link>
+        <Link
+          href="/dashboard/district-agent/resulation-center"
+          className={linkClass("/dashboard/district-agent/resulation-center")}
+        >
+          <VscCommentUnresolved className="inline-block mr-2" />
+          Resulation Center
+        </Link>
+      </>
+    )
   };
 
   const renderLinks =
-    (status === "authenticated" && (userData.role === "admin" || userData.role === "support_agent"))
+    (status === "authenticated" && userData.role === "admin")
       ? dashboardLinks.adminLinks
       : status === "authenticated" && userData.role === "rider"
         ? dashboardLinks.riderLinks

@@ -1,7 +1,7 @@
 import SupportsTicket from '@/components/dashboardComponents/adminOverview/supportAgent(admin)/SupportsTicket';
 import React from 'react';
 
-const ResulationPage = () => {
+const AgentResulationPage = () => {
     return (
         <div>
             <SupportsTicket />
@@ -9,4 +9,4 @@ const ResulationPage = () => {
     );
 };
 
-export default ResulationPage;
+export default AgentResulationPage;
