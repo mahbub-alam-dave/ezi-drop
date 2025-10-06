@@ -16,9 +16,7 @@ const Home = () => {
         <Overview />
       <Faq></Faq>
         <Review />
-      <NewsLetter />
-      
-        
+      <NewsLetter /> 
     </div>
     );
 };
