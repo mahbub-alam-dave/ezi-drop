@@ -20,6 +20,7 @@ import {
   FaTachometerAlt,
   FaSearch,
 } from "react-icons/fa";
+import { FaChartLine } from "react-icons/fa";
 import { VscCommentUnresolved } from "react-icons/vsc";
 import ThemeToggle from "../sharedComponents/navbar/Toggle";
 
