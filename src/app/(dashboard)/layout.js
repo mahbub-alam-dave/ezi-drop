@@ -2,6 +2,7 @@
 import DashboardLayoutClient from "@/components/dashboardComponents/DashboardLayoutClient";
 import { getCurrentUser } from "@/lib/api";
 import NextAuthProvider from "@/providers/NextAuthProvider";
+import { redirect } from "next/navigation";
 
 
 export default async function DashboardLayout({ children }) {
@@ -10,6 +11,10 @@ export default async function DashboardLayout({ children }) {
   // const role = "admin";
 
   const user = await getCurrentUser()
+
+/*   if(!user) {
+    redirect("/login")
+  } */
 
   const userData = {
     name: user.name,

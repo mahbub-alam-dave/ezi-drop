@@ -9,6 +9,7 @@ const SendParcel = () => {
   const { register, handleSubmit, reset, watch } = useForm();
   const [districtData, setDistrictData] = useState({});
   const [cost, setCost] = useState(null);
+  const [parcelId, setParcelId] = useState(null);
   const [showModal, setShowModal] = useState(false); // NEW: modal toggle
   const router = useRouter();
 
@@ -49,26 +50,56 @@ const SendParcel = () => {
     setCost(baseCost);
   }, [pickupDistrict, deliveryDistrict, parcelType, weight]);
 
-  const onSubmit = async (data) => {
-    try {
-      const res = await fetch("/api/parcels", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (res.ok) {
-        setShowModal(true); // Show fullscreen modal
-        reset();
-      } else {
-        const errData = await res.json();
-        alert(errData.message || "Something went wrong");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Network error");
+const onSubmit = async (data) => {
+  try {
+    // Pickup location
+    const pickupRes = await fetch(`/api/geocode?address=${encodeURIComponent(data.pickupUpazila + ", " + data.pickupDistrict)}`);
+    if (!pickupRes.ok) {
+      const err = await pickupRes.json();
+      throw new Error(err.error || "Pickup location fetch failed");
     }
-  };
+    const pickupData = await pickupRes.json();
+
+    // Delivery location
+    const deliveryRes = await fetch(`/api/geocode?address=${encodeURIComponent(data.deliveryUpazila + ", " + data.deliveryDistrict)}`);
+    if (!deliveryRes.ok) {
+      const err = await deliveryRes.json();
+      throw new Error(err.error || "Delivery location fetch failed");
+    }
+    const deliveryData = await deliveryRes.json();
+
+    // Parcel submit
+    const parcelRes = await fetch("/api/parcels", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...data,
+        pickupLocation: {
+          lat: pickupData.lat,
+          lon: pickupData.lon,
+          display_name: pickupData.display_name,
+        },
+        deliveryLocation: {
+          lat: deliveryData.lat,
+          lon: deliveryData.lon,
+          display_name: deliveryData.display_name,
+        },
+      }),
+    });
+
+    if (parcelRes.ok) {
+      alert("Parcel submitted successfully!");
+      reset();
+    } else {
+      const errData = await parcelRes.json();
+      alert(errData.message || "Something went wrong");
+    }
+  } catch (err) {
+    console.error(err);
+    alert(err.message || "Failed to fetch location");
+  }
+};
+
 
   const districts = Object.keys(districtData);
 
@@ -99,8 +130,10 @@ const SendParcel = () => {
                 See Your Booking
               </button>
               <button
-              // 
-                onClick={() => router.push("/paymentsystem/mainpoint")}
+                //
+                onClick={() =>
+                  router.push(`/paymentsystem/mainpoint?parcelId=${parcelId}`)
+                }
                 className="flex-1 rounded-lg border border-[var(--border-color)]
                  dark:border-[var(--border-color-two)]
                  text-[var(--color-text)] dark:text-[var(--color-text-dark)]
@@ -120,20 +153,20 @@ const SendParcel = () => {
          text-[var(--color-text)] dark:text-[var(--color-text-dark)]"
       >
         <div
-          className="w-full max-w-6xl rounded-2xl shadow-xl p-6
+          className="w-full max-w-7xl rounded-2xl shadow-xl p-6 sm:-8 md:p-10 lg:p-12
            bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
            transition-colors duration-300"
         >
           <h1
-            className="text-2xl md:text-3xl font-bold mb-6 text-center
-             text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]"
+            className="text-2xl md:text-3xl font-bold mb-8 text-center
+             text-color"
           >
             Send Your Parcel
           </h1>
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-10"
           >
             {/* Left column */}
             <div className="space-y-4">
@@ -146,6 +179,12 @@ const SendParcel = () => {
                 type="tel"
                 placeholder="+8801XXXXXXXXX"
                 register={register("senderPhone", { required: true })}
+              />
+              <InputField
+                label="Sender Email"
+                type="email"
+                placeholder="sender@example.com"
+                register={register("senderEmail", { required: true })}
               />
               <SelectField
                 label="Pickup District"
@@ -179,6 +218,12 @@ const SendParcel = () => {
                 type="tel"
                 placeholder="+8801XXXXXXXXX"
                 register={register("receiverPhone", { required: true })}
+              />
+              <InputField
+                label="Receiver Email"
+                type="email"
+                placeholder="receiver@example.com"
+                register={register("receiverEmail", { required: true })}
               />
               <SelectField
                 label="Delivery District"
@@ -242,42 +287,32 @@ const SendParcel = () => {
 // ----- Helper Components -----
 const InputField = ({ label, register, type = "text", placeholder = "" }) => (
   <div>
-    <label className="block mb-1 font-medium">{label}</label>
+    <label className="block mb-[6px] ">{label}</label>
     <input
       {...register}
       type={type}
       placeholder={placeholder || label}
-      className="w-full rounded-lg border border-[var(--border-color)]
-                 dark:border-[var(--border-color-two)]
-                 bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
-                 px-4 py-3 focus:outline-none
-                 focus:ring-2 focus:ring-[var(--color-primary)]
-                 dark:focus:ring-[var(--color-primary-dark)]"
+      className="w-full input-style text-color"
     />
   </div>
 );
 
 const SelectField = ({ label, register, options = [], disabled = false }) => (
   <div>
-    <label className="block mb-1 font-medium">{label}</label>
+    <label className="block mb-1 ">{label}</label>
     <select
       {...register}
       disabled={disabled}
-      className="w-full rounded-lg border border-[var(--border-color)]
-                 dark:border-[var(--border-color-two)]
-                 bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
-                 px-4 py-3 focus:outline-none
-                 focus:ring-2 focus:ring-[var(--color-primary)]
-                 dark:focus:ring-[var(--color-primary-dark)]"
+      className="w-full input-style text-color-soft"
     >
       <option value="">Select {label}</option>
       {options.map((opt) =>
         typeof opt === "object" ? (
-          <option key={opt.value} value={opt.value}>
+          <option key={opt.value} value={opt.value} className="background-color">
             {opt.label}
           </option>
         ) : (
-          <option key={opt}>{opt}</option>
+          <option key={opt} className="background-color">{opt}</option>
         )
       )}
     </select>
@@ -286,16 +321,11 @@ const SelectField = ({ label, register, options = [], disabled = false }) => (
 
 const TextAreaField = ({ label, register }) => (
   <div>
-    <label className="block mb-1 font-medium">{label}</label>
+    <label className="block mb-1 ">{label}</label>
     <textarea
       {...register}
       placeholder={label}
-      className="w-full rounded-lg border border-[var(--border-color)]
-                 dark:border-[var(--border-color-two)]
-                 bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
-                 px-4 py-3 focus:outline-none
-                 focus:ring-2 focus:ring-[var(--color-primary)]
-                 dark:focus:ring-[var(--color-primary-dark)]"
+      className="w-full input-style text-color"
     />
   </div>
 );

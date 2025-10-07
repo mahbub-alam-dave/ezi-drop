@@ -53,7 +53,7 @@ callbacks: {
     const { provider, providerAccountId } = account;
     const { name, email, image } = user;
 
-    const usersCollection = await dbConnect("users");
+    const usersCollection = dbConnect("users");
     const existUser = await usersCollection.findOne({ email });
 
     if (!existUser) {
@@ -107,7 +107,28 @@ callbacks: {
 
     return true;
   },
-}
+  // ✅ Add JWT callback
+    async jwt({ token, user }) {
+      if (user?.email) {
+        const usersCollection = dbConnect("users");
+        const dbUser = await usersCollection.findOne({ email: user.email });
+
+        if (dbUser) {
+          token.role = dbUser.role || "user";
+          token.district = dbUser.district || null;
+        }
+      }
+      return token;
+    },
+    // ✅ Add Session callback
+    async session({ session, token }) {
+      if (token) {
+        session.user.role = token.role;
+        session.user.district = token.district;
+      }
+      return session;
+    },
+},
 
 
 }

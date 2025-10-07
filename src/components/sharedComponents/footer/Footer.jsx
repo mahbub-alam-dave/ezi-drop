@@ -5,6 +5,7 @@ import { MdEmail, MdLocalPhone, MdLocationOn } from "react-icons/md";
 import { FaYoutube, FaCcVisa, FaCcMastercard, FaCcPaypal } from "react-icons/fa6";
 import logo from "../../../app/assests/brandlogo.png";
 import Image from "next/image";
+import ChatBox from "@/components/customerServicesComponents/ChatBoxUi";
 
 export default function Footer() {
   const [showTop, setShowTop] = useState(false);
@@ -196,6 +197,7 @@ export default function Footer() {
           ↑
         </button>
       )}
+      <ChatBox />
     </footer>
   );
 }

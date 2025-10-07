@@ -9,6 +9,7 @@ export async function POST(req) {
       customer_email,
       customer_phone,
       customer_address,
+        parcelId,
     } = body;
 
     const data = {
@@ -17,10 +18,10 @@ export async function POST(req) {
       total_amount: amount,
       currency: "BDT",
       tran_id: "TRAN_" + new Date().getTime(),
-      success_url: "http://localhost:3000/paymentsystem/success",
-      fail_url: "http://localhost:3000/paymentsystem/fail",
-      cancel_url: "http://localhost:3000/paymentsystem/cancel",
-      ipn_url: "http://localhost:3000/api/ipn",
+      success_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/paymentsystem/success?parcelId=${parcelId}`,
+      fail_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/paymentsystem/fail`,
+      cancel_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/paymentsystem/cancel`,
+      ipn_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/ipn`,
       shipping_method: "NO",
       product_name: "Test Product",
       product_category: "Test",

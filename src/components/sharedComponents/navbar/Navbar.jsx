@@ -37,12 +37,16 @@ export default function Navbar() {
 
   const navLinks = (
     <>
+    
       <Link href={'/'}>Home</Link>
       <Link href={"/send-parcel"}>Send Parcel</Link>
-      <Link href={"/dashboard"}>Dashboard</Link>
+      {
+         status==="authenticated" &&
+        <Link href={"/dashboard"}>Dashboard</Link>
+      }
       <Link href={"/about"}>About</Link>
       <Link href={"/contact"}>Contact</Link>
-       {/* <Link href={"/paymentsystem/mainpoint"}>payment</Link> */}
+     
    
     </>
   );
@@ -67,7 +71,7 @@ export default function Navbar() {
       }
     </div>
           <button className="hidden md:block" onClick={toggleTheme}>
-            {dark ? "☀️ Light" : "🌙 Dark"}
+            {dark ? "☀️" : "🌙"}
           </button>{" "}
           <div className="md:hidden" onClick={handleMenuButton}>
             <CiMenuBurger size={28} />

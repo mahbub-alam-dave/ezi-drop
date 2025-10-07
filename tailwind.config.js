@@ -25,6 +25,15 @@ module.exports = {
         "2xl": "1536px",
         "ml": "875px",   // ✅ custom
       },
+      keyframes: {
+        pulseScale: {
+          "0%, 100%": { transform: "scale(1)", opacity: "1" },
+          "50%": { transform: "scale(1.1)", opacity: "0.8" },
+        },
+      },
+      animation: {
+        pulseScale: "pulseScale 1.5s ease-in-out infinite",
+      },
     },
   },
   plugins: [
