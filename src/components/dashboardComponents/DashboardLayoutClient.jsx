@@ -33,8 +33,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
 
  // ✅ শুধু একবার useSession()
   const { data: session, status } = useSession();
-  console.log(session, status)
-  console.log(session?.user?.role, session?.user?.district)
+  // console.log(session?.user?.role, session?.user?.district)
 
   const linkClass = (path) =>
     `px-6 py-2 rounded-md transition-colors duration-200
