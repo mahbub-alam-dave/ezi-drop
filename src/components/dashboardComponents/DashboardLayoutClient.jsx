@@ -18,7 +18,7 @@ import {
   FaComment,
   FaUserPlus,
   FaTachometerAlt,
-  FaChartLine,
+  FaSearch,
 } from "react-icons/fa";
 import { VscCommentUnresolved } from "react-icons/vsc";
 import ThemeToggle from "../sharedComponents/navbar/Toggle";
@@ -32,7 +32,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
 
  // ✅ শুধু একবার useSession()
   const { data: session, status } = useSession();
-
+  console.log(session, status)
   console.log(session?.user?.role, session?.user?.district)
 
   const linkClass = (path) =>
@@ -151,6 +151,14 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaBox className="inline-block mr-2" />
           Send Parcel
         </Link>
+        {/* Track Parcel */}
+        <Link
+          href="/dashboard/track-parcel"
+          className={linkClass("/dashboard/track-parcel")}
+        >
+          <FaSearch className="inline-block mr-2" />
+          Track Parcel
+        </Link>
         <Link
           href="/dashboard/orders-history"
           className={linkClass("/dashboard/orders-history")}
@@ -165,7 +173,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaUser className="inline-block mr-2" />
           Profile
         </Link>
-          <Link
+        <Link
           href="/dashboard/resulation-center"
           className={linkClass("/dashboard/resulation-center")}
         >
@@ -227,7 +235,10 @@ const DashboardLayoutClient = ({ userData, children }) => {
       ? dashboardLinks.adminLinks
       : status === "authenticated" && userData.role === "rider"
         ? dashboardLinks.riderLinks
-        : dashboardLinks.userLinks;
+        : status === "authenticated" && userData.role === "support_agent"
+          ? dashboardLinks.districtAgentLinks
+          : dashboardLinks.userLinks;
+
   return (
     <div className="bg-gray-50 dark:bg-black">
       {/* ---- Topbar / Mobile Nav ---- */}
