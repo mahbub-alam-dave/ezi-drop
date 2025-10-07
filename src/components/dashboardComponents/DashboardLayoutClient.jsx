@@ -27,6 +27,10 @@ const DashboardLayoutClient = ({ userData, children }) => {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  //   const status = "authenticated"
+  //   const role = "admin"
+
+ // ✅ শুধু একবার useSession()
   const { data: session, status } = useSession();
   console.log(session, status)
   console.log(session?.user?.role, session?.user?.district)
@@ -56,7 +60,10 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaUsers className="inline-block mr-2" />
           Manage Users
         </Link>
-        <Link href="/assign-riders" className={linkClass("/assign-riders")}>
+        <Link
+          href="/assign-riders"
+          className={linkClass("/assign-riders")}
+        >
           <FaMotorcycle className="inline-block mr-2" />
           Assign Riders
         </Link>
@@ -96,6 +103,11 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaTachometerAlt className="inline-block mr-2" />
           Rider Dashboard
         </Link>
+        <Link href="/dashboard/performance" className={linkClass("/dashboard/performance")}>
+          <FaChartLine className="inline-block mr-2" />
+          Performance
+        </Link>
+        
         <Link href="/dashboard/order" className={linkClass("/dashboard/order")}>
           <FaTruck className="inline-block mr-2" />
           Order
