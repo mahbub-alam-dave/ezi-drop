@@ -29,20 +29,20 @@ export async function POST(request) {
 
     const newParcel = {
       ...body,
-      payment: "pending",            // default payment status
+      payment: "panding",
+      status:"panding",
       parcelId: generateParcelId(),  // unique parcel ID
       createdAt: new Date(),
     };
 
     const result = await collection.insertOne(newParcel);
-
     return NextResponse.json(
       {
         message: "Parcel saved successfully",
         id: result.insertedId,
         parcelId: newParcel.parcelId, // return generated ID
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("Error saving parcel:", error);

@@ -1,6 +1,6 @@
 // ...existing code...
 "use client";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
@@ -18,8 +18,9 @@ import {
   FaComment,
   FaUserPlus,
   FaTachometerAlt,
-  FaChartLine,
+  FaSearch,
 } from "react-icons/fa";
+import { FaChartLine } from "react-icons/fa";
 import { VscCommentUnresolved } from "react-icons/vsc";
 import ThemeToggle from "../sharedComponents/navbar/Toggle";
 
@@ -30,17 +31,17 @@ const DashboardLayoutClient = ({ userData, children }) => {
   //   const status = "authenticated"
   //   const role = "admin"
 
- // ✅ শুধু একবার useSession()
+  // ✅ শুধু একবার useSession()
   const { data: session, status } = useSession();
-
-  console.log(session?.user?.role, session?.user?.district)
+  // console.log(session?.user?.role, session?.user?.district)
 
   const linkClass = (path) =>
     `px-6 py-2 rounded-md transition-colors duration-200
-     ${pathname === path
-      ? "bg-[var(--color-primary)] text-white dark:bg-[var(--color-primary-dark)]"
-      : "hover:bg-blue-200  dark:hover:bg-blue-300"
-    }`;
+     ${
+       pathname === path
+         ? "bg-[var(--color-primary)] text-white dark:bg-[var(--color-primary-dark)]"
+         : "hover:bg-blue-200  dark:hover:bg-blue-300"
+     }`;
 
   // dashboard links for roles — merged so each role has its chat link
   const dashboardLinks = {
@@ -60,10 +61,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaUsers className="inline-block mr-2" />
           Manage Users
         </Link>
-        <Link
-          href="/assign-riders"
-          className={linkClass("/assign-riders")}
-        >
+        <Link href="/assign-riders" className={linkClass("/assign-riders")}>
           <FaMotorcycle className="inline-block mr-2" />
           Assign Riders
         </Link>
@@ -103,11 +101,14 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaTachometerAlt className="inline-block mr-2" />
           Rider Dashboard
         </Link>
-        <Link href="/dashboard/performance" className={linkClass("/dashboard/performance")}>
+        <Link
+          href="/dashboard/performance"
+          className={linkClass("/dashboard/performance")}
+        >
           <FaChartLine className="inline-block mr-2" />
           Performance
         </Link>
-        
+
         <Link href="/dashboard/order" className={linkClass("/dashboard/order")}>
           <FaTruck className="inline-block mr-2" />
           Order
@@ -151,6 +152,14 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaBox className="inline-block mr-2" />
           Send Parcel
         </Link>
+        {/* Track Parcel */}
+        <Link
+          href="/dashboard/track-parcel"
+          className={linkClass("/dashboard/track-parcel")}
+        >
+          <FaSearch className="inline-block mr-2" />
+          Track Parcel
+        </Link>
         <Link
           href="/dashboard/orders-history"
           className={linkClass("/dashboard/orders-history")}
@@ -165,7 +174,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaUser className="inline-block mr-2" />
           Profile
         </Link>
-          <Link
+        <Link
           href="/dashboard/resulation-center"
           className={linkClass("/dashboard/resulation-center")}
         >
@@ -219,15 +228,18 @@ const DashboardLayoutClient = ({ userData, children }) => {
           Resulation Center
         </Link>
       </>
-    )
+    ),
   };
 
   const renderLinks =
-    (status === "authenticated" && userData.role === "admin")
+    status === "authenticated" && userData.role === "admin"
       ? dashboardLinks.adminLinks
       : status === "authenticated" && userData.role === "rider"
-        ? dashboardLinks.riderLinks
-        : dashboardLinks.userLinks;
+      ? dashboardLinks.riderLinks
+      : status === "authenticated" && userData.role === "support_agent"
+      ? dashboardLinks.districtAgentLinks
+      : dashboardLinks.userLinks;
+
   return (
     <div className="bg-gray-50 dark:bg-black">
       {/* ---- Topbar / Mobile Nav ---- */}
@@ -262,7 +274,17 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <h2 className="text-2xl font-bold text-color">Ezi Drop</h2>
         </Link>
         <nav className="space-y-3 flex flex-col mt-6">{renderLinks}</nav>
-        <div className="px-6 mt-4">
+
+        
+          {status === "authenticated" && (
+            <button
+              onClick={() => signOut()}
+              className="hidden w-full mt-4 sm:block btn bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] rounded-sm text-white border-none"
+            >
+              Logout
+            </button>
+          )}
+          <div className="px-6 mt-4 flex flex-col gap-4 items-start">
           <ThemeToggle />
         </div>
       </aside>

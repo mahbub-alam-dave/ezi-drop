@@ -1,5 +1,6 @@
 // components/TicketChatClient.jsx
 "use client";
+import ChatSkeleton from "@/components/loaders/skeletons/ChatSkeleton";
 import { useEffect, useState, useRef } from "react";
 
 export default function TicketChatClient({
@@ -10,6 +11,7 @@ export default function TicketChatClient({
   const [ticket, setTicket] = useState({});
   const [input, setInput] = useState("");
   const [uiMessages, setUiMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
   const refInterval = useRef(null);
   const messagesEndRef = useRef(null);
 
@@ -18,12 +20,19 @@ export default function TicketChatClient({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [ticket?.messages || []]);
 
+  // Fetch ticket data
   async function fetchTicket() {
-    const res = await fetch(`/api/tickets/${ticketId}`);
-    if (res.ok) {
-      const { ticket } = await res.json();
-      setTicket(ticket);
-      setUiMessages(ticket);
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/tickets/${ticketId}`);
+      if (res.ok) {
+        const { ticket } = await res.json();
+        setTicket(ticket);
+      }
+    } catch (error) {
+      console.error("Error fetching ticket:", error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -51,6 +60,13 @@ export default function TicketChatClient({
   console.log(input);
 
   // if (!ticket) return <div className="">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="fixed h-[450px] max-w-96 w-full bottom-60 right-5 z-5000 bg-white dark:bg-gray-800 border rounded-lg shadow-lg">
+        <ChatSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="fixed max-w-96 w-full  bottom-60 right-5 z-5000 bg-white dark:bg-gray-800 border rounded-lg shadow-lg">

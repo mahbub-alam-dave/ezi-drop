@@ -1,7 +1,11 @@
 "use client"
+import { useSession } from 'next-auth/react';
 import React from 'react';
 
 const OverviewHeader = () => {
+
+  const {data: session, status} = useSession()
+
     // ========== EXPORT HANDLER ==========
   const exportData = (format) => {
     alert(`Exporting as ${format.toUpperCase()}... (simulated)`);
@@ -10,7 +14,11 @@ const OverviewHeader = () => {
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Smart Courier Admin
+            {
+            session?.user?.role === "support_agent" && status === "authenticated" ?
+            `District Agent (${session?.user?.district})`
+            : "Ezi Drop Admin"
+            }
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Real-time dashboard for intelligent delivery operations</p>
         </div>

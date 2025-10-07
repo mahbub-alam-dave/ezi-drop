@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-export default function useLoadingSpinner(message = "Loading...") {
+export default function UseLoadingSpinner(message = "Loading...") {
   return useMemo(() => {
     
     return (

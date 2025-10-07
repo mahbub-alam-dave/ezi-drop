@@ -71,7 +71,7 @@ export default function Navbar() {
       }
     </div>
           <button className="hidden md:block" onClick={toggleTheme}>
-            {dark ? "☀️ Light" : "🌙 Dark"}
+            {dark ? "☀️" : "🌙"}
           </button>{" "}
           <div className="md:hidden" onClick={handleMenuButton}>
             <CiMenuBurger size={28} />

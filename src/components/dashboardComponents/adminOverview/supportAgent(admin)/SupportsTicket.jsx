@@ -71,8 +71,7 @@ const SupportsTicket = ({ displayArea }) => {
               >
                 <div className="flex justify-between items-start mb-1">
                   <div className="flex gap-4">
-                    <span className="font-medium text-slate-800 dark:text-white">
-                      {ticket?.ticketId}
+                    <span className="font-medium text-slate-800 dark:text-white"> Id: {ticket?.ticketId}
                     </span>
                     <span
                       className={`text-xs px-2 py-1 rounded-full ${
@@ -108,10 +107,10 @@ const SupportsTicket = ({ displayArea }) => {
                     {ticket.priority}
                   </span>
                 </div>
-                <div className="flex justify-between items-center flex-col  sm:flex-row gap-4 mt-2 cursor-pointer">
+                <div className="flex items-center flex-col sm:flex-row gap-4 mt-2 cursor-pointer">
                 <button
                   onClick={() => handleAgentChat(ticket.ticketId)}
-                  className="px-4 py-1 rounded-full background-color-primary border-none text-sm font-normal text-white"
+                  className="px-4 py-1 cursor-pointer rounded-full background-color-primary border-none text-sm font-normal text-white"
                 >
                   Open on chat
                 </button>

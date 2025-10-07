@@ -4,13 +4,14 @@ import { dbConnect } from "@/lib/dbConnect";
 
 export async function GET(req, { params }) {
   try {
+   const { id } = params; // ✅ ঠিকভাবে params destructure করা
     const collection = dbConnect("parcels");
-    const parcel = await collection.findOne({ _id: new ObjectId(params.id) });
+    const parcel = await collection.findOne({ _id: new ObjectId(id) });
 
     if (!parcel) {
       return NextResponse.json({ error: "Parcel not found" }, { status: 404 });
     }
-
+    // console.log(parcel)
     return NextResponse.json(parcel);
   } catch (error) {
     console.error(error);
