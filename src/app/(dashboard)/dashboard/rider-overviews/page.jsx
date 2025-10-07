@@ -12,7 +12,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-export default function RiderOverviewPage() {
+
+export default function RiderOverviewsPage() {
   const [date, setDate] = useState(new Date());
 
   const riderName = "Sefat";
@@ -30,7 +31,7 @@ export default function RiderOverviewPage() {
     { id: 3, parcelId: "PCK-103", status: "Pending", date: "2025-09-22" },
   ];
 
-  
+
   // RadialBarChart data
   const radialData = [
     { name: "Today", value: 65, fill: "#3b82f6" },
@@ -39,7 +40,7 @@ export default function RiderOverviewPage() {
   ];
 
   return (
-    <div className="space-y-8 text-color p-6">
+    <div className="space-y-8 text-color">
       {/* Heading */}
       <div>
         <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -50,6 +51,7 @@ export default function RiderOverviewPage() {
           Here’s a quick look at your delivery performance today.
         </p>
       </div>
+
 
 
       {/* Revenue Statistics Section with RadialBarChart */}
@@ -158,6 +160,8 @@ export default function RiderOverviewPage() {
           </table>
         </div>
       </div>
+
+      
     </div>
   );
 }
