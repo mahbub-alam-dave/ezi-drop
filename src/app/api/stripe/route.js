@@ -23,8 +23,8 @@ export async function POST(req) {
           quantity: 1,
         },
       ],
-      success_url: `http://localhost:3000/paymentsystem/success?parcelId=${parcelId}`,
-      cancel_url: "http://localhost:3000/paymentsystem/cancel",
+      success_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/paymentsystem/success?parcelId=${parcelId}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/paymentsystem/cancel`,
     });
 
     return new Response(JSON.stringify({ url: session.url }), {
