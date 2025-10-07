@@ -331,27 +331,3 @@ const TextAreaField = ({ label, register }) => (
 );
 
 export default SendParcel;
-
-
-/* rounded-lg border border-[var(--border-color)]
-                 dark:border-[var(--border-color-two)]
-                 bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
-                 px-4 py-3 focus:outline-none
-                 focus:ring-2 focus:ring-[var(--color-primary)]
-                 dark:focus:ring-[var(--color-primary-dark)] */
-
-// text-area
-/* rounded-lg border border-[var(--border-color)]
-                 dark:border-[var(--border-color-two)]
-                 bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
-                 px-4 py-3 focus:outline-none
-                 focus:ring-2 focus:ring-[var(--color-primary)]
-                 dark:focus:ring-[var(--color-primary-dark)] */
-
-// select
-/* rounded-lg border border-[var(--border-color)]
-                 dark:border-[var(--border-color-two)]
-                 bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
-                 px-4 py-3 focus:outline-none
-                 focus:ring-2 focus:ring-[var(--color-primary)]
-                 dark:focus:ring-[var(--color-primary-dark)] */
