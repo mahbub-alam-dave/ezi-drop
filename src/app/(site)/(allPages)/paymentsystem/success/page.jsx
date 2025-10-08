@@ -7,7 +7,7 @@ export default function SuccessPage() {
   const parcelId = searchParams.get("parcelId"); // parcelId  from url 
   const router = useRouter();
 
-  useEffect(() => {
+/*   useEffect(() => {
     if (parcelId) {
       fetch(`/api/updatePayment/${parcelId}`, {
         method: "PUT",
@@ -18,7 +18,7 @@ export default function SuccessPage() {
         })
         .catch((err) => console.error(err));
     }
-  }, [parcelId]);
+  }, [parcelId]); */
 
   return (
     <div className="flex flex-col justify-center items-center h-screen">

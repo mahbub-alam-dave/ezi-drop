@@ -5,8 +5,8 @@ import nodemailer from "nodemailer";
 
 export async function PUT(req, { params }) {
   try {
-    const parcels = await dbConnect("parcels");
-    const riders = await dbConnect("rider-applications");
+    const parcels = dbConnect("parcels");
+    const riders = dbConnect("rider-applications");
 
     // Parcel searching
     const parcel = await parcels.findOne({ _id: new ObjectId(params.id) });

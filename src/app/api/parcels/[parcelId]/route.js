@@ -3,7 +3,7 @@ import { dbConnect } from "@/lib/dbConnect";
 
 export async function GET(req, { params }) {
   try {
-   const { parcelId } = params; // ✅ ঠিকভাবে params destructure করা
+   const { parcelId } = await params; // ✅ ঠিকভাবে params destructure করা
     const collection = dbConnect("parcels");
     const parcel = await collection.findOne({ parcelId });
 

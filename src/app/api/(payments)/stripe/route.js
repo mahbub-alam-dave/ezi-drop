@@ -11,6 +11,8 @@ export async function POST(req) {
     const parcel = await dbConnect("parcels").findOne({ parcelId });
     const verifiedAmount = parcel.amount;
 
+    console.log(parcelId, verifiedAmount)
+
     const amountInPoisha = Math.round(Number(verifiedAmount) * 100);
 
     const session = await stripe.checkout.sessions.create({
@@ -27,6 +29,10 @@ export async function POST(req) {
           quantity: 1,
         },
       ],
+            // ✅ Add parcel ID as metadata
+      metadata: {
+        parcelId: parcelId,
+      },
       success_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/paymentsystem/success?parcelId=${parcelId}`,
       cancel_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/paymentsystem/cancel`,
     });

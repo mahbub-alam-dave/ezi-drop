@@ -48,7 +48,7 @@ const handlePayment = async (e) => {
   e.preventDefault();
   setLoading(true);
  const paymentData = { ...formData, parcelId };
- console.log(paymentData)
+ console.log(parcelId)
   if (paymentMethod === "SSLCommerz") {
     // SSLCommerz Payment
     const res = await fetch("/api/payment", {
