@@ -15,7 +15,7 @@ export async function POST(req) {
     const data = {
       store_id: process.env.STORE_ID,
       store_passwd: process.env.STORE_PASS,
-      total_amount: amount,
+      total_amount: Number(amount),
       currency: "BDT",
       tran_id: "TRAN_" + new Date().getTime(),
       success_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/paymentsystem/success?parcelId=${parcelId}`,
@@ -26,13 +26,13 @@ export async function POST(req) {
       product_name: "Test Product",
       product_category: "Test",
       product_profile: "general",
-      cus_name: customer_name,
-      cus_email: customer_email,
+      cus_name: customer_name || null,
+      cus_email: customer_email || null,
       cus_add1: customer_address || "Customer Address",
       cus_city: "Dhaka",
       cus_postcode: "1000",
       cus_country: "Bangladesh",
-      cus_phone: customer_phone,
+      cus_phone: customer_phone || null,
       cus_fax: "",
       multi_card_name: "mastercard,visacard,amex",
       value_a: "ref001",
@@ -40,7 +40,7 @@ export async function POST(req) {
       value_c: "ref003",
       value_d: "ref004",
     };
-
+// https://sandbox.sslcommerz.com/gwprocess/v4/api.php
     const response = await axios.post(
       "https://sandbox.sslcommerz.com/gwprocess/v4/api.php",
       new URLSearchParams(data).toString(),

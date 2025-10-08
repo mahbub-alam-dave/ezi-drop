@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { Star as StarIcon } from "lucide-react";
 import Swal from "sweetalert2";
-import UseLoadingSpinner from "@/Hooks/useLoadingSpinner";
+import useLoadingSpinner from "@/Hooks/useLoadingSpinner";
+
 
 
 export default function UserRating() {
@@ -54,7 +55,7 @@ export default function UserRating() {
   };
 
   if (loading)
-    return <UseLoadingSpinner />
+    return useLoadingSpinner
 
   
   return (
