@@ -121,6 +121,7 @@ export default function RiderDashboard() {
 
   if (loading)
     return (
+
        <div className="p-6 space-y-10 animate-pulse">
 
       {/*  Title */}
@@ -170,12 +171,15 @@ export default function RiderDashboard() {
         ))}
       </div>
     </div>
+
     );
 
   if (error)
     return (
       <div className="flex justify-center items-center h-screen text-red-500 text-lg">
         you are not a rider
+      
+
       </div>
     );
 
