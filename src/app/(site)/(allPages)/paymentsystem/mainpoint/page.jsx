@@ -18,6 +18,9 @@ export default function PaymentPage() {
 
   const [parcel, setParcel] = useState(null);
 
+  console.log(parcelId)
+  console.log(parcel)
+
   useEffect(() => {
     if (parcelId) {
       fetch(`/api/parcels/${parcelId}`)
@@ -25,7 +28,8 @@ export default function PaymentPage() {
         .then((data) => {
           setParcel(data);
           setFormData({
-            amount: data.cost || "",
+            amount: data.amount || "",
+            currency: data.currency || "bdt",
             customer_name: data.senderName || "",
             customer_email: data.senderEmail || "",
             customer_phone: data.senderPhone || "",
@@ -44,6 +48,7 @@ const handlePayment = async (e) => {
   e.preventDefault();
   setLoading(true);
  const paymentData = { ...formData, parcelId };
+ console.log(paymentData)
   if (paymentMethod === "SSLCommerz") {
     // SSLCommerz Payment
     const res = await fetch("/api/payment", {

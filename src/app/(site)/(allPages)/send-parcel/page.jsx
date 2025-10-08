@@ -88,7 +88,10 @@ const onSubmit = async (data) => {
     });
 
     if (parcelRes.ok) {
-      alert("Parcel submitted successfully!");
+      // alert("Parcel submitted successfully!");
+      setShowModal(true)
+      const data = await parcelRes.json();
+      setParcelId(data.parcelId)
       reset();
     } else {
       const errData = await parcelRes.json();

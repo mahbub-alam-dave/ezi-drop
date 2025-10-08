@@ -8,6 +8,22 @@ function generateParcelId() {
   return `EziDrop${timestamp}${randomStr}`;
 }
 
+function calculateCost(parcelData) {
+  const { pickupDistrict, deliveryDistrict, parcelType, weight } = parcelData
+  let baseCost = 0;
+  if (pickupDistrict === deliveryDistrict && parcelType === "Documents" && weight <= 5) {
+    baseCost += 60;
+  } else {
+    baseCost = pickupDistrict === deliveryDistrict ? 60 : 120;
+    if (weight <= 5) baseCost += 0;
+    else if (weight <= 15) baseCost += 40;
+    else if (weight <= 30) baseCost += 80;
+    else baseCost += 100;
+  }
+  return baseCost;
+}
+
+
 // Get Data
 export async function GET() {
   const collection = dbConnect("parcels");
@@ -27,10 +43,14 @@ export async function POST(request) {
     const body = await request.json(); // form data
     const collection = dbConnect("parcels");
 
+    const amount = calculateCost(body)
+
     const newParcel = {
       ...body,
-      payment: "panding",
-      status:"panding",
+      payment: "pending",
+      amount,
+      currency: "bdt",
+      status:"not_paid",
       parcelId: generateParcelId(),  // unique parcel ID
       createdAt: new Date(),
     };
