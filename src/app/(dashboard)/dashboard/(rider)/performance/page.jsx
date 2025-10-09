@@ -27,7 +27,7 @@ import UserRating from "@/components/UserRating/UserRating";
 export default function PerformancePage() {
   const [ratingSubmitted, setRatingSubmitted] = useState(false);
 
-  
+
   // const [data, setData] = useState(null);
 
   // // 🔄 Backend থেকে ডেটা ফেচ
@@ -113,7 +113,6 @@ export default function PerformancePage() {
     });
   }
 
-  
   // ⚠️ Low performance হলে warning
   if (successRate < 80 && !ratingSubmitted) {
     Swal.fire({
@@ -153,14 +152,14 @@ export default function PerformancePage() {
           color="from-emerald-400 to-cyan-500"
         />
         <MetricCard
-          title="Average Rating"
-          value={
-            <>
-              {avgRating} <Star className="inline-block text-yellow-500" size={18} />
-            </>
-          }
-          icon={<Star size={28} />}
-        />
+  title="Average Rating"
+  value={
+    <>
+      {avgRating} <Star className="inline-block text-yellow-500" size={18} />
+    </>
+  }
+  icon={null} 
+/>
         <MetricCard
           title="Total Points"
           value={data.totalPoints}
@@ -274,10 +273,21 @@ function MetricCard({ title, value, icon, progress, progressLabel, color }) {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-gray-500 dark:text-gray-400">{title}</p>
-          <p className="text-2xl font-bold">{value}</p>
+          <div className="text-2xl font-bold flex items-center gap-2">
+            {/* ✅ value এর ভিতরে শুধুই সংখ্যা বা JSX */}
+            {value}
+          </div>
         </div>
-        <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">{icon}</div>
+
+        {/* ✅ এখানে icon একবারই রেন্ডার হচ্ছে */}
+        {icon && (
+          <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
+            {icon}
+          </div>
+        )}
       </div>
+
+      {/* 📊 Progress Bar */}
       {progress && (
         <div className="mt-3">
           <div className="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
@@ -294,6 +304,7 @@ function MetricCard({ title, value, icon, progress, progressLabel, color }) {
     </div>
   );
 }
+
 
 function ChartCard({ title, children }) {
   return (
