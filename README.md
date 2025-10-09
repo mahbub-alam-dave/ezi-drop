@@ -1,5 +1,7 @@
 # Ezi Drop (Smart courier and delivery web application)
 
+* Ezi Drop is a smart courier and Delivery web application. 
+
 ## Getting Started
 
 First, run the development server:
