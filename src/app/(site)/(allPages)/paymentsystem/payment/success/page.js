@@ -1,24 +1,22 @@
-"use client";
+"use client"
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
 
 export default function SuccessPage() {
   const searchParams = useSearchParams();
-  const parcelId = searchParams.get("parcelId"); // parcelId  from url 
   const router = useRouter();
+  const parcelId = searchParams.get("parcelId");
 
-/*   useEffect(() => {
+useEffect(() => {
     if (parcelId) {
-      fetch(`/api/updatePayment/${parcelId}`, {
-        method: "PUT",
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((err) => console.error(err));
+      fetch(`/api/payment/confirmation/${parcelId}`)
+        .then(res => res.json())
+        .then(data => console.log("Payment updated:", data))
+        .catch(err => console.error(err));
+    } else {
+      console.error("No parcelId found in success URL");
     }
-  }, [parcelId]); */
+  }, [parcelId]);
 
   return (
     <div className="flex flex-col justify-center items-center h-screen">

@@ -40,9 +40,9 @@ export default function PaymentPage() {
     }
   }, [parcelId]);
 
-  const handleChange = (e) => {
+/*   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  }; */
 
 const handlePayment = async (e) => {
   e.preventDefault();
