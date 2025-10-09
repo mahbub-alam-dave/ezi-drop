@@ -53,7 +53,7 @@ export default function UserRating() {
   };
 
   if (loading)
-    return <UseLoadingSpinner />
+    return useLoadingSpinner
 
   
   return (
