@@ -40,18 +40,18 @@ export default function PaymentPage() {
     }
   }, [parcelId]);
 
-  const handleChange = (e) => {
+/*   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  }; */
 
 const handlePayment = async (e) => {
   e.preventDefault();
   setLoading(true);
  const paymentData = { ...formData, parcelId };
- console.log(paymentData)
+ console.log(parcelId)
   if (paymentMethod === "SSLCommerz") {
     // SSLCommerz Payment
-    const res = await fetch("/api/payment", {
+    const res = await fetch("/api/ssl-payment", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(paymentData),

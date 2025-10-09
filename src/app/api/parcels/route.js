@@ -47,10 +47,10 @@ export async function POST(request) {
 
     const newParcel = {
       ...body,
-      payment: "pending",
+      payment: "not_paid",
       amount,
       currency: "bdt",
-      status:"not_paid",
+      status:"not_picked",
       parcelId: generateParcelId(),  // unique parcel ID
       createdAt: new Date(),
     };

@@ -1,26 +1,29 @@
+import { dbConnect } from "@/lib/dbConnect";
 import axios from "axios";
 
 export async function POST(req) {
   try {
     const body = await req.json();
     const {
-      amount,
       customer_name,
       customer_email,
       customer_phone,
       customer_address,
-        parcelId,
+      parcelId,
     } = body;
+
+    const parcelData = await dbConnect("parcels").findOne({parcelId})
+    const amount = parcelData.amount;
 
     const data = {
       store_id: process.env.STORE_ID,
       store_passwd: process.env.STORE_PASS,
-      total_amount: Number(amount),
+      total_amount: amount,
       currency: "BDT",
       tran_id: "TRAN_" + new Date().getTime(),
-      success_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/paymentsystem/success?parcelId=${parcelId}`,
-      fail_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/paymentsystem/fail`,
-      cancel_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/paymentsystem/cancel`,
+      success_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/payment-success`,
+      fail_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/payment/fail`,
+      cancel_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/payment/cancel`,
       ipn_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/ipn`,
       shipping_method: "NO",
       product_name: "Test Product",
@@ -35,7 +38,7 @@ export async function POST(req) {
       cus_phone: customer_phone || null,
       cus_fax: "",
       multi_card_name: "mastercard,visacard,amex",
-      value_a: "ref001",
+      value_a: parcelId,
       value_b: "ref002",
       value_c: "ref003",
       value_d: "ref004",

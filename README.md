@@ -1,5 +1,7 @@
 # Ezi Drop (Smart courier and delivery web application)
 
+* Ezi Drop is a smart courier and Delivery web application. 
+
 ## Getting Started
 
 First, run the development server:
@@ -15,6 +17,7 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# Live link: https://ezi-drop.vercel.app/
 
 You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
 
