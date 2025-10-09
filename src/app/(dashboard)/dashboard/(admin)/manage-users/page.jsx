@@ -2,6 +2,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 // 1. Import Axios
 import axios from 'axios';
+import Loading from './userloader';
 
 // Define the API endpoint URL (Replace this with your actual user API endpoint)
 const USER_API_ENDPOINT = '/api/users'; 
@@ -81,9 +82,7 @@ export default function ManageRider() {
   // 4. Render Loading/Error States
   if (loading) {
     return (
-      <div className="p-4 sm:p-6 min-h-screen flex items-center justify-center">
-        <p className="text-xl font-medium text-blue-600">Loading users... 🔄</p>
-      </div>
+      <Loading/>
     );
   }
 
