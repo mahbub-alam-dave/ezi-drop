@@ -64,15 +64,61 @@ export default function RiderDashboard() {
 
   if (loading)
     return (
-      <div className="flex justify-center items-center h-screen text-xl text-gray-600">
-        Loading...
+       <div className="p-6 space-y-10 animate-pulse">
+
+      {/*  Title */}
+      <div className="h-8 bg-gray-300 rounded-lg w-1/4 mx-auto"></div>
+
+      {/*  3 Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="p-4 bg-gray-200 rounded-2xl flex flex-col space-y-4"
+          >
+            <div className="h-10 bg-gray-300 rounded w-1/2"></div>
+            <div className="h-20 bg-gray-300 rounded w-full"></div>
+            <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+          </div>
+        ))}
       </div>
+
+      {/*  Search Box */}
+      <div className="h-10 bg-gray-300 rounded w-full md:w-1/2"></div>
+
+      {/*  Table Section */}
+      <div className="bg-gray-200 rounded-2xl overflow-hidden">
+        {/* Table Header */}
+        <div className="grid grid-cols-5 gap-4 p-4 border-b border-gray-300">
+          <div className="h-5 bg-gray-300 rounded w-3/4"></div>
+          <div className="h-5 bg-gray-300 rounded w-3/4"></div>
+          <div className="h-5 bg-gray-300 rounded w-3/4"></div>
+          <div className="h-5 bg-gray-300 rounded w-3/4"></div>
+          <div className="h-5 bg-gray-300 rounded w-3/4"></div>
+        </div>
+
+        {/* Table Rows */}
+        {[1, 2, 3, 4, 5].map((row) => (
+          <div
+            key={row}
+            className="grid grid-cols-5 gap-4 p-4 border-b border-gray-200 items-center"
+          >
+            <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+            <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+            <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+            <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+            {/* Action Button */}
+            <div className="h-8 bg-gray-300 rounded-full w-16"></div>
+          </div>
+        ))}
+      </div>
+    </div>
     );
 
   if (error)
     return (
       <div className="flex justify-center items-center h-screen text-red-500 text-lg">
-        Error: {error}
+        you are not a rider
       </div>
     );
 

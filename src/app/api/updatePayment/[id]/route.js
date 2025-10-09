@@ -58,7 +58,7 @@ export async function PUT(req, { params }) {
       },
     });
 
-    const code = generateCode();
+   
 
     // Email HTML
     const htmlContent = `
@@ -91,7 +91,7 @@ export async function PUT(req, { params }) {
             }
 
             <div style="margin-top: 20px; padding: 10px; background-color: #f3f4f6; border-radius: 6px;">
-              <strong>Your Security Code:</strong> <span style="color: #4f46e5;">${code}</span>
+              <strong>Your percel code:</strong> <span style="color: #4f46e5;">${parcel.parcelId}</span>
             </div>
 
             <p style="margin-top: 20px;">Thank you for using our service!</p>
