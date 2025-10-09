@@ -17,15 +17,15 @@ import {
   Area,
 } from "recharts";
 import UserRating from "@/components/UserRating/UserRating";
-import LoadingSpinner from "@/hooks/useLoadingSpinner";
+import useLoadingSpinner from "@/hooks/useLoadingSpinner"; // ✅ Hook import
 
 export default function PerformancePage() {
   const [data, setData] = useState(null);
   const [ratingSubmitted, setRatingSubmitted] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // 🌀 useMemo দিয়ে Loading Spinner
-  const spinner = useMemo(() => LoadingSpinner("Loading performance data..."), []);
+  // ✅ Hook top-level এ কল করতে হবে
+  const spinner = useLoadingSpinner("Loading performance data...");
 
   // 🔄 Backend থেকে ডেটা ফেচ
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function PerformancePage() {
       .then((res) => res.json())
       .then((result) => {
         if (result.success && result.data?.length > 0) {
-          setData(result.data[0]); // ধরলাম প্রথম object
+          setData(result.data[0]); 
         } else {
           Swal.fire("Error", "Failed to load performance data", "error");
         }
@@ -42,22 +42,24 @@ export default function PerformancePage() {
       .finally(() => setLoading(false));
   }, []);
 
-  // 🔒 Data safe check
+  // 🔒 Loading / Empty Data হ্যান্ডেল
   if (loading) return spinner;
   if (!data) return <p className="text-center p-6">No performance data found.</p>;
 
   // 📈 ক্যালকুলেশন (safe)
   const successRate = useMemo(
     () =>
-      ((data?.successfulDeliveries ?? 0) / (data?.totalDeliveries ?? 1) * 100).toFixed(1),
-    [data?.successfulDeliveries, data?.totalDeliveries]
+      ((data?.successfulDeliveries ?? 0) /
+        (data?.totalDeliveries || 1)) *
+      100,
+    [data]
   );
 
   const avgRating = useMemo(() => {
     const ratings = data?.ratings ?? [];
     if (ratings.length === 0) return 0;
     return (ratings.reduce((sum, r) => sum + r, 0) / ratings.length).toFixed(2);
-  }, [data?.ratings]);
+  }, [data]);
 
   const pointsGoal = 5000;
   const pointsProgress = Math.min(
@@ -67,8 +69,8 @@ export default function PerformancePage() {
 
   // 🎯 SweetAlert Notifications
   useEffect(() => {
-    if (!ratingSubmitted) {
-      if ((data?.totalPoints ?? 0) >= pointsGoal) {
+    if (!ratingSubmitted && data) {
+      if (data.totalPoints >= pointsGoal) {
         Swal.fire({
           title: "🎉 Congratulations!",
           text: "You’ve reached your monthly points goal!",
@@ -108,7 +110,7 @@ export default function PerformancePage() {
         <MetricCard title="Total Deliveries" value={data.totalDeliveries ?? 0} icon={<Hash size={28} />} />
         <MetricCard
           title="Success Rate"
-          value={`${successRate}%`}
+          value={`${successRate.toFixed(1)}%`}
           icon={<CheckCircle size={28} />}
           progress={successRate}
           progressLabel="Based on successful vs total"
@@ -167,27 +169,6 @@ export default function PerformancePage() {
           <Breakdown label="Successful Deliveries" value={data.successfulDeliveries ?? 0} />
           <Breakdown label="Failed Deliveries" value={(data.totalDeliveries ?? 0) - (data.successfulDeliveries ?? 0)} />
           <Breakdown label="Total Ratings" value={data.ratings?.length ?? 0} />
-        </div>
-      </div>
-
-      {/* 🕒 Recent Daily Stats */}
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-4">
-        <h3 className="font-semibold mb-4">Recent Daily Stats</h3>
-        <div className="h-64 mb-6">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data.recentDaily ?? []}>
-              <defs>
-                <linearGradient id="colorPoints" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Area type="monotone" dataKey="points" stroke="#3b82f6" fillOpacity={1} fill="url(#colorPoints)" />
-            </AreaChart>
-          </ResponsiveContainer>
         </div>
       </div>
 
