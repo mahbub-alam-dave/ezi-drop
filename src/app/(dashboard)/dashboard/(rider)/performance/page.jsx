@@ -1,13 +1,8 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
-import {
-  Star,
-  CheckCircle,
-  Trophy,
-  Hash,
-} from "lucide-react";
+import { Star, CheckCircle, Trophy, Hash } from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -22,108 +17,76 @@ import {
   Area,
 } from "recharts";
 import UserRating from "@/components/UserRating/UserRating";
-// import useLoadingSpinner from "@/hooks/useLoadingSpinner";
+import LoadingSpinner from "@/hooks/useLoadingSpinner";
 
 export default function PerformancePage() {
+  const [data, setData] = useState(null);
   const [ratingSubmitted, setRatingSubmitted] = useState(false);
+  const [loading, setLoading] = useState(true);
 
+  // 🌀 useMemo দিয়ে Loading Spinner
+  const spinner = useMemo(() => LoadingSpinner("Loading performance data..."), []);
 
-  // const [data, setData] = useState(null);
+  // 🔄 Backend থেকে ডেটা ফেচ
+  useEffect(() => {
+    fetch("/api/performance")
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.success && result.data?.length > 0) {
+          setData(result.data[0]); // ধরলাম প্রথম object
+        } else {
+          Swal.fire("Error", "Failed to load performance data", "error");
+        }
+      })
+      .catch(() => Swal.fire("Error", "Server connection failed", "error"))
+      .finally(() => setLoading(false));
+  }, []);
 
-  // // 🔄 Backend থেকে ডেটা ফেচ
-  // useEffect(() => {
-  //   fetch("/api/performance")
-  //     .then((res) => res.json())
-  //     .then((result) => {
-  //       if (result.success) {
-  //         setData(result.data[0]); 
-  //       }
-  //     });
-  // }, []);
-  // if (!data) return useLoadingSpinner;
+  // 🔒 Data safe check
+  if (loading) return spinner;
+  if (!data) return <p className="text-center p-6">No performance data found.</p>;
 
-  // // 📈 ক্যালকুলেশন
-  // const successRate = useMemo(() => {
-  //   return ((data.successfulDeliveries / data.totalDeliveries) * 100).toFixed(1);
-  // }, [data]);
-
-  // const avgRating = useMemo(() => {
-  //   const sum = data.ratings.reduce((s, r) => s + r, 0);
-  //   return (sum / data.ratings.length).toFixed(2);
-  // }, [data]);
-
-  // const pointsGoal = 5000;
-  // const pointsProgress = Math.min(
-  //   100,
-  //   Math.round((data.totalPoints / pointsGoal) * 100)
-  // );
-
-
-  // 📊 ডেমো ডেটা (পরে API ফেচ করতে পারবেন)
-  const data = {
-    totalDeliveries: 1240,
-    successfulDeliveries: 1168,
-    ratings: [5, 4, 5, 4, 5, 3, 5, 4],
-    totalPoints: 4980,
-    monthly: [
-      { month: "Jan", deliveries: 90, success: 85, points: 280 },
-      { month: "Feb", deliveries: 100, success: 95, points: 300 },
-      { month: "Mar", deliveries: 110, success: 102, points: 320 },
-      { month: "Apr", deliveries: 95, success: 88, points: 260 },
-      { month: "May", deliveries: 130, success: 125, points: 380 },
-      { month: "Jun", deliveries: 140, success: 132, points: 420 },
-      { month: "Jul", deliveries: 150, success: 140, points: 440 },
-      { month: "Aug", deliveries: 160, success: 150, points: 460 },
-      { month: "Sep", deliveries: 165, success: 151, points: 500 },
-    ],
-    recentDaily: [
-      { date: "Oct 01", deliveries: 20, success: 18, points: 60, rating: 4.8 },
-      { date: "Oct 02", deliveries: 22, success: 21, points: 65, rating: 4.9 },
-      { date: "Oct 03", deliveries: 25, success: 23, points: 70, rating: 5.0 },
-      { date: "Oct 04", deliveries: 19, success: 16, points: 55, rating: 4.5 },
-      { date: "Oct 05", deliveries: 26, success: 25, points: 80, rating: 5.0 },
-      { date: "Oct 06", deliveries: 24, success: 22, points: 68, rating: 4.7 },
-    ],
-  };
-
-  // 📈 ক্যালকুলেশন
+  // 📈 ক্যালকুলেশন (safe)
   const successRate = useMemo(
-    () => ((data.successfulDeliveries / data.totalDeliveries) * 100).toFixed(1),
-    [data.totalDeliveries, data.successfulDeliveries]
+    () =>
+      ((data?.successfulDeliveries ?? 0) / (data?.totalDeliveries ?? 1) * 100).toFixed(1),
+    [data?.successfulDeliveries, data?.totalDeliveries]
   );
 
   const avgRating = useMemo(() => {
-    const sum = data.ratings.reduce((s, r) => s + r, 0);
-    return (sum / data.ratings.length).toFixed(2);
-  }, [data.ratings]);
+    const ratings = data?.ratings ?? [];
+    if (ratings.length === 0) return 0;
+    return (ratings.reduce((sum, r) => sum + r, 0) / ratings.length).toFixed(2);
+  }, [data?.ratings]);
 
   const pointsGoal = 5000;
   const pointsProgress = Math.min(
     100,
-    Math.round((data.totalPoints / pointsGoal) * 100)
+    Math.round(((data?.totalPoints ?? 0) / pointsGoal) * 100)
   );
 
-  // 🎯 Goal অর্জন হলে SweetAlert
-  if (data.totalPoints >= pointsGoal && !ratingSubmitted) {
-    Swal.fire({
-      title: "🎉 Congratulations!",
-      text: "You’ve reached your monthly points goal!",
-      icon: "success",
-      confirmButtonColor: "#3b82f6",
-    });
-  }
+  // 🎯 SweetAlert Notifications
+  useEffect(() => {
+    if (!ratingSubmitted) {
+      if ((data?.totalPoints ?? 0) >= pointsGoal) {
+        Swal.fire({
+          title: "🎉 Congratulations!",
+          text: "You’ve reached your monthly points goal!",
+          icon: "success",
+          confirmButtonColor: "#3b82f6",
+        });
+      } else if (successRate < 80) {
+        Swal.fire({
+          title: "⚠️ Low Performance",
+          text: "Your success rate is below 80%. Try to improve this month!",
+          icon: "warning",
+          confirmButtonColor: "#f97316",
+        });
+      }
+    }
+  }, [data, ratingSubmitted, successRate]);
 
-  // ⚠️ Low performance হলে warning
-  if (successRate < 80 && !ratingSubmitted) {
-    Swal.fire({
-      title: "⚠️ Low Performance",
-      text: "Your success rate is below 80%. Try to improve this month!",
-      icon: "warning",
-      confirmButtonColor: "#f97316",
-    });
-  }
-
-  // ⭐ User Rating সাবমিট হলে success alert
+  // ⭐ User Rating Submit
   const handleRatingSubmit = (rating) => {
     setRatingSubmitted(true);
     Swal.fire({
@@ -140,9 +103,9 @@ export default function PerformancePage() {
         Your Performance Dashboard
       </h1>
 
-      {/* 📦 টপ মেট্রিক কার্ডস */}
+      {/* 📦 Top Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard title="Total Deliveries" value={data.totalDeliveries} icon={<Hash size={28} />} />
+        <MetricCard title="Total Deliveries" value={data.totalDeliveries ?? 0} icon={<Hash size={28} />} />
         <MetricCard
           title="Success Rate"
           value={`${successRate}%`}
@@ -152,17 +115,16 @@ export default function PerformancePage() {
           color="from-emerald-400 to-cyan-500"
         />
         <MetricCard
-  title="Average Rating"
-  value={
-    <>
-      {avgRating} <Star className="inline-block text-yellow-500" size={18} />
-    </>
-  }
-  icon={null} 
-/>
+          title="Average Rating"
+          value={
+            <>
+              {avgRating} <Star className="inline-block text-yellow-500" size={18} />
+            </>
+          }
+        />
         <MetricCard
           title="Total Points"
-          value={data.totalPoints}
+          value={data.totalPoints ?? 0}
           icon={<Trophy size={28} />}
           progress={pointsProgress}
           progressLabel={`Goal: ${pointsGoal} pts`}
@@ -170,11 +132,11 @@ export default function PerformancePage() {
         />
       </div>
 
-      {/* 📈 চার্ট সেকশন */}
+      {/* 📊 Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ChartCard title="Monthly Deliveries">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data.monthly}>
+            <BarChart data={data.monthly ?? []}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
@@ -186,7 +148,7 @@ export default function PerformancePage() {
 
         <ChartCard title="Success & Points">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data.monthly}>
+            <LineChart data={data.monthly ?? []}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
@@ -198,24 +160,22 @@ export default function PerformancePage() {
         </ChartCard>
       </div>
 
-      {/* 📊 Breakdown */}
+      {/* 🧾 Breakdown */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-4">
         <h3 className="font-semibold mb-4">Quick Breakdown</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Breakdown label="Successful Deliveries" value={data.successfulDeliveries} />
-          <Breakdown label="Failed Deliveries" value={data.totalDeliveries - data.successfulDeliveries} />
-          <Breakdown label="Total Ratings" value={data.ratings.length} />
+          <Breakdown label="Successful Deliveries" value={data.successfulDeliveries ?? 0} />
+          <Breakdown label="Failed Deliveries" value={(data.totalDeliveries ?? 0) - (data.successfulDeliveries ?? 0)} />
+          <Breakdown label="Total Ratings" value={data.ratings?.length ?? 0} />
         </div>
       </div>
 
-      {/* 🕒 Recent Daily Stats Section */}
+      {/* 🕒 Recent Daily Stats */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-4">
         <h3 className="font-semibold mb-4">Recent Daily Stats</h3>
-
-        {/* Area Chart */}
         <div className="h-64 mb-6">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data.recentDaily}>
+            <AreaChart data={data.recentDaily ?? []}>
               <defs>
                 <linearGradient id="colorPoints" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
@@ -228,32 +188,6 @@ export default function PerformancePage() {
               <Area type="monotone" dataKey="points" stroke="#3b82f6" fillOpacity={1} fill="url(#colorPoints)" />
             </AreaChart>
           </ResponsiveContainer>
-        </div>
-
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="text-gray-600">
-              <tr>
-                <th className="p-2">Date</th>
-                <th className="p-2">Deliveries</th>
-                <th className="p-2">Success</th>
-                <th className="p-2">Points</th>
-                <th className="p-2">Avg Rating</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.recentDaily.map((row, idx) => (
-                <tr key={idx} className="border-t">
-                  <td className="p-2">{row.date}</td>
-                  <td className="p-2">{row.deliveries}</td>
-                  <td className="p-2">{row.success}</td>
-                  <td className="p-2">{row.points}</td>
-                  <td className="p-2">{row.rating}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
         </div>
       </div>
 
@@ -273,21 +207,10 @@ function MetricCard({ title, value, icon, progress, progressLabel, color }) {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-gray-500 dark:text-gray-400">{title}</p>
-          <div className="text-2xl font-bold flex items-center gap-2">
-            {/* ✅ value এর ভিতরে শুধুই সংখ্যা বা JSX */}
-            {value}
-          </div>
+          <div className="text-2xl font-bold flex items-center gap-2">{value}</div>
         </div>
-
-        {/* ✅ এখানে icon একবারই রেন্ডার হচ্ছে */}
-        {icon && (
-          <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
-            {icon}
-          </div>
-        )}
+        {icon && <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">{icon}</div>}
       </div>
-
-      {/* 📊 Progress Bar */}
       {progress && (
         <div className="mt-3">
           <div className="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
@@ -296,15 +219,12 @@ function MetricCard({ title, value, icon, progress, progressLabel, color }) {
               style={{ width: `${progress}%` }}
             />
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            {progressLabel}
-          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{progressLabel}</p>
         </div>
       )}
     </div>
   );
 }
-
 
 function ChartCard({ title, children }) {
   return (
