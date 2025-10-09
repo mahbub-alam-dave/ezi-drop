@@ -11,8 +11,8 @@ export async function POST(req) {
       });
     }
 
-    const parcelsCollection = dbConnect("parcels");
-    const ridersCollection = dbConnect("rider-applications");
+    const parcelsCollection = await dbConnect("parcels");
+    const ridersCollection = await dbConnect("rider-applications");
 
     // finding parcels
     const parcel = await parcelsCollection.findOne({ parcelId });
