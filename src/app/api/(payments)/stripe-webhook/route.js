@@ -35,13 +35,14 @@ export async function POST(req) {
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
       const parcelId = session.metadata?.parcelId;
+      const transactionId = session.metadata?.transactionId;
 
       console.log("✅ Webhook received for parcel:", parcelId);
 
       const db = dbConnect("parcels");
       await db.updateOne(
         { parcelId },
-        { $set: { payment: "paid", paymentDate: new Date() } }
+        { $set: { payment: "done", transactionId, paymentDate: new Date() } }
       );
 
       console.log(`💰 Payment marked as paid for parcel ${parcelId}`);

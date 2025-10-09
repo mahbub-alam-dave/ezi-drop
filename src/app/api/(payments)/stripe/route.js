@@ -32,9 +32,10 @@ export async function POST(req) {
             // ✅ Add parcel ID as metadata
       metadata: {
         parcelId: parcelId,
+        transactionId: "TRAN_" + new Date().getTime(), // ✅ Better naming
       },
-      success_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/paymentsystem/success?parcelId=${parcelId}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/paymentsystem/cancel`,
+      success_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/payment/success?parcelId=${parcelId}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/payment/cancel`,
     });
 
     return new Response(JSON.stringify({ url: session.url }), {

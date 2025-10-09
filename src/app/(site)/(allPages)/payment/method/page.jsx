@@ -51,7 +51,7 @@ const handlePayment = async (e) => {
  console.log(parcelId)
   if (paymentMethod === "SSLCommerz") {
     // SSLCommerz Payment
-    const res = await fetch("/api/payment", {
+    const res = await fetch("/api/ssl-payment", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(paymentData),

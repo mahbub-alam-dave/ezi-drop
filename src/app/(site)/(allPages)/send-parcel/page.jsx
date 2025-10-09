@@ -135,7 +135,7 @@ const onSubmit = async (data) => {
               <button
                 //
                 onClick={() =>
-                  router.push(`/paymentsystem/mainpoint?parcelId=${parcelId}`)
+                  router.push(`/payment/method?parcelId=${parcelId}`)
                 }
                 className="flex-1 rounded-lg border border-[var(--border-color)]
                  dark:border-[var(--border-color-two)]

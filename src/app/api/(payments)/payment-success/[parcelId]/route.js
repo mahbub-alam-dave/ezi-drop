@@ -3,7 +3,8 @@ import { dbConnect } from "@/lib/dbConnect";
 
 export async function GET(req, { params }) {
   try {
-    const { parcelId } = params;
+    const p = await params;
+    const parcelId = p.parcelId
 
     // Ensure DB connection
     const parcelsCollection = dbConnect("parcels");

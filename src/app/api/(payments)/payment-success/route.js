@@ -33,7 +33,7 @@ export async function POST(request) {
 
     // 4. Update Parcel Status in Database
     // Replace this with your actual database update logic (e.g., Prisma, Mongoose, SQL)
-    await dbConnect("parcels").updateOne({parcelId}, {$set: {payment: "paid", transactionId: tran_id, paymentDate: new Date()}})
+    await dbConnect("parcels").updateOne({parcelId}, {$set: {payment: "done", transactionId: tran_id, paymentDate: new Date()}})
     
     // Log success
     console.log(`Successfully updated parcel ${parcelId} to PAID with Tran ID: ${tran_id}`);
