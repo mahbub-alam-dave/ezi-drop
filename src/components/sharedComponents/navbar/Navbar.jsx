@@ -39,7 +39,6 @@ export default function Navbar() {
     <>
     
       <Link href={'/'}>Home</Link>
-      <Link href={'/order'}>order</Link>
       <Link href={"/send-parcel"}>Send Parcel</Link>
       {
          status==="authenticated" &&
@@ -72,7 +71,7 @@ export default function Navbar() {
       }
     </div>
           <button className="hidden md:block" onClick={toggleTheme}>
-            {dark ? "☀️ Light" : "🌙 Dark"}
+            {dark ? "☀️" : "🌙"}
           </button>{" "}
           <div className="md:hidden" onClick={handleMenuButton}>
             <CiMenuBurger size={28} />
