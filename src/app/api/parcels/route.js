@@ -9,9 +9,13 @@ function generateParcelId() {
 }
 
 function calculateCost(parcelData) {
-  const { pickupDistrict, deliveryDistrict, parcelType, weight } = parcelData
+  const { pickupDistrict, deliveryDistrict, parcelType, weight } = parcelData;
   let baseCost = 0;
-  if (pickupDistrict === deliveryDistrict && parcelType === "Documents" && weight <= 5) {
+  if (
+    pickupDistrict === deliveryDistrict &&
+    parcelType === "Documents" &&
+    weight <= 5
+  ) {
     baseCost += 60;
   } else {
     baseCost = pickupDistrict === deliveryDistrict ? 60 : 120;
@@ -23,6 +27,12 @@ function calculateCost(parcelData) {
   return baseCost;
 }
 
+async function getDistrictId(districtName) {
+  const district = await dbConnect("districts").findOne({
+    district: { $regex: `^${districtName}$`, $options: "i" }, // "i" = ignore case
+  });
+  return district ? district.districtId : null;
+}
 
 // Get Data
 export async function GET() {
@@ -43,15 +53,22 @@ export async function POST(request) {
     const body = await request.json(); // form data
     const collection = dbConnect("parcels");
 
-    const amount = calculateCost(body)
+    const [senderDistrictId, receiverDistrictId] = await Promise.all([
+      getDistrictId(body.pickupDistrict),
+      getDistrictId(body.deliveryDistrict),
+    ]);
+
+    const amount = calculateCost(body);
 
     const newParcel = {
       ...body,
       payment: "not_paid",
       amount,
       currency: "bdt",
-      status:"not_picked",
-      parcelId: generateParcelId(),  // unique parcel ID
+      status: "not_picked",
+      senderDistrictId,
+      receiverDistrictId,
+      parcelId: generateParcelId(), // unique parcel ID
       createdAt: new Date(),
     };
 
@@ -62,7 +79,7 @@ export async function POST(request) {
         id: result.insertedId,
         parcelId: newParcel.parcelId, // return generated ID
       },
-      { status: 201 },
+      { status: 201 }
     );
   } catch (error) {
     console.error("Error saving parcel:", error);
