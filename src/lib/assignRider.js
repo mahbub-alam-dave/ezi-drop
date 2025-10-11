@@ -11,13 +11,13 @@ export async function assignRiderForDelivery(db, parcel) {
   // find a rider under the same district
   const availableRider = await riders.findOne({
     role: "rider",
-    districtId: parcel.sender.districtId,
+    districtId: parcel.pickupDistrictId,
     isActive: true,
     currentLoad: { $lt: 10 } // example rule: max 10 parcels
   });
 
   if (!availableRider) {
-    console.warn("⚠️ No rider available for district", parcel.sender.districtId);
+    console.warn("⚠️ No rider available for district", parcel.pickupDistrictId);
     return;
   }
 
@@ -27,7 +27,9 @@ export async function assignRiderForDelivery(db, parcel) {
     {
       $set: {
         assignedRiderId: availableRider._id,
-        status: "assigned_to_rider",
+        // status: "assigned_to_rider",
+        status: "pending_rider_approval", // 👈 changed
+        riderApprovalStatus: "pending", // 👈 new
         updatedAt: new Date(),
       },
     }
@@ -47,13 +49,13 @@ export async function assignRiderToWarehouse(db, parcel) {
   // find a rider under the sender district
   const availableRider = await riders.findOne({
     role: "rider",
-    districtId: parcel.sender.districtId,
+    districtId: parcel.pickupDistrictId,
     isActive: true,
     currentLoad: { $lt: 10 },
   });
 
   if (!availableRider) {
-    console.warn("⚠️ No rider available for sender district", parcel.sender.districtId);
+    console.warn("⚠️ No rider available for sender district", parcel.pickupDistrictId);
     return;
   }
 
@@ -63,7 +65,10 @@ export async function assignRiderToWarehouse(db, parcel) {
     {
       $set: {
         assignedRiderId: availableRider._id,
-        status: "out_for_pickup_to_warehouse",
+        // status: "out_for_pickup_to_warehouse",
+        status: "pending_rider_approval", // 👈 changed
+        riderApprovalStatus: "pending", // 👈 new
+        deliveryType: "to_warehouse",
         updatedAt: new Date(),
       },
     }

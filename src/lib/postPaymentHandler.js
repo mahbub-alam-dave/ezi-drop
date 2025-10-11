@@ -26,6 +26,9 @@ export async function handlePostPayment(parcelId) {
       { $set: { status: "rider_assigned", secretCodeHash: hash, secretCodeExpiresAt: expires } }
     );
 
+    // assign rider for same district
+    await assignRiderForDelivery(parcel)
+
     // send to receiver
     if (parcel.receiverEmail) {
       await sendEmail(parcel.receiverEmail, "Your Delivery Code", `Your delivery code is: ${otp}`);
@@ -38,6 +41,8 @@ export async function handlePostPayment(parcelId) {
       { parcelId },
       { $set: { status: "out_for_pickup_to_warehouse", secretCodeHash: hash, secretCodeExpiresAt: expires } }
     );
+
+    await assignRiderToWarehouse(parcel)
 
     // find warehouse contact
     const warehouse = await dbConnect("warehouses").findOne({
