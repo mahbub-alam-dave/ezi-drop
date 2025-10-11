@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { redirect } from 'next/navigation';
 import { dbConnect } from '@/lib/dbConnect';
+import { handlePostPaymentFunctionality } from '@/lib/postPaymentHandler';
 
 
 // The SSLCommerz success_url MUST point to this API route:
@@ -9,11 +10,15 @@ import { dbConnect } from '@/lib/dbConnect';
 export async function POST(request) {
   let parcelId = ''; // Initialize outside try block for wider scope
 
+  // trackingId
+  const trackingId = generateTrackingNumber()
+
   try {
     // 1. Get the POST data from SSLCommerz. 
     // SSLCommerz sends data as application/x-www-form-urlencoded, so we use request.formData()
     const formData = await request.formData();
     const data = Object.fromEntries(formData);
+
 
     // 2. Extract crucial data for validation and update.
     // SSLCommerz often sends custom data back in fields like 'value_a', 'value_b', etc.
@@ -33,7 +38,8 @@ export async function POST(request) {
 
     // 4. Update Parcel Status in Database
     // Replace this with your actual database update logic (e.g., Prisma, Mongoose, SQL)
-    await dbConnect("parcels").updateOne({parcelId}, {$set: {payment: "done", transactionId: tran_id, paymentDate: new Date()}})
+    await dbConnect("parcels").updateOne({parcelId}, {$set: {payment: "done", transactionId: tran_id, trackingId, paymentDate: new Date()}});
+    handlePostPaymentFunctionality(parcelId)
     
     // Log success
     console.log(`Successfully updated parcel ${parcelId} to PAID with Tran ID: ${tran_id}`);

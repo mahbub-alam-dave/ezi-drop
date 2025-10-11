@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { dbConnect } from "@/lib/dbConnect";
+import { generateTrackingNumber } from "@/utility/trackingId";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2024-06-20",
@@ -15,7 +16,8 @@ export async function POST(req) {
   const sig = req.headers.get("stripe-signature");
   const payload = await req.text(); // must use raw text
 
-  console.log("✅ Stripe webhook request received!");
+  // trackingId
+  const trackingId = generateTrackingNumber()
 
   let event;
   try {
@@ -42,7 +44,7 @@ export async function POST(req) {
       const db = dbConnect("parcels");
       await db.updateOne(
         { parcelId },
-        { $set: { payment: "done", transactionId, paymentDate: new Date() } }
+        { $set: { payment: "done", transactionId, trackingId, paymentDate: new Date() } }
       );
 
       console.log(`💰 Payment marked as paid for parcel ${parcelId}`);

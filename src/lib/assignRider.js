@@ -12,7 +12,7 @@ export async function assignRiderForDelivery(db, parcel) {
   const availableRider = await riders.findOne({
     role: "rider",
     districtId: parcel.pickupDistrictId,
-    isActive: true,
+    working_status: "duty",
     currentLoad: { $lt: 10 } // example rule: max 10 parcels
   });
 
@@ -50,7 +50,7 @@ export async function assignRiderToWarehouse(db, parcel) {
   const availableRider = await riders.findOne({
     role: "rider",
     districtId: parcel.pickupDistrictId,
-    isActive: true,
+    working_status: "duty",
     currentLoad: { $lt: 10 },
   });
 
