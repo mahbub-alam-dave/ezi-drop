@@ -1,10 +1,11 @@
 
+import { ObjectId } from "mongodb";
 import { dbConnect } from "./dbConnect";
 
 // =========================
 // 1️⃣ Assign Rider (same district)
 // =========================
-export async function assignRiderForDelivery(db, parcel) {
+export async function assignRiderForDelivery(parcel) {
   const riders = dbConnect("users"); // assuming riders are stored in users collection
   const parcels = dbConnect("parcels");
 
@@ -12,8 +13,8 @@ export async function assignRiderForDelivery(db, parcel) {
   const availableRider = await riders.findOne({
     role: "rider",
     districtId: parcel.pickupDistrictId,
-    isActive: true,
-    currentLoad: { $lt: 10 } // example rule: max 10 parcels
+    working_status: "duty",
+    // currentLoad: { $lt: 10 } // example rule: max 10 parcels
   });
 
   if (!availableRider) {
@@ -42,7 +43,7 @@ export async function assignRiderForDelivery(db, parcel) {
 // =========================
 // 2️⃣ Assign Rider (cross district — deliver to warehouse)
 // =========================
-export async function assignRiderToWarehouse(db, parcel) {
+export async function assignRiderToWarehouse(parcel) {
   const riders = dbConnect("users");
   const parcels = dbConnect("parcels");
 
@@ -50,8 +51,8 @@ export async function assignRiderToWarehouse(db, parcel) {
   const availableRider = await riders.findOne({
     role: "rider",
     districtId: parcel.pickupDistrictId,
-    isActive: true,
-    currentLoad: { $lt: 10 },
+    working_status: "duty",
+    // currentLoad: { $lt: 10 },
   });
 
   if (!availableRider) {

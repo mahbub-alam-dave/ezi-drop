@@ -1,10 +1,10 @@
 import { ObjectId } from "mongodb";
 import { dbConnect } from "@/lib/dbConnect";
-import { assignRiderForDelivery, assignRiderToWarehouse } from "@/lib/rider"; // implement these helper functions
 import { generateOtp, hashOtp } from "./otp";
+import { assignRiderForDelivery, assignRiderToWarehouse } from "./assignRider";
 import { sendEmail } from "./email";
 
-export async function handlePostPayment(parcelId) {
+export async function handlePostPaymentFunctionality(parcelId) {
   const parcels = dbConnect("parcels");
 
   const parcel = await parcels.findOne({ parcelId });
@@ -15,46 +15,53 @@ export async function handlePostPayment(parcelId) {
 
   // generate OTP and hash
   const otp = generateOtp();
-  const hash = hashOtp(otp);
-  const expires = new Date(Date.now() + 24 * 3600 * 1000);
+  const otpHash = hashOtp(otp);
+  const otpExpiry = new Date(Date.now() + 24 * 3600 * 1000);
 
   // same-district delivery
-  if (parcel.senderDistrict === parcel.receiverDistrict) {
-    await assignRiderForDelivery(parcel.senderDistrict, parcel._id);
+  if (parcel.pickupDistrictId === parcel.deliveryDistrictId) {
+    // same district
+    await assignRiderForDelivery(parcel);
+
     await parcels.updateOne(
-      { parcelId },
-      { $set: { status: "rider_assigned", secretCodeHash: hash, secretCodeExpiresAt: expires } }
+      { _id: parcel._id },
+      { $set: { secretCodeHash: otpHash, secretCodeExpiresAt: otpExpiry } }
     );
 
-    // assign rider for same district
-    await assignRiderForDelivery(parcel)
-
-    // send to receiver
     if (parcel.receiverEmail) {
-      await sendEmail(parcel.receiverEmail, "Your Delivery Code", `Your delivery code is: ${otp}`);
+      await sendEmail({
+        to: parcel.receiverEmail, 
+        subject: "Your Delivery Code", 
+        text: `Your delivery code: ${otp}`
+    });
     }
+
+    console.log("✅ Same district delivery handled successfully");
 
   } else {
-    // cross-district
-    await assignRiderToWarehouse(parcel.senderDistrict, parcel._id);
+    // cross-district delivery
+    await assignRiderToWarehouse(parcel);
+
     await parcels.updateOne(
-      { parcelId },
-      { $set: { status: "out_for_pickup_to_warehouse", secretCodeHash: hash, secretCodeExpiresAt: expires } }
+      { _id: parcel._id },
+      {
+        $set: {
+          secretCodeHash: otpHash,
+          secretCodeExpiresAt: otpExpiry,
+        },
+      }
     );
 
-    await assignRiderToWarehouse(parcel)
-
-    // find warehouse contact
-    const warehouse = await dbConnect("warehouses").findOne({
-      districtId: parcel.senderDistrictId,
-    });
+    const warehouse = await dbConnect("wirehouses").findOne({ wirehouseId: parcel.pickupDistrictId });
     if (warehouse?.contactEmail) {
-      await sendEmail(
-        warehouse.contactEmail,
-        `Parcel incoming for warehouse ${parcel.senderDistrict}`,
-        `Your OTP for this incoming parcel: ${otp}`
-      );
+      await sendEmail({
+        to: warehouse.contactEmail,
+        subject: `Incoming parcel OTP for ${parcel.trackingId}`,
+        text: `Parcel ID: ${parcel.parcelId}\nOTP: ${otp}`
+    });
     }
+
+    console.log("📦 Cross-district delivery handled successfully");
   }
 
   console.log(`✅ Post-payment handled for parcel ${parcelId}`);
