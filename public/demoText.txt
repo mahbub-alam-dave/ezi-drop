@@ -1,0 +1,13 @@
+
+
+rider data
+{"_id":{"$oid":"68dd012d541abfe7a3cce5cb"},"name":"Farid Hossain","email":"farid.chattogram@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"rider","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759242673191"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"delivery_district":"Chattogram","working_status":"vacation"}
+
+admin
+{"_id":{"$oid":"68d657a7526dafde9f618cde"},"name":"Ezi Drop Admin","email":"ezidropadmin@gmail.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"admin","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1760018788607"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null}
+
+global rider
+{"_id":{"$oid":"68d657a7526dafde9f618cde"},"name":"Ezi Drop Admin","email":"ezidropadmin@gmail.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"admin","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1760018788607"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null}
+
+global user
+{"_id":{"$oid":"68d657fa526dafde9f618ce2"},"name":"Ezi Drop User","email":"ezidropuser@gmail.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"user","createdAt":"9/23/2025, 7:05:34 PM","updatedAt":{"$date":{"$numberLong":"1760161979023"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"district":"Mymensingh","phone":"01307594998","districtId":"ezi-drop-mymensingh-01"}

@@ -5,12 +5,14 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CiCamera } from "react-icons/ci";
 
-export default function ManageProfile({ userData }) {
+export default function ManageProfile({ userData, districts }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [userDetails, setUserDetails] = useState(userData) 
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [districts, setDistricts] = useState([]);
+  const [userDistrictId, setUserDistrictId] = useState("")
+  const [selectedDistrict, setSelectedDistrict] = useState({})
+  // const [districts, setDistricts] = useState([]);
   const [preview, setPreview] = useState(
     userData?.image || "https://i.ibb.co.com/twbgmXWg/user-4.png"
   );
@@ -22,7 +24,7 @@ export default function ManageProfile({ userData }) {
   const role = userData.role;
   const allDistricts = [];
 
-  useEffect(() => {
+ /*  useEffect(() => {
     async function fetchDistricts() {
       setIsLoading(true);
       setError(null);
@@ -45,14 +47,16 @@ export default function ManageProfile({ userData }) {
     if (status === "authenticated") {
       fetchDistricts();
     }
-  }, [status]);
+  }, [status]); */
 
-  if (status === "loading") return <p>Checking login...</p>;
-  if (status === "unauthenticated") {
+  // if (status === "loading") return <p>Checking login...</p>;
+/*   if (status === "unauthenticated") {
     router.push("/login");
-  }
+  } */
+ useEffect(() => {
+  if (status === "unauthenticated") router.push("/login");
+}, [status]);
 
-  districts?.map((d) => allDistricts.push(d.district));
 
   // Sample data for different roles
   const profileData = {
@@ -347,10 +351,10 @@ export default function ManageProfile({ userData }) {
         { name: "phone", label: "Phone Number", type: "tel", required: true },
         { name: "company", label: "Company", type: "text" },
         {
-          name: "district",
+          name: "districtId",
           label: "Your District",
           type: "select",
-          options: allDistricts,
+          options: districts,
           required: true,
         },
         { name: "birthDate", label: "Birth Date", type: "date" },
@@ -488,8 +492,19 @@ export default function ManageProfile({ userData }) {
     setFormData({});
   };
 
+    // ✅ Watch districtId and find the matching district
+  useEffect(() => {
+    if (formData.districtId) {
+      const found = districts.find((d) => d.districtId === formData.districtId);
+      setSelectedDistrict(found || null);
+    } else {
+      setSelectedDistrict(null);
+    }
+  }, [formData.districtId, districts]);
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -538,8 +553,11 @@ export default function ManageProfile({ userData }) {
 
     const updatedData = {
       ...formData,
+      district: selectedDistrict?.district || "",
       image: imageUrl, // ✅ imgbb link
     };
+
+    console.log(updatedData)
 
       const res = await fetch("/api/update-user", {
         method: "POST",
@@ -549,7 +567,7 @@ export default function ManageProfile({ userData }) {
       const data = await res.json();
       // setFormData(data.user)
       setUserDetails(data.user)
-      console.log("updated:", formData)
+      console.log("updated:", userData)
       closeEditModal();
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -582,12 +600,32 @@ export default function ManageProfile({ userData }) {
             onChange={handleInputChange}
             className="input-style"
           >
-            <option value="">Select {field.label}</option>
+            {/* <option value="">Select {field.label}</option>
             {field.options.map((option) => (
-              <option key={option} value={option}>
-                {option}
+              <option key={option.districtId} value={option.districtId}>
+                {option.district}
               </option>
-            ))}
+            ))} */}
+            <option value="">Select {field.label}</option>
+
+      {/* ✅ Handle both object-based and string-based options */}
+      {field.options.map((option, index) => {
+        if (typeof option === "string") {
+          // for ["Morning", "Afternoon", ...]
+          return (
+            <option key={index} value={option} className="background-color">
+              {option}
+            </option>
+          );
+        } else {
+          // for [{ districtId, district, ... }]
+          return (
+            <option key={option.districtId} value={option.districtId} className="background-color">
+              {option.district}
+            </option>
+          );
+        }
+      })}
           </select>
         );
 
@@ -663,9 +701,9 @@ export default function ManageProfile({ userData }) {
             <h1 className="text-3xl font-bold text-color flex items-center gap-3">
               <span>{config.icon}</span>
               {
-              userDetails.role === "admin" ? "Admin Profile" 
-              : userDetails.role === "rider" ? "Rider Profile"
-              : userDetails.role === "support_agent" ? "Support Agent Profile"
+              userDetails?.role === "admin" ? "Admin Profile" 
+              : userDetails?.role === "rider" ? "Rider Profile"
+              : userDetails?.role === "support_agent" ? "Support Agent Profile"
               : "User Profile"
               }
             </h1>
@@ -701,7 +739,7 @@ export default function ManageProfile({ userData }) {
               <div className="flex flex-col items-center text-center mb-6">
                 <div className="w-20 h-20 background-color-primary rounded-full flex items-center justify-center text-white text-2xl font-bold mb-4">
                   {
-                    userDetails.image ?
+                    userDetails?.image ?
                     <img src={userDetails?.image} alt="" className="w-full h-full rounded-full" />
                     : <span>{userDetails.name.charAt(0)}</span>
                   }
