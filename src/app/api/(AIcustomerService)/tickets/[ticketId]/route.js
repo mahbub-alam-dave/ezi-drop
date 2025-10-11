@@ -19,13 +19,13 @@ export async function GET(req, { params }) {
     // Determine caller role:
     const db = dbConnect("users");
 
-    const agent = await db.findOne({ email: session.user.email, role: "support_agent" });
+    const agent = await db.findOne({ email: session.user.email, role: "district_admin" });
     const user = await db.findOne({ email: session.user.email });
 
     // Authorization:
     if (agent) {
       // allow if agent assigned to same district OR agent.role is 'admin'/'ceo'
-      if (agent.role === "ceo" || agent.role === "support_agent" || agent.district === ticket.district) {
+      if (agent.role === "ceo" || agent.role === "district_admin" || agent.district === ticket.district) {
         return new Response(JSON.stringify({ ticket }), { headers: { "Content-Type": "application/json" } });
       }
       return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
@@ -56,7 +56,7 @@ export async function PATCH(req, { params }) {
 
     const ticketInfo = await dbConnect("supportTickets").findOne({ticketId})
 
-    const agent = await dbConnect("users").findOne({ email: session.user.email, role: "support_agent", district: ticketInfo.district });
+    const agent = await dbConnect("users").findOne({ email: session.user.email, role: "district_admin", district: ticketInfo.district });
 
     // only agent or admin can change status
     if (!agent) return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });

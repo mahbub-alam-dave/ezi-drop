@@ -1,0 +1,69 @@
+
+admin
+{"_id":{"$oid":"68d657a7526dafde9f618cde"},"name":"Ezi Drop Admin","email":"ezidropadmin@gmail.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"admin","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1760018788607"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null}
+
+global rider
+{"name":"Ezi Drop Rider","email":"ezidroprider@gmail.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"rider","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1760019721639"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"district":"Jhenaidah"}
+
+global user
+{"name":"Ezi Drop User","email":"ezidropuser@gmail.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"user","createdAt":"9/23/2025, 7:05:34 PM","updatedAt":{"$date":{"$numberLong":"1760161979023"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"district":"Mymensingh","phone":"01307594998","districtId":"ezi-drop-mymensingh-01"}
+
+
+supportAgent:
+[
+{"name":"Shamim Hossen","email":"agentdhaka@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"district_admin","districtId":"ezi-drop-dhaka-01","district":"Dhaka","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759813992731"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null},
+
+{"name":"Kamal Hossain","email":"agentkhulna@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"district_admin","districtId":"ezi-drop-khulna-01","district":"Khulna","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759288919539"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null},
+
+{"name":"Sourav Sarker","email":"agentsylhet@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"district_admin","districtId":"ezi-drop-sylhet-01","district":"Sylhet","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759288919539"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null},
+
+{"name":"Rafiq Ahmed","email":"agentchattogram@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"district_admin","districtId":"ezi-drop-chattogram-01","district":"Chattogram","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759288919539"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null},
+
+{"name":"Nazma Khatun","email":"agentbarishal@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"district_admin","districtId":"ezi-drop-barisal-01","district":"Barishal","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759288919539"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null},
+
+{"name":"Amina Begum","email":"agentrajshahi@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"district_admin","districtId":"ezi-drop-rajshahi-01","district":"Rajshahi","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759288919539"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null},
+
+{"name":"Farzana Yasmin","email":"agentmymensingh@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"district_admin","districtId":"ezi-drop-mymensingh-01","district":"Mymensingh","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759288919539"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null},
+
+{"name":"Anowar Hossain","email":"agentrangpur@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"district_admin","districtId":"ezi-drop-rangpur-01","district":"Rangpur","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759288919539"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null}
+]
+
+
+rider:
+
+[
+{"name":"Shahidul Islam","email":"shahidul.dhaka@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"rider","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759242673191"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"districtId":"ezi-drop-dhaka-01","district":"Dhaka","working_status":"vacation"},
+
+{"name":"Abul Bashar","email":"abulbashar.dhaka@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"rider","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759242673191"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"districtId":"ezi-drop-dhaka-01","district":"Dhaka","working_status":"duty"},
+
+{"name":"Rubina Akter","email":"rubina.rangpur@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"rider","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759242673191"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"districtId":"ezi-drop-rangpur-01","district":"Rangpur","working_status":"vacation"},
+
+{"name":"Mehedi Hasan","email":"mehedi.rangpur@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"rider","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759242673191"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"districtId":"ezi-drop-rangpur-01","district":"Rangpur","working_status":"duty"},
+
+{"name":"Rashida Akter","email":"rashida.rajshahi@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"rider","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759242673191"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"districtId":"ezi-drop-rajshahi-01","district":"Rajshahi","working_status":"duty"},
+
+{"name":"Kamrul Hasan","email":"kamrul.rajshahi@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"rider","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759242673191"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"districtId":"ezi-drop-rajshahi-01","district":"Rajshahi","working_status":"vacation"},
+
+{"name":"Jahanara Khatun","email":"jahanara.khulna@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"rider","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759242673191"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"districtId":"ezi-drop-khulna-01","district":"Khulna","working_status":"duty"},
+
+{"name":"Rashedul Karim","email":"rashedul.khulna@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"rider","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759242673191"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"districtId":"ezi-drop-khulna-01","district":"Khulna","working_status":"vacation"},
+
+{"name":"Sumaiya Sultana","email":"sumaiya.sylhet@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"rider","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759242673191"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"districtId":"ezi-drop-sylhet-01","district":"Sylhet","working_status":"duty"},
+
+{"name":"Habibur Rahman","email":"habibur.sylhet@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"rider","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759242673191"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"districtId":"ezi-drop-sylhet-01","district":"Sylhet","working_status":"vacation"},
+
+{"name":"Shafiqul Islam","email":"shafiqul.mymensingh@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"rider","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759242673191"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"districtId":"ezi-drop-mymensingh-01","district":"Mymensingh","working_status":"vacation"},
+
+{"name":"Tania Rahman","email":"tania.mymensingh@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"rider","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759242673191"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"districtId":"ezi-drop-mymensingh-01","district":"Mymensingh","working_status":"duty"},
+
+{"name":"Mizanur Rahman","email":"mizanur.chattogram@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"rider","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759242673191"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"districtId":"ezi-drop-chattogram-01","district":"Chattogram","working_status":"duty"},
+
+{"name":"Farid Hossain","email":"farid.chattogram@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"rider","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759242673191"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"districtId":"ezi-drop-chattogram-01","district":"Chattogram","working_status":"vacation"},
+
+{"name":"Nasrin Jahan","email":"nasrin.barishal@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"rider","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759242673191"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"districtId":"ezi-drop-barisal-01","district":"Barishal","working_status":"duty"},
+
+{"name":"Shah Alam","email":"shahalam.barishal@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"rider","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759242673191"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null,"districtId":"ezi-drop-barisal-01","delivery_district":"Barishal","working_status":"vacation"}
+]
+
+
+

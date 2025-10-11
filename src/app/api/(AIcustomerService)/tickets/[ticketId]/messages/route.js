@@ -19,13 +19,13 @@ export async function POST(req, { params }) {
     if (!ticket) return new Response(JSON.stringify({ error: "Ticket not found" }), { status: 404 });
 
     const db = dbConnect("users");
-    const agent = await db.findOne({ email: session.user.email, role: "support_agent" });
+    const agent = await db.findOne({ email: session.user.email, role: "district_admin" });
     const user = await db.findOne({ email: session.user.email });
 
     // Authorization rules:
-    if (senderRole === "support_agent") {
+    if (senderRole === "district_admin") {
       if (!agent) return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
-      if (!(agent.role === "ceo" || agent.role === "support_agent" || agent._id.toString() === ticket.assignedAgentId?.toString() || agent.district === ticket.district)) {
+      if (!(agent.role === "ceo" || agent.role === "district_admin" || agent._id.toString() === ticket.assignedAgentId?.toString() || agent.district === ticket.district)) {
         return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
       }
     } else if (senderRole === "user" || senderRole === "rider") {
@@ -51,7 +51,7 @@ export async function POST(req, { params }) {
 };
 
 // If agent replies → set status = InProgress (only if not already Resolved/Closed)
-if (senderRole === "support_agent" && ticket.status === "open") {
+if (senderRole === "district_admin" && ticket.status === "open") {
   updateMessage.$set.status = "in_progress";
 }
 

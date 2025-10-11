@@ -236,7 +236,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
       ? dashboardLinks.adminLinks
       : status === "authenticated" && userData.role === "rider"
       ? dashboardLinks.riderLinks
-      : status === "authenticated" && userData.role === "support_agent"
+      : status === "authenticated" && userData.role === "district_admin"
       ? dashboardLinks.districtAgentLinks
       : dashboardLinks.userLinks;
 
