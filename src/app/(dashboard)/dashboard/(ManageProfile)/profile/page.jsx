@@ -18,7 +18,7 @@ export default async function Page() {
 
   return (
     <div className="md:p-8">
-      <ManageProfile userData={formattedUserData} districts={districts} />
+      <ManageProfile userData={formattedUserData} allDistricts={districts} />
       {/* <ManageProfile role="user" />
       <ManageProfile role="admin" /> */}
       {/* role="rider" বা role="user" ও দিতে পারো */}

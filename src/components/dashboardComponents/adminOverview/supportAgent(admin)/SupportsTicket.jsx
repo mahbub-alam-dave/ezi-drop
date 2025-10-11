@@ -116,7 +116,7 @@ const SupportsTicket = ({ displayArea }) => {
                 </button>
                                   {displayArea === undefined &&
                     ticket.status === "in_progress" &&
-                    role === "support_agent" && (
+                    role === "district_admin" && (
                       <button
                         onClick={async () => {
                           const res = await fetch(`/api/tickets/${ticketId}`, {

@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CiCamera } from "react-icons/ci";
 
-export default function ManageProfile({ userData, districts }) {
+export default function ManageProfile({ userData, allDistricts }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [userDetails, setUserDetails] = useState(userData) 
+  const [userDetails, setUserDetails] = useState(userData || {}) 
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [userDistrictId, setUserDistrictId] = useState("")
+  const [districts, setDistricts] = useState(allDistricts || [])
   const [selectedDistrict, setSelectedDistrict] = useState({})
   // const [districts, setDistricts] = useState([]);
   const [preview, setPreview] = useState(
@@ -22,7 +23,7 @@ export default function ManageProfile({ userData, districts }) {
   const router = useRouter();
 
   const role = userData.role;
-  const allDistricts = [];
+  // const allDistricts = [];
 
  /*  useEffect(() => {
     async function fetchDistricts() {
@@ -194,7 +195,7 @@ export default function ManageProfile({ userData, districts }) {
         },
       ],
     },
-      support_agent: {
+      district_admin: {
       name: "MD Abdul Halim",
       role: "System Administrator",
       email: "abdulhalim1100@gmail.com",
@@ -383,7 +384,9 @@ export default function ManageProfile({ userData, districts }) {
       stats: data.systemStats,
       statTitle: "System Overview",
       formFields: [
+        { name: "image", label: "", type: "file" },
         { name: "name", label: "Full Name", type: "text", readonly: true },
+        { name: "nickName", label: "Your Nickname", type: "text" },
         {
           name: "email",
           label: "Email Address",
@@ -391,12 +394,12 @@ export default function ManageProfile({ userData, districts }) {
           readonly: true,
         },
         { name: "phone", label: "Phone Number", type: "tel", required: true },
-        {
+/*         {
           name: "department",
           label: "Department",
           type: "text",
           required: true,
-        },
+        }, */
         {
           name: "accessLevel",
           label: "Access Level",
@@ -412,13 +415,15 @@ export default function ManageProfile({ userData, districts }) {
         },
       ],
     },
-    support_agent: {
+    district_admin: {
       title: "Admin Profile",
       icon: "⚙️",
       stats: data.agentStats,
       statTitle: "System Overview",
       formFields: [
+        { name: "image", label: "", type: "file" },
         { name: "name", label: "Full Name", type: "text", readonly: true },
+        { name: "nickName", label: "Your Nickname", type: "text" },
         {
           name: "email",
           label: "Email Address",
@@ -426,12 +431,12 @@ export default function ManageProfile({ userData, districts }) {
           readonly: true,
         },
         { name: "phone", label: "Phone Number", type: "tel", required: true },
-        {
+/*         {
           name: "department",
           label: "Department",
           type: "text",
           required: true,
-        },
+        }, */
         {
           name: "accessLevel",
           label: "Access Level",
@@ -453,6 +458,7 @@ export default function ManageProfile({ userData, districts }) {
       stats: data.riderStats,
       statTitle: "Today's Performance",
       formFields: [
+        { name: "image", label: "", type: "file" },
         { name: "name", label: "Full Name", type: "text", readonly: true },
         {
           name: "email",
@@ -461,6 +467,13 @@ export default function ManageProfile({ userData, districts }) {
           readonly: true,
         },
         { name: "phone", label: "Phone Number", type: "tel", required: true },
+                {
+          name: "districtId",
+          label: "Select Delivery District",
+          type: "select",
+          options: districts,
+          required: true,
+        },
         {
           name: "vehicleType",
           label: "Vehicle Type",
@@ -553,8 +566,11 @@ export default function ManageProfile({ userData, districts }) {
 
     const updatedData = {
       ...formData,
-      district: selectedDistrict?.district || "",
+      // district: selectedDistrict?.district || "",
       image: imageUrl, // ✅ imgbb link
+      ...(role === "user" || role === "rider"
+    ? { district: selectedDistrict?.district || "" }
+    : {}), // ✅ add district only for user/rider
     };
 
     console.log(updatedData)
@@ -703,7 +719,7 @@ export default function ManageProfile({ userData, districts }) {
               {
               userDetails?.role === "admin" ? "Admin Profile" 
               : userDetails?.role === "rider" ? "Rider Profile"
-              : userDetails?.role === "support_agent" ? "Support Agent Profile"
+              : userDetails?.role === "district_admin" ? "Support Agent Profile"
               : "User Profile"
               }
             </h1>
