@@ -15,12 +15,13 @@ export default function RiderParcels() {
   const [search, setSearch] = useState("");
 
   // const riderId = "currentRiderId"; // replace with logged-in rider _id
-  const {data: session} = useSession()
+  const {data: session, status} = useSession()
   const riderId = session?.user?.userId;
 
   useEffect(() => {
     fetchData();
   }, [filter]);
+
 
   async function fetchData() {
     try {
@@ -33,6 +34,16 @@ export default function RiderParcels() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    if(status === "authenticated" && riderId) {
+      fetchData()
+    }
+  },[status, riderId])
+
+/*     if (loading) {
+    return <p>Loading session...</p>;
+  } */
 
   async function handleAccept(parcelId) {
     await fetch(`/api/riders/accept/${parcelId}`, { method: "PATCH" });
@@ -81,7 +92,7 @@ export default function RiderParcels() {
                   <Button onClick={() => handleAccept(parcel._id)} className="bg-transparent border-color text-color hover:bg-[#cecece] dark:hover:bg-[#363636]  w-full">
                     View details
                   </Button>
-                  <Button onClick={() => handleAccept(parcel._id)} className="background-color-primary w-full">
+                  <Button onClick={() => handleAccept(parcel.parcelId)} className="background-color-primary text-gray-100 w-full">
                     Accept
                   </Button>
                   <Button onClick={() => handleReject(parcel._id)} className="border-color w-full">
@@ -141,10 +152,10 @@ export default function RiderParcels() {
                   <td className="p-3">{parcel.receiverName}</td>
                   <td className="p-3">{parcel.pickupDistrict}</td>
                   <td className="p-3">{parcel.deliveryDistrict}</td>
-                  <td className="p-3 capitalize">{parcel.status}</td>
+                  <td className="p-3 capitalize">{parcel.riderApprovalStatus}</td>
                   <td className="p-3">{parcel.amount} BDT</td>
                   <td className="p-3">
-                    {parcel.status === "pending" ? (
+                    {parcel.riderApprovalStatus === "accepted" ? (
                       <Button
                         size="sm"
                         className="bg-blue-600 hover:bg-blue-700"

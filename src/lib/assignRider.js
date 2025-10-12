@@ -31,6 +31,7 @@ export async function assignRiderForDelivery(parcel) {
         // status: "assigned_to_rider",
         status: "pending_rider_approval", // 👈 changed
         riderApprovalStatus: "pending", // 👈 new
+        deliveryType: "to_customer",
         updatedAt: new Date(),
       },
     }
