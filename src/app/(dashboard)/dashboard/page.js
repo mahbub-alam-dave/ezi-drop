@@ -15,7 +15,7 @@ const Dashboard = async () => {
         redirect("/dashboard/district-agent/overview")
     }
     else if(user.role === "rider") {
-        redirect("/dashboard/rider-overview")
+        redirect("/dashboard/rider/rider-overview")
     }
     else{
         redirect("/dashboard/user-overview")
