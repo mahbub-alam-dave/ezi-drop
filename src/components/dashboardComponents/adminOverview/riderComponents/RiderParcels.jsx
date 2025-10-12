@@ -5,6 +5,7 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 export default function RiderParcels() {
   const [newOrders, setNewOrders] = useState([]);
@@ -13,7 +14,9 @@ export default function RiderParcels() {
   const [filter, setFilter] = useState("pending");
   const [search, setSearch] = useState("");
 
-  const riderId = "currentRiderId"; // replace with logged-in rider _id
+  // const riderId = "currentRiderId"; // replace with logged-in rider _id
+  const {data: session} = useSession()
+  const riderId = session?.user?.userId;
 
   useEffect(() => {
     fetchData();
@@ -56,28 +59,32 @@ export default function RiderParcels() {
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-800">📦 My Parcels</h1>
-        <p className="text-gray-500">Manage your assigned and delivered parcels efficiently.</p>
+        <h1 className="text-3xl font-bold text-color">📦 My Parcels</h1>
+        <p className="text-color-soft">Manage your assigned and delivered parcels efficiently.</p>
       </div>
 
       {/* 🔔 New Orders Section */}
       {newOrders.length > 0 && (
-        <Card className="border-l-4 border-blue-500">
+        <Card className="border-l-4 border-color bg-transparent">
           <CardHeader>
-            <h2 className="text-lg font-semibold text-blue-700">New Orders</h2>
+            <h2 className="text-lg font-semibold text-color">New Orders</h2>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {newOrders.map((parcel) => (
-              <div key={parcel._id} className="border rounded-2xl p-4 shadow-sm">
-                <h3 className="font-semibold text-gray-800">{parcel.parcelType}</h3>
-                <p className="text-sm text-gray-600">From: {parcel.pickupDistrict}</p>
-                <p className="text-sm text-gray-600">To: {parcel.deliveryDistrict}</p>
-                <p className="text-sm text-gray-600">Amount: {parcel.amount} BDT</p>
+              <div key={parcel._id} className="border-color rounded-2xl p-4 background-color">
+                <h3 className="font-semibold text-color">{parcel.parcelType}</h3>
+                <p className="text-sm text-color-soft">From: {parcel.pickupDistrict}</p>
+                <p className="text-sm text-color-soft">To: {parcel.deliveryDistrict}</p>
+                <p className="text-sm text-color-soft">Amount: {parcel.amount} BDT</p>
+                {/* <button>View Details</button> */}
                 <div className="flex gap-2 mt-3">
-                  <Button onClick={() => handleAccept(parcel._id)} className="bg-green-600 hover:bg-green-700 w-full">
+                  <Button onClick={() => handleAccept(parcel._id)} className="bg-transparent border-color text-color hover:bg-[#cecece] dark:hover:bg-[#363636]  w-full">
+                    View details
+                  </Button>
+                  <Button onClick={() => handleAccept(parcel._id)} className="background-color-primary w-full">
                     Accept
                   </Button>
-                  <Button onClick={() => handleReject(parcel._id)} className="bg-red-600 hover:bg-red-700 w-full">
+                  <Button onClick={() => handleReject(parcel._id)} className="border-color w-full">
                     Reject
                   </Button>
                 </div>
