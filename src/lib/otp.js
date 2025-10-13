@@ -9,6 +9,7 @@ export function generateOtp(length = 6) {
 }
 
 export function hashOtp(otp) {
+
   // Add a server secret salt
   const secret = process.env.OTP_SECRET || 'change_this';
   return crypto.createHmac('sha256', secret).update(otp).digest('hex');

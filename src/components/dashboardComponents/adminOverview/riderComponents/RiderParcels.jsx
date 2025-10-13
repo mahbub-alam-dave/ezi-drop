@@ -11,8 +11,15 @@ export default function RiderParcels() {
   const [newOrders, setNewOrders] = useState([]);
   const [parcels, setParcels] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("pending");
+  const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
+  // modal
+   const [isOpen, setIsOpen] = useState(false);
+   const [secretCode, setSecretCode] = useState("");
+   const [parcelId, setParcelId] = useState(null);
+   const [error, setError] = useState("")
+   const [success, setSuccess] = useState("")
+
 
   // const riderId = "currentRiderId"; // replace with logged-in rider _id
   const {data: session, status} = useSession()
@@ -55,10 +62,10 @@ export default function RiderParcels() {
     fetchData();
   }
 
-  async function handleComplete(parcelId) {
+/*   async function handleComplete(parcelId) {
     await fetch(`/api/riders/complete/${parcelId}`, { method: "PATCH" });
     fetchData();
-  }
+  } */
 
   const filteredParcels = parcels.filter(
     (p) =>
@@ -66,6 +73,34 @@ export default function RiderParcels() {
       p.receiverName.toLowerCase().includes(search.toLowerCase()) ||
       p.deliveryDistrict.toLowerCase().includes(search.toLowerCase())
   );
+
+  async function handleComplete() {
+    if (!secretCode) {
+      setError("Please enter the secret code");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const res = await fetch(`/api/riders/complete/${parcelId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ secretCode }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || "Something went wrong");
+
+      setSuccess("✅ Delivery completed successfully");
+      setTimeout(() => setIsOpen(false), 1200);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -118,6 +153,7 @@ export default function RiderParcels() {
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="all">All</SelectItem>
             <SelectItem value="pending">Pending</SelectItem>
             <SelectItem value="completed">Completed</SelectItem>
           </SelectContent>
@@ -127,8 +163,8 @@ export default function RiderParcels() {
       {/* 📋 Parcels Table */}
       <div className="overflow-x-auto">
         <table className="w-full border-collapse mt-4">
-          <thead className="bg-gray-100">
-            <tr className="text-left text-gray-700">
+          <thead className="background-color">
+            <tr className="text-left text-color text-normal">
               <th className="p-3">Parcel ID</th>
               <th className="p-3">Receiver</th>
               <th className="p-3">Pickup</th>
@@ -147,7 +183,7 @@ export default function RiderParcels() {
               </tr>
             ) : filteredParcels.length > 0 ? (
               filteredParcels.slice(0, 10).map((parcel) => (
-                <tr key={parcel._id} className="border-b hover:bg-gray-50">
+                <tr key={parcel._id} className="border-b bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600">
                   <td className="p-3 font-medium">{parcel.parcelId}</td>
                   <td className="p-3">{parcel.receiverName}</td>
                   <td className="p-3">{parcel.pickupDistrict}</td>
@@ -155,16 +191,20 @@ export default function RiderParcels() {
                   <td className="p-3 capitalize">{parcel.riderApprovalStatus}</td>
                   <td className="p-3">{parcel.amount} BDT</td>
                   <td className="p-3">
-                    {parcel.riderApprovalStatus === "accepted" ? (
+                    {parcel.status !== "completed" ? (
                       <Button
                         size="sm"
-                        className="bg-blue-600 hover:bg-blue-700"
-                        onClick={() => handleComplete(parcel._id)}
+                        className="background-color-primary text-gray-100"
+                        // onClick={() => handleComplete(parcel._id)}
+                        onClick={() => {
+                          setIsOpen(true)
+                          setParcelId(parcel._id)
+                        }}
                       >
                         Complete Order
                       </Button>
                     ) : (
-                      <span className="text-green-600 font-semibold">Completed</span>
+                      <span className="text-[var(--color-primary)] font-semibold">Completed</span>
                     )}
                   </td>
                 </tr>
@@ -179,6 +219,39 @@ export default function RiderParcels() {
           </tbody>
         </table>
       </div>
+      {/* Modal */}
+      {isOpen && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+          <div className="background-color p-6 rounded-xl w-[350px] shadow-lg">
+            <h2 className="text-lg font-semibold mb-3">Enter Secret Code</h2>
+            <input
+              type="text"
+              value={secretCode}
+              onChange={(e) => setSecretCode(e.target.value)}
+              placeholder="Enter code"
+              className="border rounded w-full p-2 mb-3 focus:outline-blue-500"
+            />
+            {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
+            {success && <p className="text-green-600 text-sm mb-2">{success}</p>}
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setIsOpen(false)}
+                className="px-3 py-1 border rounded hover:bg-gray-100 dark:hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleComplete}
+                disabled={loading}
+                className="px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+              >
+                {loading ? "Checking..." : "Submit"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

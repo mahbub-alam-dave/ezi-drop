@@ -103,9 +103,9 @@ const handlePayment = async (e) => {
           className="input-style mb-4 w-full"
           required
         >
-          <option value="">--Select--</option>
-          <option value="SSLCommerz">SSLCommerz</option>
-          <option value="Stripe">Stripe</option>
+          <option value="" className="background-color">--Select--</option>
+          <option value="SSLCommerz" className="background-color">SSLCommerz</option>
+          <option value="Stripe" className="background-color">Stripe</option>
 
         </select>
 
