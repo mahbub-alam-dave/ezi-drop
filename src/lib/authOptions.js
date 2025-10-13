@@ -116,6 +116,8 @@ callbacks: {
         if (dbUser) {
           token.role = dbUser.role || "user";
           token.district = dbUser.district || null;
+          token.email =dbUser.email || null;
+          token.userId = dbUser._id || null
         }
       }
       return token;
@@ -125,6 +127,8 @@ callbacks: {
       if (token) {
         session.user.role = token.role;
         session.user.district = token.district;
+        session.user.email = token.email;
+        session.user.userId = token.userId;
       }
       return session;
     },

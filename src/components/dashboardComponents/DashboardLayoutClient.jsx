@@ -95,15 +95,22 @@ const DashboardLayoutClient = ({ userData, children }) => {
     riderLinks: (
       <>
         <Link
-          href="/dashboard/rider-overview"
-          className={linkClass("/dashboard/rider-overview")}
+          href="/dashboard/rider/rider-overview"
+          className={linkClass("/dashboard/rider/rider-overview")}
         >
           <FaTachometerAlt className="inline-block mr-2" />
           Rider Dashboard
         </Link>
+                <Link
+          href="/dashboard/rider/manage-parcels"
+          className={linkClass("/dashboard/rider/manage-parcels")}
+        >
+          <FaChartLine className="inline-block mr-2" />
+          Manage Parcels
+        </Link>
         <Link
-          href="/dashboard/performance"
-          className={linkClass("/dashboard/performance")}
+          href="/dashboard/rider/performance"
+          className={linkClass("/dashboard/rider/performance")}
         >
           <FaChartLine className="inline-block mr-2" />
           Performance
@@ -114,8 +121,8 @@ const DashboardLayoutClient = ({ userData, children }) => {
           Order
         </Link>
         <Link
-          href="/dashboard/delivery-history"
-          className={linkClass("/dashboard/delivery-history")}
+          href="/dashboard/rider/delivery-history"
+          className={linkClass("/dashboard/rider/delivery-history")}
         >
           <FaHistory className="inline-block mr-2" />
           Delivery History
@@ -128,8 +135,8 @@ const DashboardLayoutClient = ({ userData, children }) => {
           Profile
         </Link>
         <Link
-          href="/dashboard/riderChat"
-          className={linkClass("/dashboard/riderChat")}
+          href="/dashboard/rider/riderChat"
+          className={linkClass("/dashboard/rider/riderChat")}
         >
           <FaComments className="inline-block mr-2" />
           Chat
@@ -236,7 +243,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
       ? dashboardLinks.adminLinks
       : status === "authenticated" && userData.role === "rider"
       ? dashboardLinks.riderLinks
-      : status === "authenticated" && userData.role === "support_agent"
+      : status === "authenticated" && userData.role === "district_admin"
       ? dashboardLinks.districtAgentLinks
       : dashboardLinks.userLinks;
 

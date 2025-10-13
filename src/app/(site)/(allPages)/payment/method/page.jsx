@@ -40,18 +40,18 @@ export default function PaymentPage() {
     }
   }, [parcelId]);
 
-  const handleChange = (e) => {
+/*   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  }; */
 
 const handlePayment = async (e) => {
   e.preventDefault();
   setLoading(true);
  const paymentData = { ...formData, parcelId };
- console.log(paymentData)
+ console.log(parcelId)
   if (paymentMethod === "SSLCommerz") {
     // SSLCommerz Payment
-    const res = await fetch("/api/payment", {
+    const res = await fetch("/api/ssl-payment", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(paymentData),
@@ -103,9 +103,9 @@ const handlePayment = async (e) => {
           className="input-style mb-4 w-full"
           required
         >
-          <option value="">--Select--</option>
-          <option value="SSLCommerz">SSLCommerz</option>
-          <option value="Stripe">Stripe</option>
+          <option value="" className="background-color">--Select--</option>
+          <option value="SSLCommerz" className="background-color">SSLCommerz</option>
+          <option value="Stripe" className="background-color">Stripe</option>
 
         </select>
 
