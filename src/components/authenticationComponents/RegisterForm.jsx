@@ -31,6 +31,7 @@ const RegisterForm = () => {
           body: JSON.stringify({ email: registerData.email }),
         });
         setOtpModalData({ email: registerData.email, password:registerData.password });
+        
         setShowOtpModal(true); // open modal
 
         /*         // login after registration
