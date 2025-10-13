@@ -10,6 +10,7 @@ export default function UserRating() {
   const [hover, setHover] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  
   // 🔄 Backend থেকে রেটিং ফেচ
   useEffect(() => {
     fetch("/api/rating")
