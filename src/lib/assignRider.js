@@ -1,79 +1,115 @@
-
 import { ObjectId } from "mongodb";
 import { dbConnect } from "./dbConnect";
 
-// =========================
-// 1️⃣ Assign Rider (same district)
-// =========================
-export async function assignRiderForDelivery(parcel) {
-  const riders = dbConnect("users"); // assuming riders are stored in users collection
+/**
+ * 🔁 Helper to find available rider in a district
+ * Optionally exclude a specific rider (for reassignment)
+ */
+async function findAvailableRider(districtId, excludeRiderId = null) {
+  const users = dbConnect("users");
+
+  const query = {
+    role: "rider",
+    districtId,
+    working_status: "duty",
+  };
+
+  if (excludeRiderId) {
+    query._id = { $ne: new ObjectId(excludeRiderId) }; // exclude current rider
+  }
+
+  const availableRider = await users.findOne(query);
+  return availableRider;
+}
+
+/**
+ * 🚴 Assign or Reassign Rider (for same-district delivery)
+ */
+export async function assignRiderForDelivery(parcel, isReassign = false) {
   const parcels = dbConnect("parcels");
 
-  // find a rider under the same district
-  const availableRider = await riders.findOne({
-    role: "rider",
-    districtId: parcel.pickupDistrictId,
-    working_status: "duty",
-    // currentLoad: { $lt: 10 } // example rule: max 10 parcels
-  });
+  // 🧭 Find a rider
+  const excludeRiderId = isReassign ? parcel.assignedRiderId : null;
+  const availableRider = await findAvailableRider(parcel.pickupDistrictId, excludeRiderId);
 
   if (!availableRider) {
-    console.warn("⚠️ No rider available for district", parcel.pickupDistrictId);
+    console.warn(`⚠️ No available rider for district ${parcel.pickupDistrictId}`);
+    await parcels.updateOne(
+      { _id: new ObjectId(parcel._id) },
+      {
+        $set: {
+          status: "waiting_for_rider",
+          riderApprovalStatus: "unavailable",
+          updatedAt: new Date(),
+        },
+      }
+    );
     return;
   }
 
-  // assign parcel to rider
+  // 🚀 Assign (or reassign)
   await parcels.updateOne(
     { _id: new ObjectId(parcel._id) },
     {
       $set: {
         assignedRiderId: availableRider._id,
-        // status: "assigned_to_rider",
-        status: "pending_rider_approval", // 👈 changed
-        riderApprovalStatus: "pending", // 👈 new
+        status: "pending_rider_approval",
+        riderApprovalStatus: "pending",
+        deliveryType: "to_customer",
         updatedAt: new Date(),
       },
     }
   );
 
-  console.log(`✅ Rider ${availableRider.name} assigned to parcel ${parcel.parcelId}`);
+  console.log(
+    `✅ Rider ${availableRider.name} ${
+      isReassign ? "reassigned" : "assigned"
+    } to parcel ${parcel.parcelId}`
+  );
 }
 
-
-// =========================
-// 2️⃣ Assign Rider (cross district — deliver to warehouse)
-// =========================
-export async function assignRiderToWarehouse(parcel) {
-  const riders = dbConnect("users");
+/**
+ * 🏢 Assign or Reassign Rider (for cross-district delivery to warehouse)
+ */
+export async function assignRiderToWarehouse(parcel, isReassign = false) {
   const parcels = dbConnect("parcels");
 
-  // find a rider under the sender district
-  const availableRider = await riders.findOne({
-    role: "rider",
-    districtId: parcel.pickupDistrictId,
-    working_status: "duty",
-    // currentLoad: { $lt: 10 },
-  });
+  // 🧭 Find a rider under sender district
+  const excludeRiderId = isReassign ? parcel.assignedRiderId : null;
+  const availableRider = await findAvailableRider(parcel.pickupDistrictId, excludeRiderId);
 
   if (!availableRider) {
-    console.warn("⚠️ No rider available for sender district", parcel.pickupDistrictId);
+    console.warn(`⚠️ No available rider for sender district ${parcel.pickupDistrictId}`);
+    await parcels.updateOne(
+      { _id: new ObjectId(parcel._id) },
+      {
+        $set: {
+          status: "waiting_for_rider",
+          riderApprovalStatus: "unavailable",
+          updatedAt: new Date(),
+        },
+      }
+    );
     return;
   }
 
-  // assign the rider to deliver to warehouse
+  // 🚀 Assign (or reassign)
   await parcels.updateOne(
     { _id: new ObjectId(parcel._id) },
     {
       $set: {
         assignedRiderId: availableRider._id,
-        // status: "out_for_pickup_to_warehouse",
-        status: "pending_rider_approval", // 👈 changed
-        riderApprovalStatus: "pending", // 👈 new
+        status: "pending_rider_approval",
+        riderApprovalStatus: "pending",
         deliveryType: "to_warehouse",
         updatedAt: new Date(),
       },
     }
   );
 
-  console.log(`🚚 Rider ${availableRider.name} assigned to deliver parcel ${parcel.parcelId} to warehouse`);
+  console.log(
+    `🚚 Rider ${availableRider.name} ${
+      isReassign ? "reassigned" : "assigned"
+    } to deliver parcel ${parcel.parcelId} to warehouse`
+  );
 }
