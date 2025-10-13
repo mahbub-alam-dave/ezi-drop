@@ -32,7 +32,7 @@ export async function handlePostPaymentFunctionality(parcelId) {
       await sendEmail({
         to: parcel.receiverEmail, 
         subject: "Your Delivery Code", 
-        text: `Your delivery code: ${otp}`
+        text: `Your delivery code: ${otp}. Share this code while rider deliver you the parcel. Track your parcel with trackingId: ${parcel.trackingId}`
     });
     }
 
