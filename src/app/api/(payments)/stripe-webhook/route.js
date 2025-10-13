@@ -1,6 +1,7 @@
 import Stripe from "stripe";
 import { dbConnect } from "@/lib/dbConnect";
 import { generateTrackingNumber } from "@/utility/trackingId";
+import { handlePostPaymentFunctionality } from "@/lib/postPaymentHandler";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2024-06-20",
@@ -46,6 +47,7 @@ export async function POST(req) {
         { parcelId },
         { $set: { payment: "done", transactionId, trackingId, paymentDate: new Date() } }
       );
+      handlePostPaymentFunctionality(parcelId)
 
       console.log(`💰 Payment marked as paid for parcel ${parcelId}`);
     }
