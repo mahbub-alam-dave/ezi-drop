@@ -47,7 +47,7 @@ export async function POST(req) {
         { parcelId },
         { $set: { payment: "done", transactionId, trackingId, paymentDate: new Date() } }
       );
-      handlePostPaymentFunctionality(parcelId)
+      await handlePostPaymentFunctionality(parcelId)
 
       console.log(`💰 Payment marked as paid for parcel ${parcelId}`);
     }

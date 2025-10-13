@@ -5,9 +5,6 @@ import { handlePostPaymentFunctionality } from '@/lib/postPaymentHandler';
 import { generateTrackingNumber } from '@/utility/trackingId';
 
 
-// The SSLCommerz success_url MUST point to this API route:
-// success_url: ${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/payment/success
-
 export async function POST(request) {
   let parcelId = ''; // Initialize outside try block for wider scope
 
@@ -15,8 +12,6 @@ export async function POST(request) {
   const trackingId = generateTrackingNumber()
 
   try {
-    // 1. Get the POST data from SSLCommerz. 
-    // SSLCommerz sends data as application/x-www-form-urlencoded, so we use request.formData()
     const formData = await request.formData();
     const data = Object.fromEntries(formData);
 
@@ -40,15 +35,11 @@ export async function POST(request) {
     // 4. Update Parcel Status in Database
     // Replace this with your actual database update logic (e.g., Prisma, Mongoose, SQL)
     await dbConnect("parcels").updateOne({parcelId}, {$set: {payment: "done", transactionId: tran_id, trackingId, paymentDate: new Date()}});
-    handlePostPaymentFunctionality(parcelId)
+    await handlePostPaymentFunctionality(parcelId)
     
     // Log success
     console.log(`Successfully updated parcel ${parcelId} to PAID with Tran ID: ${tran_id}`);
 
-    // 5. Final Client-Side Redirect to Success UI Page
-    // We redirect the user's browser to the final success page. 
-    // The query parameters ensure the UI page can fetch final details.
-    // redirect(`/payment/success?parcelId=${parcelId}&status=success`);
         // Redirect to success page
     return NextResponse.redirect(
       `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/payment/success?parcelId=${parcelId}&status=success`,  { status: 302 } 
