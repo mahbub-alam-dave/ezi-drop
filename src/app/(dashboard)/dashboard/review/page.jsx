@@ -50,6 +50,9 @@ export default function ReviewModal({ riderId, userId }) {
 
   return (
     <div className="p-6 bg-white rounded-2xl shadow-lg w-full max-w-lg mx-auto">
+      <h2 className="text-4xl font-extrabold bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] bg-clip-text text-transparent mb-8">
+          ✨ Share Your Experience
+        </h2>
       {/* App Review Section */}
       {!appReviewDone && (
         <div className="mb-6 border-b pb-4">
