@@ -1,39 +1,29 @@
 import { NextResponse } from "next/server";
 import { dbConnect, collectionNames } from "@/lib/dbConnect";
 
-// ✅ POST: Add rider review
+// ✅ POST: Add rider review + rating
 export async function POST(request) {
   try {
-    const { riderId, reviewerId, review } = await request.json();
+    const { riderId, reviewerId, review, rating } = await request.json();
 
-    if (!riderId || !reviewerId || !review) {
+    if (!riderId || !reviewerId || !review || !rating) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    const riderReviewCollection = dbConnect(collectionNames.riderReview);
-
-    // Check if rider already has reviews
+    const riderReviewCollection = await dbConnect(collectionNames.riderReview);
     const existing = await riderReviewCollection.findOne({ riderId });
 
+    const reviewData = { reviewerId, review, rating, date: new Date() };
+
     if (existing) {
-      // Push new review to existing rider
       await riderReviewCollection.updateOne(
         { riderId },
-        {
-          $push: {
-            reviews: {
-              reviewerId,
-              review,
-              date: new Date(),
-            },
-          },
-        }
+        { $push: { reviews: reviewData } }
       );
     } else {
-      // Create new document for this rider
       await riderReviewCollection.insertOne({
         riderId,
-        reviews: [{ reviewerId, review, date: new Date() }],
+        reviews: [reviewData],
       });
     }
 
@@ -44,12 +34,12 @@ export async function POST(request) {
   }
 }
 
-// ✅ GET: Get all rider reviews
+// ✅ GET: Fetch all rider reviews
 export async function GET() {
   try {
-    const riderReviewCollection = dbConnect(collectionNames.riderReview);
+    const riderReviewCollection = await dbConnect(collectionNames.riderReview);
     const reviews = await riderReviewCollection.find({}).toArray();
-    return NextResponse.json(reviews, { status: 200 });
+    return NextResponse.json(reviews);
   } catch (error) {
     console.error("Error fetching rider reviews:", error);
     return NextResponse.json({ error: "Failed to fetch rider reviews" }, { status: 500 });

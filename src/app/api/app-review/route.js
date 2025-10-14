@@ -1,39 +1,44 @@
 import { NextResponse } from "next/server";
 import { dbConnect, collectionNames } from "@/lib/dbConnect";
 
-// ✅ POST: Application Review save
-
-export async function POST(req) {
+// ✅ POST: Add app/company review + rating
+export async function POST(request) {
   try {
-    const { userId, review } = await req.json();
-    const collection = await dbConnect(collectionNames.reviews);
+    const { userId, review, rating } = await request.json();
 
-    const existing = await collection.findOne({ userId });
-
-    if (existing) {
-      return NextResponse.json({
-        success: false,
-        message: "You have already reviewed the app.",
-      });
+    if (!userId || !review || !rating) {
+      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    await collection.insertOne({ userId, review });
+    const reviewsCollection = await dbConnect(collectionNames.reviews);
 
-    return NextResponse.json({ success: true, message: "App review added successfully!" });
+    const existing = await reviewsCollection.findOne({ userId });
+    if (existing) {
+      return NextResponse.json({ message: "You already reviewed the app." });
+    }
+
+    await reviewsCollection.insertOne({
+      userId,
+      review,
+      rating,
+      date: new Date(),
+    });
+
+    return NextResponse.json({ success: true, message: "App review saved" });
   } catch (error) {
     console.error("Error saving app review:", error);
-    return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to save app review" }, { status: 500 });
   }
 }
 
-// ✅ GET: Check if user already reviewed the app
-export async function GET(req) {
-  const { searchParams } = new URL(req.url);
-  const userId = searchParams.get("userId");
-
-  const collection = await dbConnect(collectionNames.reviews);
-  const existing = await collection.findOne({ userId });
-
-  return NextResponse.json({ reviewed: !!existing });
+// ✅ GET: Fetch all app reviews
+export async function GET() {
+  try {
+    const reviewsCollection = await dbConnect(collectionNames.reviews);
+    const reviews = await reviewsCollection.find({}).toArray();
+    return NextResponse.json(reviews);
+  } catch (error) {
+    console.error("Failed to fetch reviews:", error);
+    return NextResponse.json({ error: "Failed to fetch reviews" }, { status: 500 });
+  }
 }
- 
