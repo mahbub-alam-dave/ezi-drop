@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { dbConnect, collectionNames } from "@/lib/dbConnect";
 
 // ✅ POST: Application Review save
+
 export async function POST(req) {
   try {
     const { userId, review } = await req.json();
