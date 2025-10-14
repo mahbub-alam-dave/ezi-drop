@@ -1,29 +1,79 @@
-// app/api/riders/accept/[parcelId]/route.ts
 import { NextResponse } from "next/server";
-// import { ObjectId } from "mongodb";
 import { dbConnect } from "@/lib/dbConnect";
+import { ObjectId } from "mongodb";
 
 export async function PATCH(req, { params }) {
-  const { parcelId } = params;
-  const parcels = dbConnect("parcels");
+  try {
+    const { parcelId } = params;
+    const parcels = dbConnect("parcels");
 
-  const parcel = await parcels.findOne({ parcelId });
-  if (!parcel) return NextResponse.json({ error: "Parcel not found" }, { status: 404 });
+    // 🔍 Find parcel by parcelId
+    const parcel = await parcels.findOne({ parcelId });
+    if (!parcel) {
+      return NextResponse.json(
+        { success: false, message: "Parcel not found" },
+        { status: 404 }
+      );
+    }
 
-  // update status based on delivery type
-  const newStatus =
-    parcel.deliveryType === "to_warehouse" ? "in_transit_to_warehouse" : "not_picked";
+    // 🕓 Timestamp
+    const now = new Date();
 
-  await parcels.updateOne(
-    { parcelId },
-    {
-      $set: {
+    // 🔁 Determine new status and delivery status
+    let newStatus, newRiderDeliveryStatus, eventNote;
+
+    if (parcel.deliveryType === "to_warehouse") {
+      newStatus = "in_transit_to_warehouse";
+      newRiderDeliveryStatus = "in_transit_to_warehouse";
+      eventNote = "Rider accepted parcel for delivery to local warehouse.";
+    } else {
+      newStatus = "awaiting_pickup"; // Rider accepted but not yet picked up
+      newRiderDeliveryStatus = "assigned";
+      eventNote = "Rider accepted parcel for direct delivery.";
+    }
+
+    // ✅ Update parcel
+    await parcels.updateOne(
+      { parcelId },
+      {
+        $set: {
+          status: newStatus,
+          riderApprovalStatus: "accepted",
+          riderDeliveryStatus: newRiderDeliveryStatus,
+          updatedAt: now,
+        },
+        $push: {
+          events: {
+            type: "rider_accepted",
+            by: parcel.assignedRiderId,
+            role: "rider",
+            at: now,
+            note: eventNote,
+          },
+        },
+      }
+    );
+
+    console.log(`✅ Rider accepted parcel ${parcel.parcelId}`);
+
+    return NextResponse.json({
+      success: true,
+      message: "Parcel accepted successfully by rider",
+      data: {
         status: newStatus,
         riderApprovalStatus: "accepted",
-        updatedAt: new Date(),
+        riderDeliveryStatus: newRiderDeliveryStatus,
       },
-    }
-  );
-
-  return NextResponse.json({ success: true, message: "Parcel accepted successfully" });
+    });
+  } catch (error) {
+    console.error("❌ Error in rider acceptance:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Something went wrong while rider accepting parcel",
+        error: error.message,
+      },
+      { status: 500 }
+    );
+  }
 }

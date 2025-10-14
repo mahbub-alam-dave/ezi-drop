@@ -4,13 +4,17 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import {
   SelectFieldDistrict,
   SelectFieldUpazila,
 } from "@/utility/selectDistrict";
+// import { districtsData } from "@/lib/getDistrictData";
 
-const SendParcel = ({ districts }) => {
+const SendParcel = ({ districts, userData }) => {
+
+  const {data: session, status} = useSession()
+
+
   const { register, handleSubmit, reset, watch } = useForm();
   const [cost, setCost] = useState(null);
   const [parcelId, setParcelId] = useState(null);
@@ -25,11 +29,13 @@ const SendParcel = ({ districts }) => {
   const parcelType = watch("parcelType");
   const weight = watch("weight");
 
-  // Find district objects
+  // console.log(districtsData())
+  // 🧭 Find the selected district objects
   const pickupDistrictData = useMemo(
     () => districts.find((d) => d.districtId === pickupDistrictId),
     [pickupDistrictId, districts]
   );
+
   const deliveryDistrictData = useMemo(
     () => districts.find((d) => d.districtId === deliveryDistrictId),
     [deliveryDistrictId, districts]
@@ -43,6 +49,8 @@ const SendParcel = ({ districts }) => {
       parcelType === "Documents" &&
       weight <= 5
     ) {
+
+      
       baseCost += 60;
     } else {
       if (pickupDistrictId && deliveryDistrictId) {
@@ -59,29 +67,11 @@ const SendParcel = ({ districts }) => {
     setCost(baseCost);
   }, [pickupDistrictId, deliveryDistrictId, parcelType, weight]);
 
-  // Image Upload Function
-  const uploadImages = async (files) => {
-    const urls = [];
-    for (const file of files) {
-      const formData = new FormData();
-      formData.append("image", file);
-      const res = await axios.post(
-        `https://api.imgbb.com/1/upload?key=${process.env.IMAGEAPI_KYE}`,
-        formData
-      );
-      urls.push(res?.data?.data?.url);
-    }
-    return urls;
-  };
-
-  // Handle image preview
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    setPreview(files.map((file) => URL.createObjectURL(file)));
-  };
-
-  // Submit
   const onSubmit = async (data) => {
+        if(!session?.user && status === "unauthenticated" ) {
+      alert("Please login to book a parcel")
+      redirect("/login")
+    }
     try {
       setUploading(true);
       const imageFiles = fileInputRef.current.files;
@@ -131,6 +121,7 @@ const SendParcel = ({ districts }) => {
       });
 
       if (parcelRes.ok) {
+        // alert("Parcel submitted successfully!");
         setShowModal(true);
         const data = await parcelRes.json();
         setParcelId(data.parcelId);
@@ -195,18 +186,23 @@ const SendParcel = ({ districts }) => {
               <InputField
                 label="Sender Name"
                 register={register("senderName", { required: true })}
+                defaultValue={userData?.name || ""}
+                readOnly={status === "authenticated"}
               />
               <InputField
                 label="Sender Phone"
                 type="tel"
                 placeholder="+8801XXXXXXXXX"
                 register={register("senderPhone", { required: true })}
+                
               />
               <InputField
                 label="Sender Email"
                 type="email"
                 placeholder="sender@example.com"
                 register={register("senderEmail", { required: true })}
+                defaultValue={userData?.email || ""}
+                readOnly={status === "authenticated"}
               />
               <SelectFieldDistrict
                 label="Pickup District"
@@ -214,6 +210,7 @@ const SendParcel = ({ districts }) => {
                 register={register}
                 required
                 districts={districts}
+                defaultValue={userData?.districtId || ""}
               />
               <SelectFieldUpazila
                 label="Pickup Upazila"
@@ -330,14 +327,16 @@ const SendParcel = ({ districts }) => {
 };
 
 // ----- Helper Components -----
-const InputField = ({ label, register, type = "text", placeholder = "" }) => (
+const InputField = ({ label, register, type = "text", defaultValue, readOnly, placeholder = "" }) => (
   <div>
     <label className="block mb-[6px]">{label}</label>
     <input
       {...register}
       type={type}
+      defaultValue={defaultValue&& defaultValue}
       placeholder={placeholder || label}
       className="w-full input-style text-color"
+      readOnly={readOnly && readOnly}
     />
   </div>
 );
