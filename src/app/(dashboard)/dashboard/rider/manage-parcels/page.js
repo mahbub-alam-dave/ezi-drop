@@ -1,4 +1,4 @@
-import RiderParcels from '@/components/dashboardComponents/adminOverview/riderComponents/RiderParcels';
+import RiderParcels from '@/components/dashboardComponents/riderComponents/RiderParcels';
 import React from 'react';
 
 const ManageOrderPage = () => {

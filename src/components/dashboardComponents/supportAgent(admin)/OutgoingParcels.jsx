@@ -3,6 +3,16 @@ import { useEffect, useState, useMemo } from "react";
 import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 export default function OutgoingParcels({ admin }) {
   const [parcels, setParcels] = useState([]);
@@ -10,14 +20,15 @@ export default function OutgoingParcels({ admin }) {
   const [filter, setFilter] = useState("pending");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+/*   useEffect(() => {
     if (admin?.districtId) fetchParcels();
-  }, [admin?.districtId]);
+  }, [admin?.districtId]); */
 
   async function fetchParcels() {
     try {
       setLoading(true);
-      const res = await fetch(`/api/transfers?fromDistrictId=${admin.districtId}`);
+    //   ?fromDistrictId=${admin.districtId}
+      const res = await fetch(`/api/transfers`);
       if (res.ok) {
         const { transfers } = await res.json();
         setParcels(transfers || []);
@@ -28,6 +39,12 @@ export default function OutgoingParcels({ admin }) {
       setLoading(false);
     }
   }
+
+  useEffect(()=>{
+    fetchParcels()
+  },[])
+
+  console.log(parcels)
 
   const filteredParcels = useMemo(() => {
     return parcels
