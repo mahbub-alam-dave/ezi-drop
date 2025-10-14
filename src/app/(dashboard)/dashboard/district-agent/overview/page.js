@@ -8,7 +8,7 @@ import OverviewFilter from "@/components/dashboardComponents/adminOverview/Overv
 import OverviewHeader from "@/components/dashboardComponents/adminOverview/OverviewHeader";
 import RecentActivities from "@/components/dashboardComponents/adminOverview/RecentActivities";
 import ServiceAreas from "@/components/dashboardComponents/adminOverview/ServiceAreas";
-import SupportsTicket from "@/components/dashboardComponents/adminOverview/supportAgent(admin)/SupportsTicket";
+import SupportsTicket from "@/components/dashboardComponents/supportAgent(admin)/SupportsTicket";
 import TopCouriers from "@/components/dashboardComponents/adminOverview/TopCouriers";
 import React from "react";
 
