@@ -45,7 +45,9 @@ export async function assignRiderForDelivery(parcel, isReassign = false) {
         $push: {
           events: {
             type: "rider_unavailable",
+            role: "system",
             at: now,
+            note: `No available rider found in ${parcel.pickupDistrictId}.`,
           },
         },
       }
@@ -69,8 +71,11 @@ export async function assignRiderForDelivery(parcel, isReassign = false) {
         events: {
           type: isReassign ? "rider_reassigned" : "rider_assigned",
           by: "system",
-          riderId: availableRider._id,
+          role: "system",
           at: now,
+          note: `Rider ${availableRider.name} (${availableRider._id}) ${
+            isReassign ? "reassigned" : "assigned"
+          } for delivery.`,
         },
       },
     }
@@ -107,7 +112,9 @@ export async function assignRiderToWarehouse(parcel, isReassign = false) {
         $push: {
           events: {
             type: "rider_unavailable",
+            role: "system",
             at: now,
+            note: `No available rider found in ${parcel.pickupDistrictId}.`,
           },
         },
       }
@@ -131,8 +138,11 @@ export async function assignRiderToWarehouse(parcel, isReassign = false) {
         events: {
           type: isReassign ? "rider_reassigned" : "rider_assigned",
           by: "system",
-          riderId: availableRider._id,
+          role: "system",
           at: now,
+          note: `Rider ${availableRider.name} (${availableRider._id}) ${
+            isReassign ? "reassigned" : "assigned"
+          } for warehouse delivery.`,
         },
       },
     }
