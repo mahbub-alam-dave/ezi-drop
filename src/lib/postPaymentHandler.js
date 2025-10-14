@@ -6,7 +6,7 @@ import { sendEmail } from "./email";
 
 export async function handlePostPaymentFunctionality(parcelId) {
   try {
-    const parcels = await dbConnect("parcels");
+    const parcels = dbConnect("parcels");
 
     const parcel = await parcels.findOne({ parcelId });
     if (!parcel) {
@@ -65,13 +65,15 @@ export async function handlePostPaymentFunctionality(parcelId) {
     );
 
     // Send email
-    if (parcel.receiverEmail) {
+    if (parcel.pickupDistrictId === parcel.deliveryDistrictId && parcel.receiverEmail) {
       await sendEmail({
         to: parcel.receiverEmail,
         subject: "Your Delivery Code",
         text: `Your delivery code: ${otp}. Track your parcel with trackingId: ${parcel.trackingId}`,
       });
-    } else if (warehouse?.contactEmail) {
+    } 
+    
+    if (parcel.pickupDistrictId !== parcel.deliveryDistrictId && warehouse?.contactEmail) {
       await sendEmail({
         to: "dakterkhujun@gmail.com",
         subject: `Incoming parcel OTP for ${parcel.trackingId}`,
