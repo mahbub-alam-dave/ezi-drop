@@ -1,14 +1,34 @@
 import SendParcel from '@/components/sendparcelPageComponents/SendParcel';
 import React from 'react';
 import { districtsData } from '../../../../lib/getDistrictData';
+import { getCurrentUser } from '@/lib/api';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/authOptions';
 
 const SendParcelPage = async () => {
+
+  const session = await getServerSession(authOptions)
+
   const districtsInfo = await districtsData()
   // console.log(districts)
   const districts = JSON.parse(JSON.stringify(districtsInfo));
+
+  let userData = {}
+  if(session?.user) {
+
+    const userInfo = await getCurrentUser();
+    userData = ({
+      name: userInfo.name, 
+      email: userInfo.email, 
+      district: userInfo?.district || null, 
+      districtId: userInfo?.districtId || null
+    }) 
+    console.log(userData)
+  }
+  console.log(session?.user)
   return (
     <div>
-      <SendParcel districts={districts}/>
+      <SendParcel districts={districts} userData={userData}/>
     </div>
   );
 };

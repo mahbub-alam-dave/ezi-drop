@@ -2,6 +2,7 @@ export function SelectFieldDistrict({
   label,
   name,
   register,
+  defaultValue,
   districts = [],
   required = false,
 }) {
@@ -18,7 +19,7 @@ export function SelectFieldDistrict({
         id={name}
         {...register(name, { required })}
         className="w-full input-style text-color-soft"
-        defaultValue=""
+        defaultValue={defaultValue}
       >
         <option value="" disabled>
           Select {label}
