@@ -1,27 +1,26 @@
 import { NextResponse } from "next/server";
 import { dbConnect, collectionNames } from "@/lib/dbConnect";
 
-// ✅ POST: Add app/company review
+// ✅ POST: Add app/company review + rating
 export async function POST(request) {
   try {
-    const { userId, review } = await request.json();
+    const { userId, review, rating } = await request.json();
 
-    if (!userId || !review) {
+    if (!userId || !review || !rating) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    const reviewsCollection = dbConnect(collectionNames.reviews);
+    const reviewsCollection = await dbConnect(collectionNames.reviews);
 
-    // Check if user already reviewed the app
     const existing = await reviewsCollection.findOne({ userId });
-
     if (existing) {
-      return NextResponse.json({ message: "You already reviewed the app." }, { status: 200 });
+      return NextResponse.json({ message: "You already reviewed the app." });
     }
 
     await reviewsCollection.insertOne({
       userId,
       review,
+      rating,
       date: new Date(),
     });
 
@@ -35,9 +34,9 @@ export async function POST(request) {
 // ✅ GET: Fetch all app reviews
 export async function GET() {
   try {
-    const reviewsCollection = dbConnect(collectionNames.reviews);
+    const reviewsCollection = await dbConnect(collectionNames.reviews);
     const reviews = await reviewsCollection.find({}).toArray();
-    return NextResponse.json(reviews, { status: 200 });
+    return NextResponse.json(reviews);
   } catch (error) {
     console.error("Failed to fetch reviews:", error);
     return NextResponse.json({ error: "Failed to fetch reviews" }, { status: 500 });

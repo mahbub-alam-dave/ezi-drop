@@ -5,6 +5,7 @@ export const collectionNames = {
   users: "users",
   reviews: "reviews",
   messages: "messages", // ✅ added
+  riderReview: "riderReview",
 };
 
 export const dbConnect = (collectionName) => {

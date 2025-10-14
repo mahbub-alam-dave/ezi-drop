@@ -33,7 +33,7 @@ export default function PerformancePage() {
       .then((res) => res.json())
       .then((result) => {
         if (result.success && result.data?.length > 0) {
-          setData(result.data[0]); 
+          setData(result.data[0]);
         } else {
           Swal.fire("Error", "Failed to load performance data", "error");
         }
