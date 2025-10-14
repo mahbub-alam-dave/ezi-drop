@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/dbConnect";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
+import { distanceMap } from "@/lib/distanceMapping";
 
 export async function PATCH(req, { params }) {
 
@@ -13,12 +14,22 @@ export async function PATCH(req, { params }) {
 
   const now = new Date();
 
+  const parcelInTransfer = await transfers.findOne({parcelId, status: "requested"})
+
+  const from = parcelInTransfer.fromDistrictId;
+  const to = parcelInTransfer.toDistrictId;
+
+const hours = distanceMap[`${from}-${to}`] || distanceMap.default;
+const expectedArrival = new Date(Date.now() + hours * 3600 * 1000);
+
+
   // 1️⃣ Update transfer record
   const result = await transfers.updateOne(
     { parcelId },
     {
       $set: {
         status: "dispatched",
+        expectedArrival,
         dispatchedAt: now,
         updatedAt: now,
       },
@@ -40,6 +51,7 @@ export async function PATCH(req, { params }) {
     {
       $set: {
         status: "in_transit", // or "dispatched", depending on your naming convention
+        expectedArrival,
         updatedAt: now,
       },
       $push: {
