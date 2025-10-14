@@ -23,6 +23,7 @@ import {
 import { FaChartLine } from "react-icons/fa";
 import { VscCommentUnresolved } from "react-icons/vsc";
 import ThemeToggle from "../sharedComponents/navbar/Toggle";
+import { MdPersonAddAlt1 } from "react-icons/md";
 
 const DashboardLayoutClient = ({ userData, children }) => {
   const pathname = usePathname();
@@ -180,6 +181,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
         >
           <FaUser className="inline-block mr-2" />
           Profile
+        </Link>
+        <Link
+          href="/dashboard/referral"
+          className={linkClass("/dashboard/referral")}
+        >
+          <MdPersonAddAlt1 className="inline-block mr-2" />
+          referral
         </Link>
         <Link
           href="/dashboard/resulation-center"
