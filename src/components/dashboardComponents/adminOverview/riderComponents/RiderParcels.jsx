@@ -25,9 +25,7 @@ export default function RiderParcels() {
   const {data: session, status} = useSession()
   const riderId = session?.user?.userId;
 
-  useEffect(() => {
-    fetchData();
-  }, [filter]);
+
 
 
   async function fetchData() {
@@ -47,6 +45,10 @@ export default function RiderParcels() {
       fetchData()
     }
   },[status, riderId])
+
+    useEffect(() => {
+    fetchData();
+  }, [filter]);
 
 /*     if (loading) {
     return <p>Loading session...</p>;
@@ -191,7 +193,7 @@ export default function RiderParcels() {
                   <td className="p-3 capitalize">{parcel.riderApprovalStatus}</td>
                   <td className="p-3">{parcel.amount} BDT</td>
                   <td className="p-3">
-                    {parcel.status !== "completed" ? (
+                    {parcel.status !== "completed" || parcel.status !== "at_local_warehouse" ? (
                       <Button
                         size="sm"
                         className="background-color-primary text-gray-100"

@@ -8,6 +8,8 @@ export async function PATCH(req, { params }) {
     const { parcelId } = params;
     const { secretCode } = await req.json();
 
+    console.log(secretCode)
+
     if (!secretCode) {
       return NextResponse.json(
         { success: false, message: "Secret code is required" },
@@ -27,6 +29,7 @@ export async function PATCH(req, { params }) {
 
     // 🔐 Verify secret code
     const hashedInput = hashOtp(secretCode);
+    console.log(parcel.secretCodeHash, hashedInput)
     if (parcel.secretCodeHash !== hashedInput) {
       return NextResponse.json(
         { success: false, message: "Invalid secret code" },
