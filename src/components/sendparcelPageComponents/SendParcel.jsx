@@ -3,11 +3,18 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+<<<<<<<<< Temporary merge branch 1
+import { redirect, useRouter } from "next/navigation";
+=========
 import { useRouter } from "next/navigation";
+import axios from "axios";
+>>>>>>>>> Temporary merge branch 2
 import {
   SelectFieldDistrict,
   SelectFieldUpazila,
 } from "@/utility/selectDistrict";
+<<<<<<<<< Temporary merge branch 1
+import { useSession } from "next-auth/react";
 // import { districtsData } from "@/lib/getDistrictData";
 
 const SendParcel = ({ districts, userData }) => {
@@ -29,12 +36,16 @@ const SendParcel = ({ districts, userData }) => {
   const parcelType = watch("parcelType");
   const weight = watch("weight");
 
-  // console.log(districtsData())
+<<<<<<<<< Temporary merge branch 1
+  
   // 🧭 Find the selected district objects
   const pickupDistrictData = useMemo(
     () => districts.find((d) => d.districtId === pickupDistrictId),
     [pickupDistrictId, districts]
   );
+<<<<<<<<< Temporary merge branch 1
+
+  console.log(pickupDistrictData)
 
   const deliveryDistrictData = useMemo(
     () => districts.find((d) => d.districtId === deliveryDistrictId),
@@ -67,6 +78,50 @@ const SendParcel = ({ districts, userData }) => {
     setCost(baseCost);
   }, [pickupDistrictId, deliveryDistrictId, parcelType, weight]);
 
+<<<<<<<<< Temporary merge branch 1
+
+  // save user district and districtId if not saved in the database
+   const saveUserDistrict = async () => {
+    if (!userData?.districtId) {
+      /* const selectedDistrict = districts.find((d) => d.value === districtId);
+      if (!selectedDistrict) return; */
+
+      await fetch("/api/update-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: userData.email,
+          districtId: pickupDistrictData?.districtId,
+          district: pickupDistrictData?.district,
+        }),
+      });
+    }
+  };
+
+=========
+  // Image Upload Function
+  const uploadImages = async (files) => {
+    const urls = [];
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append("image", file);
+      const res = await axios.post(
+        `https://api.imgbb.com/1/upload?key=${process.env.IMAGEAPI_KYE}`,
+        formData
+      );
+      urls.push(res?.data?.data?.url);
+    }
+    return urls;
+  };
+
+  // Handle image preview
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setPreview(files.map((file) => URL.createObjectURL(file)));
+  };
+
+  // Submit
+>>>>>>>>> Temporary merge branch 2
   const onSubmit = async (data) => {
         if(!session?.user && status === "unauthenticated" ) {
       alert("Please login to book a parcel")
@@ -121,6 +176,9 @@ const SendParcel = ({ districts, userData }) => {
       });
 
       if (parcelRes.ok) {
+<<<<<<<<< Temporary merge branch 1
+        // save user district and district Id
+        await saveUserDistrict()
         // alert("Parcel submitted successfully!");
         setShowModal(true);
         const data = await parcelRes.json();

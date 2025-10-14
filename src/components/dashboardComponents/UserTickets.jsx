@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import TicketChatClient from "./adminOverview/supportAgent(admin)/AgentChatBox";
+import TicketChatClient from "./supportAgent(admin)/AgentChatBox";
 
 
 export default function UserTickets({ userId }) {
