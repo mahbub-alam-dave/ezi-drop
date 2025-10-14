@@ -3,14 +3,19 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import {
   SelectFieldDistrict,
   SelectFieldUpazila,
 } from "@/utility/selectDistrict";
+import { useSession } from "next-auth/react";
 // import { districtsData } from "@/lib/getDistrictData";
 
-const SendParcel = ({ districts }) => {
+const SendParcel = ({ districts, userData }) => {
+
+  const {data: session, status} = useSession()
+
+
   const { register, handleSubmit, reset, watch } = useForm();
   // const [districtData, setDistrictData] = useState({});
   const [cost, setCost] = useState(null);
@@ -23,12 +28,14 @@ const SendParcel = ({ districts }) => {
   const parcelType = watch("parcelType");
   const weight = watch("weight");
 
-  // console.log(districtsData())
+  
   // 🧭 Find the selected district objects
   const pickupDistrictData = useMemo(
     () => districts.find((d) => d.districtId === pickupDistrictId),
     [pickupDistrictId, districts]
   );
+
+  console.log(pickupDistrictData)
 
   const deliveryDistrictData = useMemo(
     () => districts.find((d) => d.districtId === deliveryDistrictId),
@@ -60,7 +67,30 @@ const SendParcel = ({ districts }) => {
     setCost(baseCost);
   }, [pickupDistrictId, deliveryDistrictId, parcelType, weight]);
 
+
+  // save user district and districtId if not saved in the database
+   const saveUserDistrict = async () => {
+    if (!userData?.districtId) {
+      /* const selectedDistrict = districts.find((d) => d.value === districtId);
+      if (!selectedDistrict) return; */
+
+      await fetch("/api/update-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: userData.email,
+          districtId: pickupDistrictData?.districtId,
+          district: pickupDistrictData?.district,
+        }),
+      });
+    }
+  };
+
   const onSubmit = async (data) => {
+        if(!session?.user && status === "unauthenticated" ) {
+      alert("Please login to book a parcel")
+      redirect("/login")
+    }
     try {
       const parcelData = {
         ...data,
@@ -112,6 +142,8 @@ const SendParcel = ({ districts }) => {
       });
 
       if (parcelRes.ok) {
+        // save user district and district Id
+        await saveUserDistrict()
         // alert("Parcel submitted successfully!");
         setShowModal(true);
         const data = await parcelRes.json();
@@ -126,7 +158,6 @@ const SendParcel = ({ districts }) => {
       alert(err.message || "Failed to fetch location");
     }
   };
-
 
   return (
     <>
@@ -198,18 +229,23 @@ const SendParcel = ({ districts }) => {
               <InputField
                 label="Sender Name"
                 register={register("senderName", { required: true })}
+                defaultValue={userData?.name || ""}
+                readOnly={status === "authenticated"}
               />
               <InputField
                 label="Sender Phone"
                 type="tel"
                 placeholder="+8801XXXXXXXXX"
                 register={register("senderPhone", { required: true })}
+                
               />
               <InputField
                 label="Sender Email"
                 type="email"
                 placeholder="sender@example.com"
                 register={register("senderEmail", { required: true })}
+                defaultValue={userData?.email || ""}
+                readOnly={status === "authenticated"}
               />
               <SelectFieldDistrict
                 label="Pickup District"
@@ -217,6 +253,7 @@ const SendParcel = ({ districts }) => {
                 register={register}
                 required
                 districts={districts}
+                defaultValue={userData?.districtId || ""}
               />
               <SelectFieldUpazila
                 label="Pickup Upazila"
@@ -320,14 +357,16 @@ const SendParcel = ({ districts }) => {
 };
 
 // ----- Helper Components -----
-const InputField = ({ label, register, type = "text", placeholder = "" }) => (
+const InputField = ({ label, register, type = "text", defaultValue, readOnly, placeholder = "" }) => (
   <div>
     <label className="block mb-[6px] ">{label}</label>
     <input
       {...register}
       type={type}
+      defaultValue={defaultValue&& defaultValue}
       placeholder={placeholder || label}
       className="w-full input-style text-color"
+      readOnly={readOnly && readOnly}
     />
   </div>
 );

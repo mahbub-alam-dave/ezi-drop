@@ -5,64 +5,86 @@ import { assignRiderForDelivery, assignRiderToWarehouse } from "./assignRider";
 import { sendEmail } from "./email";
 
 export async function handlePostPaymentFunctionality(parcelId) {
-  const parcels = dbConnect("parcels");
+  try {
+    const parcels = await dbConnect("parcels");
 
-  const parcel = await parcels.findOne({ parcelId });
-  if (!parcel) {
-    console.error("❌ Parcel not found for post-payment:", parcelId);
-    return;
-  }
-
-  // generate OTP and hash
-  const otp = generateOtp();
-  const otpHash = hashOtp(otp);
-  const otpExpiry = new Date(Date.now() + 24 * 3600 * 1000);
-
-  // same-district delivery
-  if (parcel.pickupDistrictId === parcel.deliveryDistrictId) {
-    // same district
-    await assignRiderForDelivery(parcel);
-
-    await parcels.updateOne(
-      { _id: parcel._id },
-      { $set: { secretCodeHash: otpHash, secretCodeExpiresAt: otpExpiry } }
-    );
-
-    if (parcel.receiverEmail) {
-      await sendEmail({
-        to: parcel.receiverEmail, 
-        subject: "Your Delivery Code", 
-        text: `Your delivery code: ${otp}. Share this code while rider deliver you the parcel. Track your parcel with trackingId: ${parcel.trackingId}`
-    });
+    const parcel = await parcels.findOne({ parcelId });
+    if (!parcel) {
+      console.error("❌ Parcel not found for post-payment:", parcelId);
+      return;
     }
 
-    console.log("✅ Same district delivery handled successfully");
+    const otp = generateOtp();
+    const otpHash = hashOtp(otp);
+    const otpExpiry = new Date(Date.now() + 24 * 3600 * 1000);
 
-  } else {
-    // cross-district delivery
-    await assignRiderToWarehouse(parcel);
+    let warehouse = null;
+    let assignedRider = null;
 
+    if (parcel.pickupDistrictId === parcel.deliveryDistrictId) {
+      // same-district
+      assignedRider = await assignRiderForDelivery(parcel);
+    } else {
+      // cross-district
+      assignedRider = await assignRiderToWarehouse(parcel);
+      warehouse = await dbConnect("wirehouses").findOne({ wirehouseId: parcel.pickupDistrictId });
+    }
+
+    if (!assignedRider) {
+      console.warn("⚠️ No rider assigned after payment for parcel:", parcelId);
+    }
+
+    // Update parcel with OTP, warehouse info, timestamps, and event
     await parcels.updateOne(
       { _id: parcel._id },
       {
         $set: {
           secretCodeHash: otpHash,
           secretCodeExpiresAt: otpExpiry,
+          wirehouseAddress: warehouse?.address || "",
+          updatedAt: new Date(),
+        },
+        $push: {
+          events: [
+            {
+              type: "post_payment_handled",
+              by: "system",
+              at: new Date(),
+              note: `OTP generated and rider assigned.`,
+            },
+            assignedRider && {
+              type: "rider_assigned_post_payment",
+              by: assignedRider._id,
+              role: "rider",
+              at: new Date(),
+              note: `Rider ${assignedRider.name} assigned after payment.`,
+            },
+          ].filter(Boolean),
         },
       }
     );
 
-    const warehouse = await dbConnect("wirehouses").findOne({ wirehouseId: parcel.pickupDistrictId });
-    if (warehouse?.contactEmail) {
+    // Send email
+    if (parcel.receiverEmail) {
       await sendEmail({
-        to: warehouse.contactEmail,
+        to: parcel.receiverEmail,
+        subject: "Your Delivery Code",
+        text: `Your delivery code: ${otp}. Track your parcel with trackingId: ${parcel.trackingId}`,
+      });
+    } else if (warehouse?.contactEmail) {
+      await sendEmail({
+        to: "dakterkhujun@gmail.com",
         subject: `Incoming parcel OTP for ${parcel.trackingId}`,
-        text: `Parcel ID: ${parcel.parcelId}\nOTP: ${otp}`
-    });
+        text: `Parcel ID: ${parcel.parcelId}\nOTP: ${otp}`,
+      });
     }
 
-    console.log("📦 Cross-district delivery handled successfully");
-  }
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`Generated OTP for parcel ${parcel.parcelId}: ${otp}`);
+    }
 
-  console.log(`✅ Post-payment handled for parcel ${parcelId}`);
+    console.log(`✅ Post-payment handled for parcel ${parcelId}`);
+  } catch (error) {
+    console.error("❌ Error in post-payment handling:", error);
+  }
 }
