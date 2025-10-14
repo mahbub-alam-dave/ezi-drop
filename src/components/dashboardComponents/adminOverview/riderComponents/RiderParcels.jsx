@@ -118,9 +118,9 @@ export default function RiderParcels() {
           <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {newOrders.map((parcel) => (
               <div key={parcel._id} className="border-color rounded-2xl p-4 background-color">
-                <h3 className="font-semibold text-color">{parcel.parcelType}</h3>
-                <p className="text-sm text-color-soft">From: {parcel.pickupDistrict}</p>
-                <p className="text-sm text-color-soft">To: {parcel.deliveryDistrict}</p>
+                <h3 className="font-semibold text-color">{ parcel.parcelType}</h3>
+                <p className="text-sm text-color-soft">From: { parcel.status ==="pending_rider_approval" ? `${parcel.pickupDistrict}, (${parcel.deliveryAddress})` : parcel.deliveryDistrict ("from wirehouse")}</p>
+                <p className="text-sm text-color-soft">To: {parcel.deliveryType === "to_wirehouse" ? parcel.wirehouseAddress : `${parcel.deliveryDistrict}, (${parcel.deliveryAddress})`}</p>
                 <p className="text-sm text-color-soft">Amount: {parcel.amount} BDT</p>
                 {/* <button>View Details</button> */}
                 <div className="flex gap-2 mt-3">

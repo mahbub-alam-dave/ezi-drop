@@ -15,7 +15,7 @@ export async function PATCH(req, { params }) {
       );
     }
 
-    const parcels = dbConnect("parcels"); // ✅ ensure dbConnect returns awaited collection
+    const parcels =  dbConnect("parcels");
     const parcel = await parcels.findOne({ _id: new ObjectId(parcelId) });
 
     if (!parcel) {
@@ -25,11 +25,8 @@ export async function PATCH(req, { params }) {
       );
     }
 
-    // 🔐 Compare hashed codes
+    // 🔐 Verify secret code
     const hashedInput = hashOtp(secretCode);
-    console.log("Hashed input:", hashedInput);
-    console.log("Stored hash:", parcel.secretCodeHash);
-
     if (parcel.secretCodeHash !== hashedInput) {
       return NextResponse.json(
         { success: false, message: "Invalid secret code" },
@@ -38,74 +35,99 @@ export async function PATCH(req, { params }) {
     }
 
     const now = new Date();
+    const events = [];
 
-    // ✅ Same district — directly completed
+    /**
+     * ✅ Case 1: Same district — mark as completed
+     */
     if (parcel.pickupDistrictId === parcel.deliveryDistrictId) {
       await parcels.updateOne(
         { _id: new ObjectId(parcelId) },
         {
           $set: {
             status: "completed",
+            riderDeliveryStatus: "completed",
             completedAt: now,
             updatedAt: now,
           },
-        }
-      );
-    } else {
-      // 🏬 Different districts — send to local warehouse
-      await parcels.updateOne(
-        { _id: new ObjectId(parcelId) },
-        {
-          $set: {
-            status: "at_local_warehouse",
-            updatedAt: now,
+          $push: {
+            events: {
+              type: "delivery_completed",
+              by: parcel.assignedRiderId,
+              role: "rider",
+              at: now,
+              note: "Parcel delivered successfully within same district",
+            },
           },
         }
       );
 
-      // 🧾 Create transfer document
-      const transfers = dbConnect("transfers");
-      const transferDoc = {
-        parcelId: parcel.parcelId,
-        fromDistrictId: parcel.pickupDistrictId,
-        toDistrictId: parcel.deliveryDistrictId,
-        status: "requested",
-        createdBy: { type: "rider", id: parcel.assignedRiderId },
-        createdAt: now,
-        updatedAt: now,
-        events: [
-          {
-            type: "created",
-            by: parcel.assignedRiderId,
-            at: now,
-          },
-        ],
-      };
-
-      const { insertedId } = await transfers.insertOne(transferDoc);
-
-      await parcels.updateOne(
-        { _id: new ObjectId(parcelId) },
-        {
-          $set: {
-            transferId: insertedId,
-            updatedAt: now,
-          },
-        }
-      );
+      return NextResponse.json({
+        success: true,
+        message: "Parcel marked as completed successfully",
+      });
     }
+
+    /**
+     * 🏢 Case 2: Cross-district delivery — send to local warehouse
+     */
+    const transfers = dbConnect("transfers");
+
+    // 🧾 Create transfer request
+    const transferDoc = {
+      parcelId: parcel.parcelId,
+      fromDistrictId: parcel.pickupDistrictId,
+      toDistrictId: parcel.deliveryDistrictId,
+      status: "requested",
+      createdBy: { type: "rider", id: parcel.assignedRiderId },
+      createdAt: now,
+      updatedAt: now,
+      events: [
+        {
+          type: "transfer_requested",
+          by: parcel.assignedRiderId,
+          at: now,
+          note: "Rider delivered parcel to local warehouse for transfer",
+        },
+      ],
+    };
+
+    const { insertedId } = await transfers.insertOne(transferDoc);
+
+    // 🧩 Update parcel status
+    await parcels.updateOne(
+      { _id: new ObjectId(parcelId) },
+      {
+        $set: {
+          status: "at_local_warehouse",
+          riderDeliveryStatus: "delivered_to_warehouse",
+          transferId: insertedId,
+          updatedAt: now,
+        },
+        $push: {
+          events: {
+            type: "delivered_to_local_warehouse",
+            by: parcel.assignedRiderId,
+            role: "rider",
+            at: now,
+            note: "Parcel dropped at local warehouse for transfer",
+          },
+        },
+      }
+    );
 
     return NextResponse.json({
       success: true,
-      message:
-        parcel.pickupDistrictId === parcel.deliveryDistrictId
-          ? "Parcel marked as completed"
-          : "Parcel sent to local warehouse for transfer",
+      message: "Parcel sent to local warehouse for transfer",
     });
   } catch (error) {
     console.error("❌ Error in completing parcel:", error);
     return NextResponse.json(
-      { success: false, message: "Something went wrong", error: error.message },
+      {
+        success: false,
+        message: "Something went wrong while completing parcel",
+        error: error.message,
+      },
       { status: 500 }
     );
   }

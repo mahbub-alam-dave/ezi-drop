@@ -42,17 +42,19 @@ export async function handlePostPaymentFunctionality(parcelId) {
     // cross-district delivery
     await assignRiderToWarehouse(parcel);
 
+    const warehouse = await dbConnect("wirehouses").findOne({ wirehouseId: parcel.pickupDistrictId });
+
     await parcels.updateOne(
       { _id: parcel._id },
       {
         $set: {
+          wirehouseAddress: wirehouse.address,
           secretCodeHash: otpHash,
           secretCodeExpiresAt: otpExpiry,
         },
       }
     );
 
-    const warehouse = await dbConnect("wirehouses").findOne({ wirehouseId: parcel.pickupDistrictId });
     if (warehouse?.contactEmail) {
       await sendEmail({
         to: warehouse.contactEmail,
