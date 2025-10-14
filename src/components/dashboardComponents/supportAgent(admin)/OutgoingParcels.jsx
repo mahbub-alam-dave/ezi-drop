@@ -60,7 +60,7 @@ export default function OutgoingParcels({ admin }) {
   }, [parcels, search, filter]);
 
   async function handleDispatch(parcelId) {
-    if (!confirm("Confirm dispatch of this parcel?")) return;
+    // if (!confirm("Confirm dispatch of this parcel?")) return;
     try {
       const res = await fetch(`/api/transfers/dispatch/${parcelId}`, {
         method: "PATCH",
