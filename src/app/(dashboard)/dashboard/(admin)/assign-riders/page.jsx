@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import { Button } from "@/components/ui/button"; 
+import { Button } from "@/components/ui/button";
 import useLoadingSpinner from "@/hooks/useLoadingSpinner";
 
 export default function AssignRiders() {
@@ -28,7 +28,7 @@ export default function AssignRiders() {
   }, []);
 
   // ✅ Handle Accept button click
-  const handleAccept = async (userId) => {
+  const handleAccept = async (userId, appId) => {
     try {
       const confirm = await Swal.fire({
         title: "Approve this rider?",
@@ -36,33 +36,64 @@ export default function AssignRiders() {
         icon: "question",
         showCancelButton: true,
         confirmButtonText: "Yes, approve",
-        cancelButtonText: "Cancel",
       });
 
       if (!confirm.isConfirmed) return;
 
-      const res = await fetch(`/api/users/update-role/${userId}`, {
+      const res = await fetch(`/api/rider-applications/update-status/${appId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "accepted" }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update application");
+
+      // update user role
+      await fetch(`/api/users/update-role/${userId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: "rider" }),
       });
 
-      const result = await res.json();
-
-      if (res.ok) {
-        Swal.fire("Approved!", "User is now a rider.", "success");
-        // remove accepted user from list
-        setApplications((prev) => prev.filter((a) => a.userId !== userId));
-      } else {
-        Swal.fire("Error!", result.error || "Update failed.", "error");
-      }
+      Swal.fire("Approved!", "User is now a rider.", "success");
+      setApplications((prev) => prev.filter((a) => a._id !== appId));
     } catch (error) {
       console.error(error);
-      Swal.fire("Error!", "Something went wrong.", "error");
+      Swal.fire("Error", "Failed to approve application", "error");
     }
   };
 
-  if (loading) return useLoadingSpinner
+  // ✅ Handle Reject button click
+  const handleReject = async (appId) => {
+    try {
+      const confirm = await Swal.fire({
+        title: "Reject this application?",
+        text: "This action cannot be undone.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, reject",
+        cancelButtonText: "Cancel",
+      });
+
+      if (!confirm.isConfirmed) return;
+
+      const res = await fetch(`/api/rider-applications/update-status/${appId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "rejected" }),
+      });
+
+      if (!res.ok) throw new Error("Failed to reject application");
+
+      Swal.fire("Rejected!", "Application has been rejected.", "success");
+      setApplications((prev) => prev.filter((a) => a._id !== appId));
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", "Failed to reject application", "error");
+    }
+  };
+
+  if (loading) return useLoadingSpinner;
 
   return (
     <section className="p-6">
@@ -94,24 +125,25 @@ export default function AssignRiders() {
                   <td className="px-4 py-2">{app.applicantEmail}</td>
                   <td className="px-4 py-2">{app.mobileNumber}</td>
                   <td className="px-4 py-2">{app.district}</td>
-                  <td className="px-4 py-2 capitalize">
-                    {app.status || "Pending"}
-                  </td>
+                  <td className="px-4 py-2 capitalize">{app.status || "Pending"}</td>
                   <td className="px-4 py-2 flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSelectedApp(app)}
-                    >
+                    <Button variant="outline" size="sm" onClick={() => setSelectedApp(app)}>
                       View
                     </Button>
                     <Button
                       variant="default"
                       size="sm"
                       className="bg-green-600 hover:bg-green-700"
-                      onClick={() => handleAccept(app.userId)}
+                      onClick={() => handleAccept(app.userId, app._id)}
                     >
                       Accept
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleReject(app._id)}
+                    >
+                      Reject
                     </Button>
                   </td>
                 </tr>
@@ -121,35 +153,23 @@ export default function AssignRiders() {
         </div>
       )}
 
-      {/* ✅ Modal for viewing full details */}
+      {/* ✅ Modal */}
       {selectedApp && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg w-[90%] max-w-lg p-6">
             <h3 className="text-xl font-semibold mb-4">
-              {selectedApp.applicationTitle || "Rider Application"}
+              Rider Application Details
             </h3>
 
             <div className="space-y-2 text-sm text-gray-700 dark:text-gray-200">
+              <p><strong>Name:</strong> {selectedApp.applicantName}</p>
+              <p><strong>Email:</strong> {selectedApp.applicantEmail}</p>
+              <p><strong>Phone:</strong> {selectedApp.mobileNumber}</p>
+              <p><strong>District:</strong> {selectedApp.district}</p>
+              <p><strong>Education:</strong> {selectedApp.education}</p>
+              <p><strong>Summary:</strong> {selectedApp.profileSummary}</p>
               <p>
-                <strong>Name:</strong> {selectedApp.applicantName}
-              </p>
-              <p>
-                <strong>Email:</strong> {selectedApp.applicantEmail}
-              </p>
-              <p>
-                <strong>Phone:</strong> {selectedApp.mobileNumber}
-              </p>
-              <p>
-                <strong>District:</strong> {selectedApp.district}
-              </p>
-              <p>
-                <strong>Education:</strong> {selectedApp.education}
-              </p>
-              <p>
-                <strong>Profile Summary:</strong> {selectedApp.profileSummary}
-              </p>
-              <p>
-                <strong>Resume Link:</strong>{" "}
+                <strong>Resume:</strong>{" "}
                 <a
                   href={selectedApp.resumeLink}
                   target="_blank"
@@ -168,11 +188,20 @@ export default function AssignRiders() {
               <Button
                 className="bg-green-600 hover:bg-green-700"
                 onClick={() => {
-                  handleAccept(selectedApp.userId);
+                  handleAccept(selectedApp.userId, selectedApp._id);
                   setSelectedApp(null);
                 }}
               >
                 Accept
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  handleReject(selectedApp._id);
+                  setSelectedApp(null);
+                }}
+              >
+                Reject
               </Button>
             </div>
           </div>
