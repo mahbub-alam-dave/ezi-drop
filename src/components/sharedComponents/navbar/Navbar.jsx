@@ -10,10 +10,19 @@ export default function Navbar() {
   const { data: session, status } = useSession();
 
   const currentUserId = session?.user?.userId || session?.user?._id;
+  // ---------------------------------------------------------------------
 
   const [dark, setDark] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
   const [unseenNotifCount, setUnseenNotifCount] = useState(0);
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "dark") {
+      setDark(true);
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
 
   const toggleTheme = () => {
     if (dark) {
@@ -70,7 +79,7 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Notification Icon, Theme Toggle*/}
+          {/* Notification */}
           <div className="flex gap-4 items-center z-[1001]">
             {/* 1. Notification Panel */}
             {status === "authenticated" && currentUserId && (
@@ -80,7 +89,7 @@ export default function Navbar() {
               />
             )}
 
-            {/* 2. Theme Toggle (hidden md:block Notification) */}
+            {/* 2. Theme Toggle */}
             <button className="hidden md:block" onClick={toggleTheme}>
               {dark ? "☀️" : "🌙"}
             </button>
