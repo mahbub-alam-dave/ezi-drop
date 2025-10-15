@@ -39,7 +39,7 @@ export default function Navbar() {
     <>
     
       <Link href={'/'}>Home</Link>
-      <Link href={"/send-parcel"}>Send Parcel</Link>
+      <Link href={"/send-parcel"}>Parcel Booking</Link>
       {
          status==="authenticated" &&
         <Link href={"/dashboard"}>Dashboard</Link>
