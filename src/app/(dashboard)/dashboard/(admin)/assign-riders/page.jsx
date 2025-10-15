@@ -10,7 +10,7 @@ export default function AssignRiders() {
   const [loading, setLoading] = useState(true);
   const [selectedApp, setSelectedApp] = useState(null);
 
-  // ✅ Load all rider applications
+  // Load all rider applications
   useEffect(() => {
     const fetchApplications = async () => {
       try {
@@ -27,7 +27,7 @@ export default function AssignRiders() {
     fetchApplications();
   }, []);
 
-  // ✅ Handle Accept button click
+  // Handle Accept
   const handleAccept = async (userId, appId) => {
     try {
       const confirm = await Swal.fire({
@@ -37,18 +37,17 @@ export default function AssignRiders() {
         showCancelButton: true,
         confirmButtonText: "Yes, approve",
       });
-
       if (!confirm.isConfirmed) return;
 
+      // Update application status
       const res = await fetch(`/api/rider-applications/update-status/${appId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "accepted" }),
       });
-
       if (!res.ok) throw new Error("Failed to update application");
 
-      // update user role
+      // Update user role
       await fetch(`/api/users/update-role/${userId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -63,7 +62,7 @@ export default function AssignRiders() {
     }
   };
 
-  // ✅ Handle Reject button click
+  // Handle Reject
   const handleReject = async (appId) => {
     try {
       const confirm = await Swal.fire({
@@ -74,7 +73,6 @@ export default function AssignRiders() {
         confirmButtonText: "Yes, reject",
         cancelButtonText: "Cancel",
       });
-
       if (!confirm.isConfirmed) return;
 
       const res = await fetch(`/api/rider-applications/update-status/${appId}`, {
@@ -82,7 +80,6 @@ export default function AssignRiders() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "rejected" }),
       });
-
       if (!res.ok) throw new Error("Failed to reject application");
 
       Swal.fire("Rejected!", "Application has been rejected.", "success");
@@ -97,7 +94,7 @@ export default function AssignRiders() {
 
   return (
     <section className="p-6">
-      <h2 className="text-4xl font-extrabold bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] bg-clip-text text-transparent mb-8">
+      <h2 className="text-4xl font-extrabold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-blue-500">
         Assign Riders
       </h2>
 
@@ -127,24 +124,9 @@ export default function AssignRiders() {
                   <td className="px-4 py-2">{app.district}</td>
                   <td className="px-4 py-2 capitalize">{app.status || "Pending"}</td>
                   <td className="px-4 py-2 flex gap-2">
-                    <Button variant="outline" size="sm" onClick={() => setSelectedApp(app)}>
-                      View
-                    </Button>
-                    <Button
-                      variant="default"
-                      size="sm"
-                      className="bg-green-600 hover:bg-green-700"
-                      onClick={() => handleAccept(app.userId, app._id)}
-                    >
-                      Accept
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleReject(app._id)}
-                    >
-                      Reject
-                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => setSelectedApp(app)}>View</Button>
+                    <Button variant="default" size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => handleAccept(app.userId, app._id)}>Accept</Button>
+                    <Button variant="destructive" size="sm" onClick={() => handleReject(app._id)}>Reject</Button>
                   </td>
                 </tr>
               ))}
@@ -153,14 +135,10 @@ export default function AssignRiders() {
         </div>
       )}
 
-      {/* ✅ Modal */}
       {selectedApp && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg w-[90%] max-w-lg p-6">
-            <h3 className="text-xl font-semibold mb-4">
-              Rider Application Details
-            </h3>
-
+            <h3 className="text-xl font-semibold mb-4">Rider Application Details</h3>
             <div className="space-y-2 text-sm text-gray-700 dark:text-gray-200">
               <p><strong>Name:</strong> {selectedApp.applicantName}</p>
               <p><strong>Email:</strong> {selectedApp.applicantEmail}</p>
@@ -168,41 +146,12 @@ export default function AssignRiders() {
               <p><strong>District:</strong> {selectedApp.district}</p>
               <p><strong>Education:</strong> {selectedApp.education}</p>
               <p><strong>Summary:</strong> {selectedApp.profileSummary}</p>
-              <p>
-                <strong>Resume:</strong>{" "}
-                <a
-                  href={selectedApp.resumeLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 underline"
-                >
-                  {selectedApp.resumeLink}
-                </a>
-              </p>
+              <p><strong>Resume:</strong> <a href={selectedApp.resumeLink} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">{selectedApp.resumeLink}</a></p>
             </div>
-
             <div className="mt-6 flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setSelectedApp(null)}>
-                Close
-              </Button>
-              <Button
-                className="bg-green-600 hover:bg-green-700"
-                onClick={() => {
-                  handleAccept(selectedApp.userId, selectedApp._id);
-                  setSelectedApp(null);
-                }}
-              >
-                Accept
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={() => {
-                  handleReject(selectedApp._id);
-                  setSelectedApp(null);
-                }}
-              >
-                Reject
-              </Button>
+              <Button variant="outline" onClick={() => setSelectedApp(null)}>Close</Button>
+              <Button className="bg-green-600 hover:bg-green-700" onClick={() => { handleAccept(selectedApp.userId, selectedApp._id); setSelectedApp(null); }}>Accept</Button>
+              <Button variant="destructive" onClick={() => { handleReject(selectedApp._id); setSelectedApp(null); }}>Reject</Button>
             </div>
           </div>
         </div>

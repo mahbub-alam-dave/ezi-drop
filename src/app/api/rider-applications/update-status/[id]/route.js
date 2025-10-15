@@ -2,9 +2,10 @@ import { dbConnect } from "@/lib/dbConnect";
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 
-export async function PATCH(req, { params }) {
+export async function PATCH(req, context) {
   try {
-    const { id } = params;
+    const { params } = context;  
+    const id = params.id;          
     const { status } = await req.json();
 
     const collection = dbConnect("rider-applications");
