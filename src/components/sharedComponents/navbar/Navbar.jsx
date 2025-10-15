@@ -4,21 +4,16 @@ import React, { useEffect, useState } from "react";
 import { CiMenuBurger } from "react-icons/ci";
 import Sidebar from "./Sidebar";
 import { signOut, useSession } from "next-auth/react";
+import NotificationPanel from "@/components/NotificationPanel/NotificationPanel";
 
 export default function Navbar() {
-
   const { data: session, status } = useSession();
+
+  const currentUserId = session?.user?.userId || session?.user?._id;
 
   const [dark, setDark] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
-
-  useEffect(() => {
-    const storedTheme = localStorage.getItem("theme");
-    if (storedTheme === "dark") {
-      setDark(true);
-      document.documentElement.classList.add("dark"); // 👈 add class here
-    }
-  }, []);
+  const [unseenNotifCount, setUnseenNotifCount] = useState(0);
 
   const toggleTheme = () => {
     if (dark) {
@@ -37,50 +32,70 @@ export default function Navbar() {
 
   const navLinks = (
     <>
-    
-      <Link href={'/'}>Home</Link>
+      <Link href={"/"}>Home</Link>
       <Link href={"/send-parcel"}>Send Parcel</Link>
-      {
-         status==="authenticated" &&
-        <Link href={"/dashboard"}>Dashboard</Link>
-      }
+      {status === "authenticated" && <Link href={"/dashboard"}>Dashboard</Link>}
       <Link href={"/about"}>About</Link>
       <Link href={"/contact"}>Contact</Link>
-     
-   
     </>
   );
 
   return (
-    <div className=" w-full flex justify-center h-[100px] bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] px-6 md:px-8  fixed z-1000 ">
+    // Navbar Z-index: z-[1000]
+    <div className=" w-full flex justify-center h-[100px] bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] px-6 md:px-8  fixed z-[1000] ">
       <div className="w-full max-w-[1440px] mx-auto flex justify-between items-center">
-        <h1 className="text-2xl font-bold"><Link href={"/"}>Ezi Drop </Link></h1>
+        <h1 className="text-2xl font-bold">
+          <Link href={"/"}>Ezi Drop </Link>
+        </h1>
         <div className="flex items-center gap-8">
           <nav>
-            <ul className="hidden md:flex gap-8 ">
-              
-              {navLinks}
-            </ul>
+            <ul className="hidden md:flex gap-8 ">{navLinks}</ul>
           </nav>
-              <div className='flex gap-4'>
-      {
-        status === "authenticated" ?
-        <button onClick={() => signOut()} className="hidden sm:block btn bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] rounded-sm text-white border-none">Logout</button>
-       :
-      <Link href={'/login'}><button className="hidden sm:block btn bg-[var(--color-primary)] dark:bg-[var(--color-primary-dark)] rounded-sm text-white border-none">Login</button></Link>
-      }
-    </div>
-          <button className="hidden md:block" onClick={toggleTheme}>
-            {dark ? "☀️" : "🌙"}
-          </button>{" "}
-          <div className="md:hidden" onClick={handleMenuButton}>
-            <CiMenuBurger size={28} />
+
+          {/* Login/Logout */}
+          <div className="flex gap-4">
+            {status === "authenticated" ? (
+              <button
+                onClick={() => signOut()}
+                className="hidden sm:block btn bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] rounded-sm text-white border-none"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link href={"/login"}>
+                <button className="hidden sm:block btn bg-[var(--color-primary)] dark:bg-[var(--color-primary-dark)] rounded-sm text-white border-none">
+                  Login
+                </button>
+              </Link>
+            )}
+          </div>
+
+          {/* Notification Icon, Theme Toggle*/}
+          <div className="flex gap-4 items-center z-[1001]">
+            {/* 1. Notification Panel */}
+            {status === "authenticated" && currentUserId && (
+              <NotificationPanel
+                userId={currentUserId}
+                onUnseenChange={setUnseenNotifCount}
+              />
+            )}
+
+            {/* 2. Theme Toggle (hidden md:block Notification) */}
+            <button className="hidden md:block" onClick={toggleTheme}>
+              {dark ? "☀️" : "🌙"}
+            </button>
+
+            {/* 3. Menu Burger (Mobile) */}
+            <div className="md:hidden" onClick={handleMenuButton}>
+              <CiMenuBurger size={28} />
+            </div>
           </div>
         </div>
       </div>
 
       {openMenu && (
-        <div className="md:hidden absolute right-0 top-[100px] z-1000">
+        // Mobile Menu Z-index: z-[999]
+        <div className="md:hidden absolute right-0 top-[100px] z-[999]">
           <Sidebar navLinks={navLinks} status={status} />
         </div>
       )}
