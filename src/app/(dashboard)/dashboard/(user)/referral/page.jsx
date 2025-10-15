@@ -66,12 +66,12 @@ export default function ReferralPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center py-12 px-4 bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 transition-colors duration-300">
+    <div className="min-h-screen w-full flex flex-col items-center   dark:from-gray-900 dark:to-gray-950 transition-colors duration-300">
       <Toaster position="top-right" />
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-5xl bg-white dark:bg-gray-900 shadow-2xl rounded-3xl p-8"
+        className="w-full max-w-5xl bg-white dark:bg-gray-900  p-8"
       >
         {/* Hero Section */}
         <div className="text-center mb-10">
