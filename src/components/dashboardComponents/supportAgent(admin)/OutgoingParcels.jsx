@@ -28,7 +28,7 @@ export default function OutgoingParcels({ admin }) {
     try {
       setLoading(true);
     //   ?fromDistrictId=${admin.districtId}
-      const res = await fetch(`/api/transfers`);
+      const res = await fetch(`/api/transfers/outgoing`);
       if (res.ok) {
         const { transfers } = await res.json();
         setParcels(transfers || []);
