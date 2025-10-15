@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
 import { FiMail, FiGift } from "react-icons/fi";
 
+
 export default function ReferralPage() {
   const [showInput, setShowInput] = useState(false);
   const [email, setEmail] = useState("");
@@ -11,6 +12,7 @@ export default function ReferralPage() {
   const [isValid, setIsValid] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [referrals, setReferrals] = useState([]);
+  const [totalPoints, setTotalPoints] = useState(0);
 
   // Input validation
   const handleEmailChange = (e) => {
@@ -25,8 +27,16 @@ export default function ReferralPage() {
     try {
       const res = await fetch("/api/referrallist");
       const data = await res.json();
-      if (res.ok) setReferrals(data);
-      else toast.error(data.message || "Failed to fetch referrals");
+      if (res.ok) {
+        setReferrals(data);
+
+        // Calculate total points from all referral documents
+        const total = data.reduce(
+          (sum, item) => sum + (item.refererpoint || 0),
+          0
+        );
+        setTotalPoints(total);
+      } else toast.error(data.message || "Failed to fetch referrals");
     } catch (err) {
       console.error(err);
       toast.error("Failed to fetch referrals");
@@ -35,7 +45,6 @@ export default function ReferralPage() {
 
   useEffect(() => {
     fetchReferrals();
-    // Update dateLeft/dateOver every 1 minute
     const interval = setInterval(fetchReferrals, 60000);
     return () => clearInterval(interval);
   }, []);
@@ -55,7 +64,7 @@ export default function ReferralPage() {
         setName("");
         setIsValid(false);
         setShowInput(false);
-        fetchReferrals(); // refresh table
+        fetchReferrals();
       } else {
         toast.error(data.message || "Something went wrong");
       }
@@ -65,13 +74,29 @@ export default function ReferralPage() {
     }
   };
 
+  //  Status badge color logic
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "pending":
+        return "bg-yellow-100 text-yellow-700";
+      case "in-time":
+        return "bg-green-100 text-green-700";
+      case "after-time":
+        return "bg-red-100 text-red-700";
+      default:
+        return "bg-gray-100 text-gray-700";
+    }
+  };
+
   return (
-    <div className="min-h-screen w-full flex flex-col items-center   dark:from-gray-900 dark:to-gray-950 transition-colors duration-300">
+    <div className="min-h-screen w-full flex flex-col items-center dark:from-gray-900 dark:to-gray-950 transition-colors duration-300">
       <Toaster position="top-right" />
+    
+
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-5xl bg-white dark:bg-gray-900  p-8"
+        className="w-full max-w-5xl bg-white dark:bg-gray-900 p-8"
       >
         {/* Hero Section */}
         <div className="text-center mb-10">
@@ -88,6 +113,65 @@ export default function ReferralPage() {
           </p>
         </div>
 
+      <div className="flex  justify-center  gap-5">
+          {/*  Total Points Display */}
+        <div className="flex justify-center mb-6">
+          <h2 className="flex items-center gap-2 bg-purple-600 text-white px-6 py-2 rounded-xl font-medium shadow-md hover:scale-105 transition">
+            Total Points: {totalPoints}
+          </h2>
+        </div>
+        {/* Reward Info Button */}
+<div className="flex justify-center mb-6">
+  <button
+    onClick={() => setShowModal(true)}
+    className="flex items-center gap-2 bg-purple-600 text-white px-6 py-2 rounded-xl font-medium shadow-md hover:scale-105 transition"
+  >
+    <FiGift className="text-lg" />
+    View Reward Info
+  </button>
+</div>
+      </div>
+
+{/* Reward Modal */}
+<AnimatePresence>
+  {showModal && (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+    >
+      <motion.div
+        initial={{ scale: 0.8 }}
+        animate={{ scale: 1 }}
+        exit={{ scale: 0.8 }}
+        className="bg-white dark:bg-gray-900 rounded-2xl p-8 max-w-md w-full shadow-xl relative"
+      >
+        <h2 className="text-2xl font-bold text-center text-purple-600 mb-4">
+          🎁 Reward Information
+        </h2>
+        <p className="text-gray-700 dark:text-gray-300 mb-2">
+          ✅ You will earn <b>50 points</b> for each successful referral.
+        </p>
+        <p className="text-gray-700 dark:text-gray-300 mb-2">
+          💎 If your referred person joins within 30 days, that person will get a <b>bonus of 100 points</b>.
+        </p>
+        <p className="text-gray-700 dark:text-gray-300 mb-4">
+          📅 All rewards will be automatically added to your profile points.
+        </p>
+        <button
+          onClick={() => setShowModal(false)}
+          className="mt-4 w-full bg-purple-600 text-white py-2 rounded-xl font-semibold hover:scale-105 transition"
+        >
+          Close
+        </button>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
+
+
         {/* Reward Cards */}
         <div className="grid sm:grid-cols-2 gap-6 mb-10">
           <motion.div
@@ -95,27 +179,15 @@ export default function ReferralPage() {
             className="bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-2xl p-6 shadow-lg text-center"
           >
             <h3 className="text-3xl font-bold">100 Points</h3>
-            <p>Earned by your Referrals</p>
+            <p>Earned user by your Referrals</p>
           </motion.div>
           <motion.div
             whileHover={{ scale: 1.03 }}
             className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-2xl p-6 shadow-lg text-center"
           >
             <h3 className="text-3xl font-bold">50 Points</h3>
-            <p>Earned by You</p>
+            <p>Earned You for referduser</p>
           </motion.div>
-        </div>
-
-        {/* Rewards button */}
-        <div className="flex justify-center items-center gap-3 mb-10">
-          <motion.button
-            onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 px-6 py-2 rounded-xl text-white font-semibold bg-gradient-to-r from-pink-500 to-orange-500 shadow-md"
-            animate={{ scale: [1, 1.05, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
-            <FiGift /> Your Rewards
-          </motion.button>
         </div>
 
         {/* Refer Button */}
@@ -179,7 +251,7 @@ export default function ReferralPage() {
           )}
         </AnimatePresence>
 
-        {/* Referral List Table */}
+        {/*  Referral List Table */}
         <div className="mt-12">
           <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-4">
             Your Referrals
@@ -191,9 +263,8 @@ export default function ReferralPage() {
                   <th className="px-4 py-3">Name</th>
                   <th className="px-4 py-3">Email</th>
                   <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Date</th>
-                  <th className="px-4 py-3">Date Left</th>
-                  <th className="px-4 py-3">Date Over</th>
+                  <th className="px-4 py-3">Join Time</th>
+                  <th className="px-4 py-3">Day Left / Over</th>
                 </tr>
               </thead>
               <tbody>
@@ -207,20 +278,25 @@ export default function ReferralPage() {
                     <td className="px-4 py-3">{r.referredEmail}</td>
                     <td className="px-4 py-3">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          r.status === "Registered"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-yellow-100 text-yellow-700"
-                        }`}
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
+                          r.status
+                        )}`}
                       >
                         {r.status}
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      {new Date(r.referDate).toLocaleDateString()}
+                      {r.jointime
+                        ? new Date(r.jointime).toLocaleString()
+                        : "—"}
                     </td>
-                    <td className="px-4 py-3">{r.dateLeft} days</td>
-                    <td className="px-4 py-3">{r.dateOver} days</td>
+                    <td className="px-4 py-3">
+                      {r.dateLeft > 0
+                        ? `${r.dateLeft} days left`
+                        : r.dateOver > 0
+                        ? `${r.dateOver} days over`
+                        : "—"}
+                    </td>
                   </motion.tr>
                 ))}
               </tbody>
@@ -228,46 +304,6 @@ export default function ReferralPage() {
           </div>
         </div>
       </motion.div>
-
-      {/* Rewards Modal */}
-      <AnimatePresence>
-        {showModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 px-4"
-            onClick={() => setShowModal(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.8 }}
-              className="bg-white dark:bg-gray-900 rounded-2xl p-6 max-w-md w-full shadow-lg text-center relative"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">
-                🎁 Referral Rewards
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
-                If you refer someone and they join within <b>30 days</b> using
-                your referral, that person will get <b>100 positive points</b>{" "}
-                and you will receive <b>50 positive points</b>.
-              </p>
-              <p className="text-gray-600 dark:text-gray-300 text-sm mt-2">
-                If they join <b>after 30 days</b>, you won’t receive any points.
-              </p>
-
-              <button
-                onClick={() => setShowModal(false)}
-                className="mt-6 bg-purple-600 text-white px-6 py-2 rounded-xl hover:scale-105 transition-transform"
-              >
-                Got it
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

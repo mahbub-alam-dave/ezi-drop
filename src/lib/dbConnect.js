@@ -1,6 +1,6 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 
-export const collectionNames = {
+export  const collectionNames = {
   products: "products",
   users: "users",
   reviews: "reviews",
@@ -17,6 +17,6 @@ export const dbConnect = (collectionName) => {
       deprecationErrors: true,
     },
   });
-
+   client.connect();
   return client.db(process.env.DB_NAME).collection(collectionName);
 };
