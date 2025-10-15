@@ -31,6 +31,7 @@ const RegisterForm = () => {
           body: JSON.stringify({ email: registerData.email }),
         });
         setOtpModalData({ email: registerData.email, password:registerData.password });
+        
         setShowOtpModal(true); // open modal
 
         /*         // login after registration
@@ -111,7 +112,7 @@ const RegisterForm = () => {
       </div>
       <button
         type="submit"
-        className="bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] px-6 py-3 cursor-pointer rounded-full mt-4 w-full text-white font-medium text-lg"
+        className="bg-[var(--color-primary)] dark:bg-[var(--color-primary-dark)] px-6 py-3 cursor-pointer rounded-full mt-4 w-full text-white font-medium text-lg"
       >
         {loading ? "loading..." : "Register"}
       </button>

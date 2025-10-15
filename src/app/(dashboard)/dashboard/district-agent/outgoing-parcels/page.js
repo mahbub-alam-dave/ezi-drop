@@ -1,9 +1,10 @@
+import OutgoingParcels from '@/components/dashboardComponents/supportAgent(admin)/OutgoingParcels';
 import React from 'react';
 
 const InternalParcels = () => {
     return (
         <div>
-            Here showed the parcels needs to transfer to other districts
+            <OutgoingParcels />
         </div>
     );
 };

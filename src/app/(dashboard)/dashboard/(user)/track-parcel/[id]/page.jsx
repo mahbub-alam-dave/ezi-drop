@@ -30,7 +30,7 @@ export default function ParcelMapPage() {
         const res = await fetch(`/api/parcels/${id}`);
         const data = await res.json();
         setParcel(data);
-
+console.log(data)
         if (data?.pickupLocation && data?.deliveryLocation) {
           const start = [
             parseFloat(data.pickupLocation.lon),
@@ -103,7 +103,7 @@ export default function ParcelMapPage() {
 
     return () => clearInterval(interval);
   }, [parcel]);
-
+console.log(parcel)
   if (!parcel) return <p className="p-6">Loading parcel...</p>;
   if (!parcel.pickupLocation || !parcel.deliveryLocation)
     return <p className="p-6 text-red-500">Parcel location data missing</p>;

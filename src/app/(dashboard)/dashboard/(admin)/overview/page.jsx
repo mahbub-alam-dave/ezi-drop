@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import SupportsTicket from "@/components/dashboardComponents/adminOverview/supportAgent(admin)/SupportsTicket";
+import SupportsTicket from "@/components/dashboardComponents/supportAgent(admin)/SupportsTicket";
 import OverviewHeader from "@/components/dashboardComponents/adminOverview/OverviewHeader";
 import AIinsightBanner from "@/components/dashboardComponents/adminOverview/AIinsightBanner";
 import OverviewFilter from "@/components/dashboardComponents/adminOverview/OverviewFilter";
