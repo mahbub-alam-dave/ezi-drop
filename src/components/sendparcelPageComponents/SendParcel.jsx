@@ -1,4 +1,3 @@
-// implement by abu bokor and yasin..
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -11,7 +10,6 @@ import {
 } from "@/utility/selectDistrict";
 
 import { useSession } from "next-auth/react";
-// import { districtsData } from "@/lib/getDistrictData";
 
 const SendParcel = ({ districts, userData }) => {
 
@@ -19,20 +17,19 @@ const SendParcel = ({ districts, userData }) => {
 
 
   const { register, handleSubmit, reset, watch } = useForm();
+  // const [districtData, setDistrictData] = useState({});
   const [cost, setCost] = useState(null);
   const [parcelId, setParcelId] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [preview, setPreview] = useState([]);
+  const [showModal, setShowModal] = useState(false); // NEW: modal toggle
   const router = useRouter();
   const fileInputRef = useRef();
 
+  // Domestic form fields
   const pickupDistrictId = watch("pickupDistrictId");
   const deliveryDistrictId = watch("deliveryDistrictId");
   const parcelType = watch("parcelType");
   const weight = watch("weight");
 
-  // Find district objects
   
   // 🧭 Find the selected district objects
   const pickupDistrictData = useMemo(
@@ -40,14 +37,13 @@ const SendParcel = ({ districts, userData }) => {
     [pickupDistrictId, districts]
   );
 
-  console.log(pickupDistrictData)
-
   const deliveryDistrictData = useMemo(
     () => districts.find((d) => d.districtId === deliveryDistrictId),
     [deliveryDistrictId, districts]
   );
 
-  // Calculate cost
+
+  // cost calculation
   useEffect(() => {
     let baseCost = 0;
     if (
@@ -71,28 +67,6 @@ const SendParcel = ({ districts, userData }) => {
     setCost(baseCost);
   }, [pickupDistrictId, deliveryDistrictId, parcelType, weight]);
 
-  // Image Upload Function
-  const uploadImages = async (files) => {
-    const urls = [];
-    for (const file of files) {
-      const formData = new FormData();
-      formData.append("image", file);
-      const res = await axios.post(
-        `https://api.imgbb.com/1/upload?key=${process.env.IMAGEAPI_KYE}`,
-        formData
-      );
-      urls.push(res?.data?.data?.url);
-    }
-    return urls;
-  };
-
-  // Handle image preview
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    setPreview(files.map((file) => URL.createObjectURL(file)));
-  };
-
-  // Submit
 
   // save user district and districtId if not saved in the database
    const saveUserDistrict = async () => {
@@ -112,11 +86,18 @@ const SendParcel = ({ districts, userData }) => {
     }
   };
 
-  const onSubmit = async (data) => {
-        if(!session?.user && status === "unauthenticated" ) {
-      alert("Please login to book a parcel")
-      redirect("/login")
+  const onSubmitDomestic = async (data) => {
+    if (!session?.user && status === "unauthenticated") {
+      alert("Please login to book a parcel");
+      redirect("/login");
     }
+
+    if (!pickupDistrictData || !deliveryDistrictData) {
+      alert("Please select both pickup and delivery districts");
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
       setUploading(true);
       const imageFiles = fileInputRef.current.files;
@@ -127,9 +108,7 @@ const SendParcel = ({ districts, userData }) => {
         ...data,
         pickupDistrict: pickupDistrictData.district,
         deliveryDistrict: deliveryDistrictData.district,
-        parcelImages: imageUrls,
       };
-
       // Pickup location
       const pickupRes = await fetch(
         `/api/geocode?address=${encodeURIComponent(
@@ -162,13 +141,12 @@ const SendParcel = ({ districts, userData }) => {
             lon: deliveryData.lon,
             display_name: deliveryData.display_name,
           },
+          shipmentType: "domestic",
         }),
       });
 
       if (parcelRes.ok) {
-        // save user district and district Id
-        await saveUserDistrict()
-        // alert("Parcel submitted successfully!");
+        await saveUserDistrict();
         setShowModal(true);
         const data = await parcelRes.json();
         setParcelId(data.parcelId);
@@ -180,14 +158,13 @@ const SendParcel = ({ districts, userData }) => {
       }
     } catch (err) {
       console.error(err);
-      alert(err.message || "Failed to submit parcel");
-      setUploading(false);
+      alert(err.message || "Failed to fetch location");
     }
   };
 
   return (
     <>
-      {/* ---------- Fullscreen Success Modal ---------- */}
+      {/* Success Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
           <div className="bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] text-center p-8 rounded-2xl shadow-2xl w-[90%] max-w-md">
@@ -195,7 +172,7 @@ const SendParcel = ({ districts, userData }) => {
               Thanks for choosing Ezi Drop!
             </h2>
             <p className="mb-8 text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
-              Your parcel has been submitted successfully.
+              Your {activeTab === "domestic" ? "domestic" : "international"} parcel has been submitted successfully.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
@@ -218,11 +195,45 @@ const SendParcel = ({ districts, userData }) => {
       )}
 
       {/* ---------- Main Form ---------- */}
-      <div className="min-h-screen my-16 flex justify-center items-center p-4 text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
-        <div className="w-full max-w-7xl rounded-2xl shadow-xl p-6 sm:-8 md:p-10 lg:p-12 bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] transition-colors duration-300">
-          <h1 className="text-2xl md:text-3xl font-bold mb-8 text-center text-color">
+      <div
+        className="min-h-screen my-16 flex justify-center items-center p-4
+         text-[var(--color-text)] dark:text-[var(--color-text-dark)]"
+      >
+        <div
+          className="w-full max-w-7xl rounded-2xl shadow-xl p-6 sm:-8 md:p-10 lg:p-12
+           bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
+           transition-colors duration-300"
+        >
+          <h1
+            className="text-2xl md:text-3xl font-bold mb-8 text-center
+             text-color"
+          >
             Send Your Parcel
           </h1>
+
+          {/* Tab Navigation */}
+          <div className="flex border-b border-gray-200 dark:border-gray-700 mb-8">
+            <button
+              onClick={() => handleTabChange("domestic")}
+              className={`py-3 px-6 font-medium text-lg transition-colors ${
+                activeTab === "domestic"
+                  ? "border-b-2 border-[var(--color-primary)] text-[var(--color-primary)]"
+                  : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+              }`}
+            >
+              🇧🇩 Domestic
+            </button>
+            <button
+              onClick={() => handleTabChange("overseas")}
+              className={`py-3 px-6 font-medium text-lg transition-colors ${
+                activeTab === "overseas"
+                  ? "border-b-2 border-[var(--color-primary)] text-[var(--color-primary)]"
+                  : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+              }`}
+            >
+              🌍 International
+            </button>
+          </div>
 
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -275,17 +286,6 @@ const SendParcel = ({ districts, userData }) => {
                 label="Special Instructions"
                 register={register("special")}
               />
-
-              <div className="hidden lg:flex">
-                <FileInputField
-                label="Upload Parcel Images (Multiple)"
-                fileInputRef={fileInputRef}
-                uploading={uploading}
-                preview={preview}
-                required
-                handleFileChange={handleFileChange}
-              />
-              </div>
             </div>
 
             {/* Right column */}
@@ -306,6 +306,7 @@ const SendParcel = ({ districts, userData }) => {
                 placeholder="receiver@example.com"
                 register={register("receiverEmail", { required: true })}
               />
+
               <SelectFieldDistrict
                 label="Delivery District"
                 name="deliveryDistrictId"
@@ -313,6 +314,7 @@ const SendParcel = ({ districts, userData }) => {
                 required
                 districts={districts}
               />
+
               <SelectFieldUpazila
                 label="Delivery Upazila"
                 name="deliveryUpazila"
@@ -340,20 +342,13 @@ const SendParcel = ({ districts, userData }) => {
                   { value: 60, label: "Over 30kg" },
                 ]}
               />
-              <div className="lg:hidden mt-4">
-                <FileInputField
-                label="Upload Parcel Images (Multiple)"
-                fileInputRef={fileInputRef}
-                uploading={uploading}
-                preview={preview}
-                required
-                handleFileChange={handleFileChange}
-              />
-              </div>
             </div>
 
             {cost !== null && (
-              <p className="lg:col-span-2 mt-2 text-xl font-semibold text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]">
+              <p
+                className="lg:col-span-2 mt-2 text-xl font-semibold
+                text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]"
+              >
                 Estimated Cost: {cost}৳
               </p>
             )}
@@ -361,9 +356,18 @@ const SendParcel = ({ districts, userData }) => {
             <div className="lg:col-span-2">
               <button
                 type="submit"
-                className="w-full mt-4 rounded-lg border border-[var(--border-color)] dark:border-[var(--border-color-two)] bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white font-medium py-3 transition-colors"
+                className="w-full mt-4 rounded-lg border border-[var(--border-color)]
+                 dark:border-[var(--border-color-two)]
+                 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)]
+                 text-white font-medium py-3 transition-colors"
               >
-                Submit Parcel
+                {isSubmitting ? (
+                  "⏳ Processing..."
+                ) : activeTab === "domestic" ? (
+                  "📦 Submit Domestic Parcel"
+                ) : (
+                  "🌍 Submit International Shipment"
+                )}
               </button>
             </div>
           </form>
@@ -373,28 +377,34 @@ const SendParcel = ({ districts, userData }) => {
   );
 };
 
-// ----- Helper Components -----
+// Helper Components (same as before)
 const InputField = ({ label, register, type = "text", defaultValue, readOnly, placeholder = "" }) => (
   <div>
-    <label className="block mb-[6px]">{label}</label>
+    <label className="block mb-[6px] ">{label}</label>
     <input
       {...register}
       type={type}
-      defaultValue={defaultValue&& defaultValue}
-      placeholder={placeholder || label}
-      className="w-full input-style text-color"
-      readOnly={readOnly && readOnly}
+      defaultValue={defaultValue}
+      placeholder={placeholder}
+      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+                 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+                 bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                 transition-colors duration-200"
+      readOnly={readOnly}
     />
   </div>
 );
 
 const SelectField = ({ label, register, options = [], disabled = false }) => (
   <div>
-    <label className="block mb-1">{label}</label>
+    <label className="block mb-2 font-medium text-gray-700 dark:text-gray-300">{label}</label>
     <select
       {...register}
       disabled={disabled}
-      className="w-full input-style text-color-soft"
+      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+                 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+                 bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                 transition-colors duration-200"
     >
       <option value="">Select {label}</option>
       {options.map((opt) =>
@@ -403,20 +413,26 @@ const SelectField = ({ label, register, options = [], disabled = false }) => (
             {opt.label}
           </option>
         ) : (
-          <option key={opt}>{opt}</option>
+          <option key={opt} className="background-color">
+            {opt}
+          </option>
         )
       )}
     </select>
   </div>
 );
 
-const TextAreaField = ({ label, register }) => (
+const TextAreaField = ({ label, register, placeholder = "" }) => (
   <div>
-    <label className="block mb-1">{label}</label>
+    <label className="block mb-1 ">{label}</label>
     <textarea
       {...register}
-      placeholder={label}
-      className="w-full input-style text-color"
+      placeholder={placeholder}
+      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+                 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+                 bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                 transition-colors duration-200 resize-none"
+      rows={3}
     />
   </div>
 );
