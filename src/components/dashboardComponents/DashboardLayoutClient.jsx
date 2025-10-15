@@ -41,7 +41,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
      ${
        pathname === path
          ? "bg-[var(--color-primary)] text-white dark:bg-[var(--color-primary-dark)]"
-         : "hover:bg-blue-200  dark:hover:bg-blue-300"
+         : "hover:bg-blue-300  dark:hover:bg-blue-400"
      }`;
 
   // dashboard links for roles — merged so each role has its chat link
@@ -222,11 +222,18 @@ const DashboardLayoutClient = ({ userData, children }) => {
           Overview
         </Link>
         <Link
-          href="/dashboard/district-agent/check-wire-houses"
-          className={linkClass("/dashboard/district-agent/check-wire-houses")}
+          href="/dashboard/district-agent/outgoing-parcels"
+          className={linkClass("/dashboard/district-agent/outgoing-parcels")}
         >
           <FaClipboardList className="inline-block mr-2" />
-          Check Wire-houses
+          Outgoing Parcels
+        </Link>
+        <Link
+          href="/dashboard/district-agent/incoming-parcels"
+          className={linkClass("/dashboard/district-agent/incoming-parcels")}
+        >
+          <FaClipboardList className="inline-block mr-2" />
+          Incoming Parcels
         </Link>
         <Link
           href="/dashboard/district-agent/profile"
@@ -294,7 +301,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
           {status === "authenticated" && (
             <button
               onClick={() => signOut()}
-              className="hidden w-full mt-4 sm:block btn bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] rounded-sm text-white border-none"
+              className="hidden w-full mt-4 sm:block btn bg-transparent btn-outline  rounded-sm text-[var(--color-secondary)] dark:text-[var(--color-secondary-dark)] border-color shadow-none hover:text-white hover:bg-blue-200 dark:hover:bg-blue-400 hover:border-none"
             >
               Logout
             </button>

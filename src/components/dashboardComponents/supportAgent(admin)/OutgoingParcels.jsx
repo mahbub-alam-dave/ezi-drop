@@ -28,7 +28,7 @@ export default function OutgoingParcels({ admin }) {
     try {
       setLoading(true);
     //   ?fromDistrictId=${admin.districtId}
-      const res = await fetch(`/api/transfers`);
+      const res = await fetch(`/api/transfers/outgoing`);
       if (res.ok) {
         const { transfers } = await res.json();
         setParcels(transfers || []);
@@ -60,7 +60,7 @@ export default function OutgoingParcels({ admin }) {
   }, [parcels, search, filter]);
 
   async function handleDispatch(parcelId) {
-    if (!confirm("Confirm dispatch of this parcel?")) return;
+    // if (!confirm("Confirm dispatch of this parcel?")) return;
     try {
       const res = await fetch(`/api/transfers/dispatch/${parcelId}`, {
         method: "PATCH",
@@ -74,7 +74,7 @@ export default function OutgoingParcels({ admin }) {
   }
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="pt-8 space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <h2 className="text-xl font-semibold">🚚 Outgoing Parcels</h2>
         <div className="flex gap-2">
