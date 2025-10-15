@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 
-export default function IncomingParcels({ admin }) {
+export default function IncomingParcels() {
   const [parcels, setParcels] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [filter, setFilter] = useState("all");
@@ -34,8 +34,8 @@ export default function IncomingParcels({ admin }) {
         setIsLoading(false);
       }
     }
-    if (admin?.districtId) fetchParcels();
-  }, [admin?.districtId]);
+     fetchParcels();
+  },[]);
 
   // ✅ Filter + search logic
   const filteredParcels = useMemo(() => {
@@ -66,7 +66,7 @@ export default function IncomingParcels({ admin }) {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pt-8">
       <h2 className="text-xl font-semibold">Incoming Parcels</h2>
 
       {/* Filters */}

@@ -74,7 +74,7 @@ export default function OutgoingParcels({ admin }) {
   }
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="pt-8 space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <h2 className="text-xl font-semibold">🚚 Outgoing Parcels</h2>
         <div className="flex gap-2">

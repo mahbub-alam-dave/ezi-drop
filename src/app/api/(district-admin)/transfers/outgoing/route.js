@@ -22,15 +22,12 @@ const districtAdminData = await dbConnect("users").findOne({_id: new ObjectId(se
 
   const fromDistrictId = districtAdminData.districtId;
 
-  console.log(session?.user?.userId, fromDistrictId)
 
   const transfers = dbConnect("transfers");
   const results = await transfers
     .find({ fromDistrictId, status: { $in: ["requested", "dispatched"] } })
     .sort({ createdAt: -1 })
     .toArray();
-
-    console.log(transfers)
 
   return NextResponse.json({ transfers: results });
 }

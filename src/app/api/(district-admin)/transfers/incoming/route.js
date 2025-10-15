@@ -19,7 +19,7 @@ export async function GET(req) {
     const users = dbConnect("users");
 
     // 3️⃣ Find the logged-in user’s districtId
-    const user = await users.findOne({ _id: new ObjectId(session.user.userId) });
+    const user = await users.findOne({ _id: new ObjectId(session?.user?.userId) });
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
