@@ -1,9 +1,10 @@
+import IncomingParcels from '@/components/dashboardComponents/supportAgent(admin)/IncomingParcels';
 import React from 'react';
 
 const ExternalParcels = () => {
     return (
         <div>
-            Here displayed the parcel that were sent to from other districts
+           <IncomingParcels />
         </div>
     );
 };

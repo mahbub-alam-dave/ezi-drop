@@ -18,6 +18,7 @@ import {
   FaUserPlus,
   FaTachometerAlt,
   FaSearch,
+   FaCalendarAlt
 } from "react-icons/fa";
 import { FaChartLine } from "react-icons/fa";
 import { VscCommentUnresolved } from "react-icons/vsc";
@@ -36,11 +37,10 @@ const DashboardLayoutClient = ({ userData, children }) => {
 
   const linkClass = (path) =>
     `px-6 py-2 rounded-md transition-colors duration-200
-     ${
-       pathname === path
-         ? "bg-[var(--color-primary)] text-white dark:bg-[var(--color-primary-dark)]"
-         : "hover:bg-blue-200  dark:hover:bg-blue-300"
-     }`;
+     ${pathname === path
+      ? "bg-[var(--color-primary)] text-white dark:bg-[var(--color-primary-dark)]"
+      : "hover:bg-blue-300  dark:hover:bg-blue-400"
+    }`;
 
   const handleLogout = () => {
     setShowLogoutModal(true);
@@ -85,7 +85,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaUsers className="inline-block mr-2" />
           Manage Users
         </Link>
-        <Link href="/assign-riders" className={linkClass("/assign-riders")}>
+        <Link href="/dashboard/assign-riders" className={linkClass("/dashboard/assign-riders")}>
           <FaMotorcycle className="inline-block mr-2" />
           Assign Riders
         </Link>
@@ -125,7 +125,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaTachometerAlt className="inline-block mr-2" />
           Rider Dashboard
         </Link>
-                <Link
+        <Link
           href="/dashboard/rider/manage-parcels"
           className={linkClass("/dashboard/rider/manage-parcels")}
         >
@@ -227,6 +227,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
           Be A Rider
         </Link>
         <Link
+  href="/dashboard/my-bookings"
+  className={linkClass("/dashboard/my-bookings")}
+>
+  <FaCalendarAlt className="inline-block mr-2" />
+  My Bookings
+</Link>
+        <Link
           href="/dashboard/userChat"
           className={linkClass("/dashboard/userChat")}
         >
@@ -245,11 +252,18 @@ const DashboardLayoutClient = ({ userData, children }) => {
           Overview
         </Link>
         <Link
-          href="/dashboard/district-agent/check-wire-houses"
-          className={linkClass("/dashboard/district-agent/check-wire-houses")}
+          href="/dashboard/district-agent/outgoing-parcels"
+          className={linkClass("/dashboard/district-agent/outgoing-parcels")}
         >
           <FaClipboardList className="inline-block mr-2" />
-          Check Wire-houses
+          Outgoing Parcels
+        </Link>
+        <Link
+          href="/dashboard/district-agent/incoming-parcels"
+          className={linkClass("/dashboard/district-agent/incoming-parcels")}
+        >
+          <FaClipboardList className="inline-block mr-2" />
+          Incoming Parcels
         </Link>
         <Link
           href="/dashboard/district-agent/profile"
@@ -273,10 +287,10 @@ const DashboardLayoutClient = ({ userData, children }) => {
     status === "authenticated" && userData.role === "admin"
       ? dashboardLinks.adminLinks
       : status === "authenticated" && userData.role === "rider"
-      ? dashboardLinks.riderLinks
-      : status === "authenticated" && userData.role === "district_admin"
-      ? dashboardLinks.districtAgentLinks
-      : dashboardLinks.userLinks;
+        ? dashboardLinks.riderLinks
+        : status === "authenticated" && userData.role === "district_admin"
+          ? dashboardLinks.districtAgentLinks
+          : dashboardLinks.userLinks;
 
   return (
     <div className="bg-gray-50 dark:bg-black">

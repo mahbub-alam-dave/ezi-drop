@@ -34,6 +34,7 @@ export async function POST(request) {
   }
 }
 
+
 // ✅ GET: Fetch all rider reviews
 export async function GET() {
   try {
