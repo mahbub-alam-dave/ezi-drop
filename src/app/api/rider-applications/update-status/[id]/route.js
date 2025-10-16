@@ -2,10 +2,9 @@ import { dbConnect } from "@/lib/dbConnect";
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 
-export async function PATCH(req, context) {
+export async function PATCH(req, { params }) {
   try {
-    const { params } = context;  
-    const id = params.id;          
+    const id = (await params)?.id; // ✅ fix for params async issue
     const { status } = await req.json();
 
     const collection = dbConnect("rider-applications");
@@ -14,8 +13,9 @@ export async function PATCH(req, context) {
       { $set: { status } }
     );
 
-    if (result.matchedCount === 0)
+    if (result.matchedCount === 0) {
       return NextResponse.json({ error: "Application not found" }, { status: 404 });
+    }
 
     return NextResponse.json({ success: true, status });
   } catch (error) {
