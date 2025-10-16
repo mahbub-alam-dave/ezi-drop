@@ -19,6 +19,7 @@ import {
   FaUserPlus,
   FaTachometerAlt,
   FaSearch,
+   FaCalendarAlt
 } from "react-icons/fa";
 import { FaChartLine } from "react-icons/fa";
 import { VscCommentUnresolved } from "react-icons/vsc";
@@ -203,6 +204,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaUserPlus className="inline-block mr-2" />
           Be A Rider
         </Link>
+        <Link
+  href="/dashboard/my-bookings"
+  className={linkClass("/dashboard/my-bookings")}
+>
+  <FaCalendarAlt className="inline-block mr-2" />
+  My Bookings
+</Link>
         <Link
           href="/dashboard/userChat"
           className={linkClass("/dashboard/userChat")}
