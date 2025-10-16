@@ -12,6 +12,7 @@ export default function AssignRiders() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedApp, setSelectedApp] = useState(null);
 
+  
   // 🔹 Fetch all applications from backend
   useEffect(() => {
     const fetchApplications = async () => {
