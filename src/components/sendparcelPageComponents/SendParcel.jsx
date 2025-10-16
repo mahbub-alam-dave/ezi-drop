@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { redirect, useRouter } from "next/navigation";
+import axios from "axios";
 import {
   SelectFieldDistrict,
   SelectFieldUpazila,
@@ -211,6 +212,8 @@ const SendParcel = ({ districts, userData }) => {
         }),
       });
 
+      const resultData = await parcelRes.json();
+
       if (parcelRes.ok) {
         await saveUserDistrict();
         setShowModal(true);
@@ -218,8 +221,7 @@ const SendParcel = ({ districts, userData }) => {
         setParcelId(data.parcelId);
         reset();
       } else {
-        const errData = await parcelRes.json();
-        alert(errData.message || "Something went wrong");
+        toast.error(resultData.message || "Something went wrong");
       }
     } catch (err) {
       console.error("Domestic submission error:", err);
@@ -388,7 +390,7 @@ const SendParcel = ({ districts, userData }) => {
                 className="flex-1 rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)]
                  text-white font-medium py-3 transition-colors"
               >
-                See Your Booking
+                Track Parcel
               </button>
               <button
                 onClick={() =>
@@ -450,7 +452,7 @@ const SendParcel = ({ districts, userData }) => {
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-10"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-8"
           >
             {/* Left Column - Common Fields */}
             <div className="space-y-4">
@@ -757,7 +759,8 @@ const SendParcel = ({ districts, userData }) => {
               </div>
             )}
 
-            <div className="lg:col-span-2">
+            {/* Submit */}
+            <div className="lg:col-span-2 mt-6">
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -778,7 +781,7 @@ const SendParcel = ({ districts, userData }) => {
             </div>
           </form>
         </div>
-      </div>
+      </section>
     </>
   );
 };
@@ -815,9 +818,7 @@ const SelectField = ({ label, register, options = [], disabled = false }) => (
       <option value="">Select {label}</option>
       {options.map((opt) =>
         typeof opt === "object" ? (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
+          <option key={opt.value} value={opt.value}>{opt.label}</option>
         ) : (
           <option key={opt} value={opt}>
             {opt}
