@@ -1,25 +1,12 @@
 import { ObjectId } from "mongodb";
 import { dbConnect } from "./dbConnect";
+import { findAvailableRider } from "./riderAssignment/findAvailableRider";
 
 /**
  * 🔍 Find available rider in a district
  * Optionally exclude a specific rider (for reassignment)
  */
-async function findAvailableRider(districtId, excludeRiderId = null) {
-  const users = dbConnect("users");
 
-  const query = {
-    role: "rider",
-    districtId,
-    working_status: "duty", // ✅ only active riders
-  };
-
-  if (excludeRiderId) {
-    query._id = { $ne: new ObjectId(excludeRiderId) }; // exclude current rider
-  }
-
-  return await users.findOne(query);
-}
 
 /**
  * 🚴 Assign or Reassign Rider (for same-district delivery)
