@@ -104,7 +104,9 @@ console.log(data)
     return () => clearInterval(interval);
   }, [parcel]);
 console.log(parcel)
-  if (!parcel) return <p className="p-6">Loading parcel...</p>;
+  if (!parcel) return <div className="flex justify-center h-screen items-center">
+       <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>;
   if (!parcel.pickupLocation || !parcel.deliveryLocation)
     return <p className="p-6 text-red-500">Parcel location data missing</p>;
 
