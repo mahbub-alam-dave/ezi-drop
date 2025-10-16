@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import useLoadingSpinner from "@/hooks/useLoadingSpinner";
 import { Search } from "lucide-react";
 
+
 export default function AssignRiders() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
