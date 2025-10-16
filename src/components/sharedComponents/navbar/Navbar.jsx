@@ -41,9 +41,13 @@ export default function Navbar() {
 
   const navLinks = (
     <>
-      <Link href={"/"}>Home</Link>
-      <Link href={"/send-parcel"}>Send Parcel</Link>
-      {status === "authenticated" && <Link href={"/dashboard"}>Dashboard</Link>}
+    
+      <Link href={'/'}>Home</Link>
+      <Link href={"/send-parcel"}>Parcel Booking</Link>
+      {
+         status==="authenticated" &&
+        <Link href={"/dashboard"}>Dashboard</Link>
+      }
       <Link href={"/about"}>About</Link>
       <Link href={"/contact"}>Contact</Link>
     </>

@@ -1,4 +1,3 @@
-
 import { dbConnect } from "@/lib/dbConnect";
 import { getServerSession } from "next-auth";
 import nodemailer from "nodemailer";
@@ -8,18 +7,34 @@ export async function POST(req) {
     // ---------------- Session Check ----------------
     const session = await getServerSession();
     if (!session) {
-      return new Response(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
+      return new Response(JSON.stringify({ message: "Unauthorized" }), {
+        status: 401,
+      });
     }
 
     // ---------------- Request Body ----------------
     const { name, email } = await req.json();
     if (!name || !email) {
-      return new Response(JSON.stringify({ message: "Name and email are required" }), { status: 400 });
+      return new Response(
+        JSON.stringify({ message: "Name and email are required" }),
+        { status: 400 }
+      );
     }
 
+    // ---------------- DB Collections ----------------
     const refCollection = dbConnect("referraluser");
+    const usersCollection = dbConnect("users");
 
-    // ---------------- Duplicate Check ----------------
+    // ---------------- Check if user already exists in users collection ----------------
+    const existingUser = await usersCollection.findOne({ email });
+    if (existingUser) {
+      return new Response(
+        JSON.stringify({ message: "This person is already in this website" }),
+        { status: 400 }
+      );
+    }
+
+    // ---------------- Duplicate Check in referral collection ----------------
     const existingReferral = await refCollection.findOne({ referredEmail: email });
 
     if (existingReferral) {
@@ -90,17 +105,17 @@ export async function POST(req) {
     await transporter.sendMail(mailOptions);
 
     return new Response(
-      JSON.stringify({ message: "Referral added successfully and email sent!", data: referralDoc }),
+      JSON.stringify({
+        message: "Referral added successfully and email sent!",
+        data: referralDoc,
+      }),
       { status: 201 }
     );
-
   } catch (err) {
     console.error(err);
-    return new Response(JSON.stringify({ message: "Internal server error" }), { status: 500 });
+    return new Response(
+      JSON.stringify({ message: "Internal server error" }),
+      { status: 500 }
+    );
   }
 }
-
-
-
-
-

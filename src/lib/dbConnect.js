@@ -1,11 +1,12 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 
-export const collectionNames = {
+export  const collectionNames = {
   products: "products",
   users: "users",
   reviews: "reviews",
   messages: "messages", // ✅ added
   riderReview: "riderReview",
+  riderApplications: "rider-applications",
 };
 
 export const dbConnect = (collectionName) => {
@@ -17,6 +18,6 @@ export const dbConnect = (collectionName) => {
       deprecationErrors: true,
     },
   });
-
+   client.connect();
   return client.db(process.env.DB_NAME).collection(collectionName);
 };

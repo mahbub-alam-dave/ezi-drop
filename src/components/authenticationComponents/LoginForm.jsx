@@ -116,7 +116,7 @@ const LoginForm = () => {
 
       <button
         type="submit"
-        className="bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] px-6 py-3 cursor-pointer rounded-full mt-4 w-full text-white font-medium text-lg"
+        className="bg-[var(--color-primary)] dark:bg-[var(--color-primary-dark)] px-6 py-3 cursor-pointer rounded-full mt-4 w-full text-white font-medium text-lg"
       >
         {loading ? "loading..." : "Login"}
       </button>
