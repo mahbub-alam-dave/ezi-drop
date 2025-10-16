@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb";
 
 export async function PATCH(req, { params }) {
   try {
-    const id = (await params)?.id; // ✅ fix for params async issue
+    const id = (await params)?.id; 
     const { status } = await req.json();
 
     const collection = dbConnect("rider-applications");

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 
 // ✅ PATCH: update user role to "rider"
+
 export async function PATCH(req, { params }) {
   try {
     const { id } = params;

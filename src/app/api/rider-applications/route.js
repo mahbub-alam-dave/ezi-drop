@@ -6,7 +6,7 @@ export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const search = searchParams.get("search")?.toLowerCase() || "";
-    const status = searchParams.get("status") || ""; // Optional filter
+    const status = searchParams.get("status") || ""; 
 
     const collection = dbConnect("rider-applications");
 
