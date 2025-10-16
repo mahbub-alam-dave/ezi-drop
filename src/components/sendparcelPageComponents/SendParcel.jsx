@@ -9,6 +9,8 @@ import {
   SelectFieldUpazila,
 } from "@/utility/selectDistrict";
 import { useSession } from "next-auth/react";
+import { FiUploadCloud, FiTrash2 } from "react-icons/fi";
+import toast from "react-hot-toast";
 
 const SendParcel = ({ districts, userData }) => {
   const { data: session, status } = useSession();
@@ -19,6 +21,11 @@ const SendParcel = ({ districts, userData }) => {
   const [showModal, setShowModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState([]);
+  const [loading, setLoading] = useState(false); // Add loading state
+
+  console.log(parcelId)
 
   // Domestic form fields
   const pickupDistrictId = watch("pickupDistrictId");
@@ -145,6 +152,39 @@ const SendParcel = ({ districts, userData }) => {
     }
   };
 
+  // Upload images
+  const uploadImages = async (files) => {
+    const urls = [];
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append("image", file);
+      const res = await axios.post(
+        `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMAGEAPI_KEY}`,
+        formData
+      );
+      urls.push(res?.data?.data?.url);
+    }
+    return urls;
+  };
+
+  // Handle preview
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setPreview(files.map((file) => URL.createObjectURL(file)));
+  };
+
+  const handleRemovePreview = (index) => {
+    const newPreview = [...preview];
+    newPreview.splice(index, 1);
+    setPreview(newPreview);
+    const dt = new DataTransfer();
+    const files = fileInputRef.current.files;
+    Array.from(files)
+      .filter((_, i) => i !== index)
+      .forEach((f) => dt.items.add(f));
+    fileInputRef.current.files = dt.files;
+  };
+
   const onSubmitDomestic = async (data) => {
     if (!session?.user && status === "unauthenticated") {
       alert("Please login to book a parcel");
@@ -158,6 +198,7 @@ const SendParcel = ({ districts, userData }) => {
 
     setIsSubmitting(true);
     try {
+      
       const parcelData = {
         ...data,
         pickupDistrict: pickupDistrictData.district,
@@ -212,13 +253,12 @@ const SendParcel = ({ districts, userData }) => {
         }),
       });
 
-      const resultData = await parcelRes.json();
-
       if (parcelRes.ok) {
         await saveUserDistrict();
         setShowModal(true);
         const data = await parcelRes.json();
-        setParcelId(data.parcelId);
+        setParcelId(data?.parcelId);
+        console.log(data?.parcelId)
         reset();
       } else {
         toast.error(resultData.message || "Something went wrong");
@@ -368,6 +408,21 @@ const SendParcel = ({ districts, userData }) => {
 
   return (
     <>
+
+          {/* ✅ Full Screen Loading Overlay */}
+      {loading && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-2xl flex flex-col items-center gap-4">
+            <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+              Submitting your parcel...
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+              Please wait while we process your request
+            </p>
+          </div>
+        </div>
+      )}
       {/* Success Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
@@ -781,7 +836,7 @@ const SendParcel = ({ districts, userData }) => {
             </div>
           </form>
         </div>
-      </section>
+      </div>
     </>
   );
 };
@@ -843,5 +898,50 @@ const TextAreaField = ({ label, register, placeholder = "" }) => (
     />
   </div>
 );
+
+const FileInputField = ({ label, fileInputRef, uploading, preview = [], handleFileChange, handleRemovePreview }) => (
+  <div className="flex flex-col gap-2">
+    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{label}</label>
+
+    {/* Drag & Drop Wrapper */}
+    <div
+      onClick={() => fileInputRef.current?.click()}
+      className="relative flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-6 cursor-pointer hover:border-blue-400 transition-all duration-200 bg-white dark:bg-gray-800"
+    >
+      <FiUploadCloud className="text-4xl text-blue-500 mb-2" />
+      <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
+        Drag & drop or <span className="text-blue-600 font-medium">browse</span> to upload
+      </p>
+    </div>
+
+    {/* Hidden Input */}
+    <input
+      type="file"
+      accept="image/*"
+      multiple
+      ref={fileInputRef}
+      onChange={handleFileChange}
+      className="hidden"
+    />
+
+    {uploading && <p className="text-blue-500 text-sm mt-2 animate-pulse">Uploading images...</p>}
+
+    {preview.length > 0 && (
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3">
+        {preview.map((src, i) => (
+          <div key={i} className="relative group overflow-hidden rounded-lg border border-gray-300 dark:border-gray-700">
+            <img src={src} alt="preview" className="w-full h-24 object-cover transition-transform duration-200 group-hover:scale-105" />
+            {handleRemovePreview && (
+              <button onClick={() => handleRemovePreview(i)} className="absolute top-1 right-1 bg-red-500 p-1 rounded-full opacity-0 group-hover:opacity-100 text-white transition-opacity">
+                <FiTrash2 size={14} />
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+    )}
+</div>
+    )
+
 
 export default SendParcel;

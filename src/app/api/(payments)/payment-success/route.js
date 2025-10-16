@@ -4,12 +4,12 @@ import { dbConnect } from "@/lib/dbConnect";
 import { handlePostPaymentFunctionality } from "@/lib/postPaymentHandler";
 import { generateTrackingNumber } from "@/utility/trackingId";
 import { createNotification } from "@/utility/notificationUtils";
-import { useSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
 
 export async function POST(request) {
   let parcelId = ""; // Initialize outside try block for wider scope
-  const { data: session } = useSession();
-  const currentUserId = session?.user?.userId || session?.user?._id;
+  const { data: session } = getServerSession();
+  const currentUserId = session?.user?.userId
   // console.log(currentUserId)
   // trackingId
   const trackingId = generateTrackingNumber();

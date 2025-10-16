@@ -5,16 +5,18 @@ import { CiMenuBurger } from "react-icons/ci";
 import Sidebar from "./Sidebar";
 import { signOut, useSession } from "next-auth/react";
 import NotificationPanel from "@/components/NotificationPanel/NotificationPanel";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
 
   const currentUserId = session?.user?.userId || session?.user?._id;
-  // ---------------------------------------------------------------------
-
+  const router = useRouter();
   const [dark, setDark] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
   const [unseenNotifCount, setUnseenNotifCount] = useState(0);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
@@ -97,7 +99,7 @@ export default function Navbar() {
           <div className="flex gap-4">
             {status === "authenticated" ? (
               <button
-                onClick={() => signOut()}
+                onClick={handleLogout}
                 className="hidden sm:block btn bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] rounded-sm text-white border-none"
               >
                 Logout
