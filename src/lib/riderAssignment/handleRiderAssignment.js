@@ -1,14 +1,23 @@
 import { dbConnect } from "../dbConnect"
 import { findAvailableRider }  from "./findAvailableRider";
 
-
-
 export default async function handleRiderAssignment(parcel, deliveryType, isReassign = false) {
   const parcels = dbConnect("parcels");
   const now = new Date();
   const excludeRiderId = isReassign ? parcel.assignedRiderId : null;
 
-  const availableRider = await findAvailableRider(parcel.pickupDistrictId, excludeRiderId);
+    let districtForAssignment;
+
+  if (deliveryType === "to_warehouse" || deliveryType === "to_customer") {
+    districtForAssignment = parcel.pickupDistrictId; // pickup-side
+  } else if (deliveryType === "to_receiver_final") {
+    districtForAssignment = parcel.deliverDistrictId; // receiver-side
+  } else {
+    throw new Error(`Unknown delivery type: ${deliveryType}`);
+  }
+
+
+  const availableRider = await findAvailableRider(districtForAssignment, excludeRiderId);
   if (!availableRider) {
     await parcels.updateOne(
       { _id: new ObjectId(parcel._id) },

@@ -1,16 +1,7 @@
-import { ObjectId } from "mongodb";
+/* import { ObjectId } from "mongodb";
 import { dbConnect } from "./dbConnect";
 import { findAvailableRider } from "./riderAssignment/findAvailableRider";
 
-/**
- * 🔍 Find available rider in a district
- * Optionally exclude a specific rider (for reassignment)
- */
-
-
-/**
- * 🚴 Assign or Reassign Rider (for same-district delivery)
- */
 export async function assignRiderForDelivery(parcel, isReassign = false) {
   const parcels = dbConnect("parcels");
   const now = new Date();
@@ -74,11 +65,11 @@ export async function assignRiderForDelivery(parcel, isReassign = false) {
     } to parcel ${parcel.parcelId}`
   );
 }
-
+ */
 /**
  * 🏢 Assign or Reassign Rider (for cross-district delivery to warehouse)
  */
-export async function assignRiderToWarehouse(parcel, isReassign = false) {
+/* export async function assignRiderToWarehouse(parcel, isReassign = false) {
   const parcels = dbConnect("parcels");
   const now = new Date();
 
@@ -140,4 +131,22 @@ export async function assignRiderToWarehouse(parcel, isReassign = false) {
       isReassign ? "reassigned" : "assigned"
     } to deliver parcel ${parcel.parcelId} to warehouse`
   );
+} */
+
+
+
+// same district
+export async function assignRiderForDelivery(parcel, isReassign = false) {
+  return await handleRiderAssignment(parcel, "to_customer", isReassign);
+}
+
+// Cross-district (to warehouse)
+export async function assignRiderToWarehouse(parcel, isReassign = false) {
+  return await handleRiderAssignment(parcel, "to_warehouse", isReassign);
+}
+
+
+// final delivery (from wirehouse to receiver)
+export async function assignRiderForFinalDelivery(parcel, isReassign = false) {
+  return await handleRiderAssignment(parcel, "to_receiver_final", isReassign);
 }
