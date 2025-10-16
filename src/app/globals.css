@@ -40,7 +40,7 @@
 
 /* dark mode */
 .dark .banner-shape {
-  fill: var(--color-text-soft-dark); /* #c0c0c0 */
+  fill: var(--foreground); /* #c0c0c0 */
 }
 
 /* new font style  */

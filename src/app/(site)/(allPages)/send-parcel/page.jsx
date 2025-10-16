@@ -23,9 +23,9 @@ const SendParcelPage = async () => {
       district: userInfo?.district || null, 
       districtId: userInfo?.districtId || null
     }) 
-    console.log(userData)
+    // console.log(userData)
   }
-  console.log(session?.user)
+  // console.log(session?.user)
   return (
     <div>
       <SendParcel districts={districts} userData={userData}/>
