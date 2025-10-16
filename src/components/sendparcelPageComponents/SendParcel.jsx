@@ -37,6 +37,8 @@ const SendParcel = ({ districts, userData }) => {
     [pickupDistrictId, districts]
   );
 
+  // console.log(pickupDistrictData)
+
   const deliveryDistrictData = useMemo(
     () => districts.find((d) => d.districtId === deliveryDistrictId),
     [deliveryDistrictId, districts]
