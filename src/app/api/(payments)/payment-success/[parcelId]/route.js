@@ -22,20 +22,16 @@ export async function GET(req, { params }) {
     return NextResponse.json({ error: "Failed to process payment" }, { status: 500 });
   }
 } */
-
 import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/dbConnect";
 import { generateInvoicePDF } from "@/lib/invoice";
 import { sendEmail } from "@/lib/email";
-import fs from "fs";
-import path from "path";
 
 export async function GET(req, { params }) {
   const { parcelId } = params;
-  const db = dbConnect("parcels");
-  const parcels = db.collection("parcels");
+  const parcels = dbConnect("parcels");
 
-  // 1️⃣ Find parcel
+  // 1️⃣ Find the parcel
   const parcel = await parcels.findOne({ parcelId });
   if (!parcel) {
     return NextResponse.json({ ok: false, message: "Parcel not found" }, { status: 404 });
@@ -46,29 +42,28 @@ export async function GET(req, { params }) {
     return NextResponse.json({ ok: false, message: "Payment not completed" }, { status: 400 });
   }
 
-  // 4️⃣ Generate invoice PDF
+  // 3️⃣ Generate invoice PDF (in memory only)
   const invoiceBuffer = await generateInvoicePDF(parcel);
-  const invoiceDir = path.join(process.cwd(), "public", "invoices");
-  if (!fs.existsSync(invoiceDir)) fs.mkdirSync(invoiceDir, { recursive: true });
 
-  const invoicePath = path.join(invoiceDir, `${parcel.parcelId}.pdf`);
-  fs.writeFileSync(invoicePath, invoiceBuffer);
-
-  const invoiceUrl = `/invoices/${parcel.parcelId}.pdf`;
-
-  // 5️⃣ Email notification
-  if (parcel.sender?.email) {
-    await sendEmail(
-      parcel.sender.email,
-      "Your EZI Drop Booking Confirmation ✅",
-      `Dear ${parcel.sender.name || "Customer"},\n\nYour payment and booking for parcel ${parcel.parcelId} are confirmed.\n\nYou can download your invoice here:\n${process.env.NEXT_PUBLIC_NEXTAUTH_URL}${invoiceUrl}\n\nThank you for choosing EZI Drop!`
-    );
+  // 4️⃣ Email notification with attached PDF
+  if (parcel.senderEmail) {
+    await sendEmail({
+      // to: parcel.senderEmail,
+      to: "dakterkhujun@gmail.com",
+      subject: "Your EZI Drop Booking Confirmation ✅",
+      text: `Dear ${parcel.senderName || "Customer"},\n\nYour payment and booking for parcel ${parcel.parcelId} are confirmed.\n\nThank you for choosing EZI Drop!`,
+      attachments: [
+        {
+          filename: `${parcel.parcelId}.pdf`,
+          content: invoiceBuffer,
+        },
+      ],
+    });
   }
 
+  // 5️⃣ Respond success (no file created locally)
   return NextResponse.json({
     ok: true,
-    message: "Payment success processed",
-    invoiceUrl,
+    message: "Payment success processed and invoice sent via email",
   });
 }
-
