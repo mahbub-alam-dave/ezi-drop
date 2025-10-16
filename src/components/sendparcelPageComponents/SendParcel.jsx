@@ -410,7 +410,7 @@ const SendParcel = ({ districts, userData }) => {
     <>
 
           {/* ✅ Full Screen Loading Overlay */}
-      {loading && (
+      {isSubmitting && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-2xl flex flex-col items-center gap-4">
             <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
@@ -441,7 +441,7 @@ const SendParcel = ({ districts, userData }) => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                onClick={() => router.push("/user-dashboard/my-bookings")}
+                onClick={() => router.push("/dashboard/track-parcel")}
                 className="flex-1 rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)]
                  text-white font-medium py-3 transition-colors"
               >
