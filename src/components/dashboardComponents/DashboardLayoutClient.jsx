@@ -39,11 +39,10 @@ const DashboardLayoutClient = ({ userData, children }) => {
 
   const linkClass = (path) =>
     `px-6 py-2 rounded-md transition-colors duration-200
-     ${
-       pathname === path
-         ? "bg-[var(--color-primary)] text-white dark:bg-[var(--color-primary-dark)]"
-         : "hover:bg-blue-300  dark:hover:bg-blue-400"
-     }`;
+     ${pathname === path
+      ? "bg-[var(--color-primary)] text-white dark:bg-[var(--color-primary-dark)]"
+      : "hover:bg-blue-300  dark:hover:bg-blue-400"
+    }`;
 
   // dashboard links for roles — merged so each role has its chat link
   const dashboardLinks = {
@@ -63,7 +62,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaUsers className="inline-block mr-2" />
           Manage Users
         </Link>
-        <Link href="/assign-riders" className={linkClass("/assign-riders")}>
+        <Link href="/dashboard/assign-riders" className={linkClass("/dashboard/assign-riders")}>
           <FaMotorcycle className="inline-block mr-2" />
           Assign Riders
         </Link>
@@ -103,7 +102,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaTachometerAlt className="inline-block mr-2" />
           Rider Dashboard
         </Link>
-                <Link
+        <Link
           href="/dashboard/rider/manage-parcels"
           className={linkClass("/dashboard/rider/manage-parcels")}
         >
@@ -265,10 +264,10 @@ const DashboardLayoutClient = ({ userData, children }) => {
     status === "authenticated" && userData.role === "admin"
       ? dashboardLinks.adminLinks
       : status === "authenticated" && userData.role === "rider"
-      ? dashboardLinks.riderLinks
-      : status === "authenticated" && userData.role === "district_admin"
-      ? dashboardLinks.districtAgentLinks
-      : dashboardLinks.userLinks;
+        ? dashboardLinks.riderLinks
+        : status === "authenticated" && userData.role === "district_admin"
+          ? dashboardLinks.districtAgentLinks
+          : dashboardLinks.userLinks;
 
   return (
     <div className="bg-gray-50 dark:bg-black">
@@ -305,16 +304,16 @@ const DashboardLayoutClient = ({ userData, children }) => {
         </Link>
         <nav className="space-y-3 flex flex-col mt-6">{renderLinks}</nav>
 
-        
-          {status === "authenticated" && (
-            <button
-              onClick={() => signOut()}
-              className="hidden w-full mt-4 sm:block btn bg-transparent btn-outline  rounded-sm text-[var(--color-secondary)] dark:text-[var(--color-secondary-dark)] border-color shadow-none hover:text-white hover:bg-blue-200 dark:hover:bg-blue-400 hover:border-none"
-            >
-              Logout
-            </button>
-          )}
-          <div className="px-6 mt-4 flex flex-col gap-4 items-start">
+
+        {status === "authenticated" && (
+          <button
+            onClick={() => signOut()}
+            className="hidden w-full mt-4 sm:block btn bg-transparent btn-outline  rounded-sm text-[var(--color-secondary)] dark:text-[var(--color-secondary-dark)] border-color shadow-none hover:text-white hover:bg-blue-200 dark:hover:bg-blue-400 hover:border-none"
+          >
+            Logout
+          </button>
+        )}
+        <div className="px-6 mt-4 flex flex-col gap-4 items-start">
           <ThemeToggle />
         </div>
       </aside>
