@@ -69,12 +69,13 @@ const LoginForm = () => {
           icon: "success",
           title: "Logged In successfully",
           showConfirmButton: false,
-          timer: 1500,
+          timer: 800,
         }).then(() => {
           router.push("/");
           form.reset();
-          update();
+          window.location.reload();
         });
+    
       } else {
         Swal.fire({ icon: "error", title: "Oops...", text: "Invalid credentials" });
       }

@@ -56,8 +56,9 @@ const DashboardLayoutClient = ({ userData, children }) => {
       // Auto close success modal after 1.5 seconds
       setTimeout(() => {
         setShowSuccessModal(false);
-        redirect("/login")
-      }, 1500);
+        // redirect("/login")
+        window.location.reload();
+      }, 800);
     } catch (error) {
       console.error("Logout error:", error);
     }
