@@ -215,7 +215,9 @@ console.log(parcels, userEmail)
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                  <div className="flex justify-center">
+                  <div className="flex justify-center items-center gap-2 ">
+                    {parcel.payment !== "done" && 
+                    <Link href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/payment/method?parcelId=${parcel.parcelId}`}><button className="btn border border-color text-gray-100 background-color-primary rounded-sm">pay</button></Link>}
                     <Link
                       href={`/dashboard/user/track-parcel/${parcel._id}`}
                       className="group relative inline-flex items-center px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 overflow-hidden"
