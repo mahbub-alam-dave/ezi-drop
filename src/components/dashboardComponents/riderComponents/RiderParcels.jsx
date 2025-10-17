@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { showErrorAlert, showSuccessAlert } from "@/utility/alerts";
 
 export default function RiderParcels() {
   const [newOrders, setNewOrders] = useState([]);
@@ -50,11 +51,7 @@ export default function RiderParcels() {
     fetchData();
   }, [filter]);
 
-/*     if (loading) {
-    return <p>Loading session...</p>;
-  } */
-
-  async function handleAccept(parcelId) {
+/*   async function handleAccept(parcelId) {
     await fetch(`/api/riders/accept/${parcelId}`, { method: "PATCH" });
     fetchData();
   }
@@ -62,12 +59,38 @@ export default function RiderParcels() {
   async function handleReject(parcelId) {
     await fetch(`/api/riders/reject/${parcelId}`, { method: "PATCH" });
     fetchData();
-  }
-
-/*   async function handleComplete(parcelId) {
-    await fetch(`/api/riders/complete/${parcelId}`, { method: "PATCH" });
-    fetchData();
   } */
+
+  async function handleAccept(parcelId) {
+  try {
+    const res = await fetch(`/api/riders/accept/${parcelId}`, { method: "PATCH" });
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message || "Failed to accept parcel");
+
+    showSuccessAlert("Parcel Accepted", data.message || "You have successfully accepted the parcel.");
+    fetchData();
+  } catch (error) {
+    console.error(error);
+    showErrorAlert("Accept Failed", error.message || "Something went wrong while accepting the parcel.");
+  }
+}
+
+async function handleReject(parcelId) {
+  try {
+    const res = await fetch(`/api/riders/reject/${parcelId}`, { method: "PATCH" });
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message || "Failed to reject parcel");
+
+    showSuccessAlert("Parcel Rejected", data.message || "You have successfully rejected the parcel.");
+    fetchData();
+  } catch (error) {
+    console.error(error);
+    showErrorAlert("Reject Failed", error.message || "Something went wrong while rejecting the parcel.");
+  }
+}
+
 
   const filteredParcels = parcels.filter(
     (p) =>
@@ -96,7 +119,7 @@ export default function RiderParcels() {
       if (!res.ok) throw new Error(data.message || "Something went wrong");
 
       setSuccess("✅ Delivery completed successfully");
-      setTimeout(() => setIsOpen(false), 1200);
+      setTimeout(() => setIsOpen(false), 1000);
     } catch (err) {
       setError(err.message);
     } finally {

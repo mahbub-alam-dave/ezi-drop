@@ -316,7 +316,8 @@ const DashboardLayoutClient = ({ userData, children }) => {
             {status === "authenticated" && (
               <button
                 onClick={handleLogout}
-                className="px-6 py-2 text-left bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] rounded-sm text-white border-none mt-4"
+                // bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)]
+                className="px-6 py-2 text-left bg-transparent text-[var(--color-secondary)] rounded-sm dark:text-[var(--color-secondary-dark)] border border-color shadow-none mt-4"
               >
                 Logout
               </button>
@@ -340,7 +341,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
         {status === "authenticated" && (
           <button
             onClick={handleLogout}
-            className="w-full mt-4 btn bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] rounded-sm text-white border-none"
+            className="w-full mt-4 btn bg-transparent text-[var(--color-secondary)] rounded-sm dark:text-[var(--color-secondary-dark)] border border-color shadow-none hover:bg-gray-200 dark:hover:bg-gray-400"
           >
             Logout
           </button>

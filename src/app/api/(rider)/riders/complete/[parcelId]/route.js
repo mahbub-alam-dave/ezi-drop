@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { dbConnect } from "@/lib/dbConnect";
 import { hashOtp } from "@/lib/otp";
+import { sendEmail } from "@/lib/email";
 
 export async function PATCH(req, { params }) {
   try {
@@ -65,10 +66,45 @@ export async function PATCH(req, { params }) {
         }
       );
 
-      return NextResponse.json({
-        success: true,
-        message: "Parcel marked as completed successfully",
-      });
+          // ✅ 2. Send feedback emails to both sender and receiver
+    const feedbackLink = `${process.env.NEXT_PUBLIC_BASE_URL}/reviews-and-ratings?parcelId=${parcelId}`;
+
+    const senderEmail = parcel.senderEmail;
+    const receiverEmail = parcel.receiverEmail;
+
+    const subject = `Parcel ${parcel.parcelId} Delivered Successfully 🎉`;
+
+    const message = `
+      <p>Dear User,</p>
+      <p>Your parcel <strong>${parcel.parcelId}</strong> has been successfully delivered to the receiver.</p>
+      <p>We’d love to hear your feedback on your experience and the assigned rider.</p>
+      <p><a href="${feedbackLink}" style="background-color:#007bff;color:white;padding:10px 15px;text-decoration:none;border-radius:5px;">Share Your Review</a></p>
+      <p>Thank you for using <strong>EZI Drop</strong>!</p>
+    `;
+
+    try {
+      // Send to receiver
+      if (receiverEmail) {
+        await sendEmail(receiverEmail, subject, message);
+      }
+
+      // Send to sender
+      if (senderEmail) {
+        await sendEmail(senderEmail, subject, message);
+      }
+
+      console.log(`📧 Feedback emails sent for parcel ${parcel.parcelId}`);
+    } catch (error) {
+      console.error("❌ Failed to send feedback emails:", error.message);
+    }
+
+    // ✅ 3. Respond to client
+    return NextResponse.json({
+      success: true,
+      message: "Parcel marked as completed successfully and emails sent",
+    });
+
+
     }
 
     /**
