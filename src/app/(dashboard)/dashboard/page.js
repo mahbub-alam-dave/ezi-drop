@@ -9,16 +9,16 @@ const Dashboard = async () => {
         redirect("/login")
     } */
     if(user.role === "admin") {
-        redirect("/dashboard/overview")
+        redirect("/dashboard/admin/overview")
     }
-    else if(user.role === "support_agent") {
-        redirect("/dashboard/district-agent/overview")
+    else if(user.role === "district_admin") {
+        redirect("/dashboard/district-admin/overview")
     }
     else if(user.role === "rider") {
-        redirect("/dashboard/rider/rider-overview")
+        redirect("/dashboard/rider/overview")
     }
     else{
-        redirect("/dashboard/user-overview")
+        redirect("/dashboard/user/overview")
     }
     return (
 <div>

@@ -1,11 +1,17 @@
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { IoMdClose } from "react-icons/io";
+// import NotificationPanel from "@/components/NotificationPanel/NotificationPanel";
 
-const Sidebar = ({ navLinks, status }) => {
+const Sidebar = ({ setOpenMenu, toggleTheme, setUnseenNotifCount }) => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [dark, setDark] = useState(false);
+
+  const {data:session, status} = useSession();
+  const userId = session?.user?.userId
 
   const handleLogout = () => {
     setShowLogoutModal(true);
@@ -32,10 +38,26 @@ const Sidebar = ({ navLinks, status }) => {
     setShowLogoutModal(false);
   };
 
+  const navLinks = (
+      <>
+        <Link onClick={() => setOpenMenu(m => !m)} href={'/'}>Home</Link>
+        <Link onClick={() => setOpenMenu(m => !m)} href={"/send-parcel"}>Parcel Booking</Link>
+        {
+          status === "authenticated" &&
+          <Link onClick={() => setOpenMenu(m => !m)} href={"/dashboard"}>Dashboard</Link>
+        }
+        <Link onClick={() => setOpenMenu(m => !m)} href={"/about"}>About</Link>
+        <Link onClick={() => setOpenMenu(m => !m)} href={"/contact"}>Contact</Link>
+      </>
+    );
+
   return (
     <>
-      <div className="w-[300px] h-screen bg-[var(--color-bg)] dark:bg-[var(--color-bg)]">
+      <div className="w-[300px] h-screen background-color shadow shadow-gray-200">
         <div className="flex flex-col items-start gap-6 p-8">
+          <div onClick={() => setOpenMenu(m => !m)}>
+            <IoMdClose className="text-2xl text-color"/>
+            </div>
           <nav>
             <ul className="flex flex-col gap-8">{navLinks}</ul>
           </nav>
@@ -55,6 +77,19 @@ const Sidebar = ({ navLinks, status }) => {
               </Link>
             )}
           </div>
+              <button className="lg:hidden" onClick={toggleTheme}>
+              {dark ? "☀️" : "🌙"}
+            </button>
+
+{/*             <div className="lg:hidden">
+                        {status === "authenticated" && userId && (
+                          <NotificationPanel
+                            userId={userId}
+                            onUnseenChange={setUnseenNotifCount}
+                          />
+                        )}
+        </div> */}
+            
         </div>
       </div>
 
