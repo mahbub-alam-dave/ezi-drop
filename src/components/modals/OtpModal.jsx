@@ -19,15 +19,15 @@ export default function OtpModal({ signInData, closeModal }) {
     setMessage(data.message);
 
     if (res.ok) {
-      // After OTP verified → sign in automatically
-      await signIn("credentials", {
-        email,
-        password, // you should have it in state
-        redirect: true,
-      });
-      onClose();
-      closeModal(o => !o)
-    } else {
+  // OTP verified → sign in
+  await signIn("credentials", { email, password, redirect: true });
+
+  
+
+  // close modal
+  closeModal(false);
+}
+ else {
       Swal.fire({ icon: "error", title: "Invalid OTP", text: data.message });
     }
   };

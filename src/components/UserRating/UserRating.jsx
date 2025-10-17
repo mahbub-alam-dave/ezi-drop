@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Star as StarIcon } from "lucide-react";
 import Swal from "sweetalert2";
-import UseLoadingSpinner from "@/Hooks/useLoadingSpinner";
+import useLoadingSpinner from "@/Hooks/useLoadingSpinner";
 
 
 export default function UserRating() {
@@ -11,6 +11,7 @@ export default function UserRating() {
   const [hover, setHover] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  
   // 🔄 Backend থেকে রেটিং ফেচ
   useEffect(() => {
     fetch("/api/rating")
@@ -41,7 +42,7 @@ export default function UserRating() {
         text: `You rated: ${star} ⭐`,
         icon: "success",
         confirmButtonText: "Close",
-        confirmButtonColor: "#facc15", 
+        confirmButtonColor: "#facc15", // হলুদ রঙ (matching the star)
       });
     } else {
       Swal.fire({
@@ -53,10 +54,8 @@ export default function UserRating() {
     }
   };
 
-  if (loading)
-    return <UseLoadingSpinner />
+  if (loading) return useLoadingSpinner();
 
-  
   return (
     <div className="flex flex-col items-center space-y-3">
       <div className="flex space-x-2">

@@ -15,7 +15,7 @@ const LoginPage = async () => {
     <div className="text-center mt-4">
       <a
         href="/forgot-password"
-        className="text-sm text-blue-600 hover:underline"
+        className="text-sm text-[var(--color-secondary)] dark:text-[var(--color-secondary-dark)] hover:underline"
       >
         Forgot your password?
       </a>

@@ -112,7 +112,7 @@ if (needsAgent) {
           // Find agent for that district
           const agent = await dbConnect("users").findOne({
             district: detected,
-            role: "support_agent"
+            role: "district_admin"
           });
 
           if (agent) {
@@ -147,7 +147,7 @@ if (needsAgent) {
         }
       } else {
         // User already has district → find agent
-        const agent = await dbConnect("users").findOne({ district, role: "support_agent" });
+        const agent = await dbConnect("users").findOne({ district, role: "district_admin" });
         if (agent) {
           await dbConnect("supportTickets").insertOne({
             userId: user._id,
@@ -265,7 +265,7 @@ if (!reply && session) {
 "name":"Shamim Hossen",
 "email": "agentjhenaidah@ezidrop.com",
 "password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2",
-"role": "support_agent",
+"role": "district_admin",
 "district": "Jhenaidah",
 "createdAt":{"$date":{"$numberLong":"1758632734086"}},
 "updatedAt":{"$date":{"$numberLong":"1758890539171"}},

@@ -15,7 +15,7 @@ const OverviewHeader = () => {
         <div>
           <h1 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             {
-            session?.user?.role === "support_agent" && status === "authenticated" ?
+            session?.user?.role === "district_admin" && status === "authenticated" ?
             `District Agent (${session?.user?.district})`
             : "Ezi Drop Admin"
             }

@@ -12,9 +12,9 @@ export async function middleware(req) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
 
-    // If support_agent → allow (district filtering happens in API layer)
+    // If district_admin → allow (district filtering happens in API layer)
     if (pathname.startsWith("/dashboard/district-agent")) {
-      if (token.role !== "support_agent") {
+      if (token.role !== "district_admin") {
         return NextResponse.redirect(new URL("/404", req.url)); {/* will be 403 */}
       }
     }
@@ -25,6 +25,20 @@ export async function middleware(req) {
         return NextResponse.redirect(new URL("/404", req.url)); {/* will be 403 */}
       }
     }
+    // Example: if you want rider to access /dashboard/rider
+    if (pathname.startsWith("/dashboard/rider")) {
+      if (token.role !== "rider") {
+        return NextResponse.redirect(new URL("/404", req.url)); {/* will be 403 */}
+      }
+    }
+
+        if (pathname.startsWith("/dashboard/user")) {
+      if (token.role !== "user") {
+        return NextResponse.redirect(new URL("/404", req.url)); {/* will be 403 */}
+      }
+    }
+
+  
   }
 
   return NextResponse.next();

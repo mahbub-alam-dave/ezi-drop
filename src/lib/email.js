@@ -1,7 +1,7 @@
 // lib/email.js
 import nodemailer from "nodemailer";
 
-export const sendEmail = async ({ to, subject, text, html }) => {
+export const sendEmail = async ({ to, subject, text, attachments, html }) => {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
@@ -16,6 +16,7 @@ export const sendEmail = async ({ to, subject, text, html }) => {
     to,
     subject,
     text,
+    attachments,
     html,
   });
 };

@@ -6,20 +6,11 @@ import NextAuthProvider from "@/providers/NextAuthProvider";
 import ChatBoxUi from "@/components/customerServicesComponents/ChatBoxUi";
 import { Suspense } from "react";
 import SiteSkeleton from "@/components/loaders/skeletons/SiteSkeleton";
-
-
-
+import { Toaster } from "react-hot-toast"; // ✅ Import Toast
 
 const poppins = Poppins({
-  // variable: "--font-geist-sans",
   weight: "400",
-  // subsets: [latin],
 });
-
-/* const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-}); */
 
 export const metadata = {
   title: "Ezi Drop",
@@ -27,17 +18,33 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-
   return (
-    <html lang="en" >
-      <body
-        className={`${poppins.className} antialiased`}
-      >
+    <html lang="en">
+      <body className={`${poppins.className} antialiased`}>
         <Suspense fallback={<SiteSkeleton />}>
-        <NextAuthProvider>
-        {children}
-        <ChatBoxUi />
-        </NextAuthProvider>
+          <NextAuthProvider>
+            {children}
+
+            {/* ✅ Global Toast Notifications */}
+            <Toaster
+              position="top-right"
+              reverseOrder={false}
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  borderRadius: "8px",
+                  padding: "12px 16px",
+                  fontWeight: "500",
+                  fontSize: "14px",
+                  background: "var(--color-bg)", // Matches your site theme
+                  color: "var(--color-text)",
+                  boxShadow: "0 2px 12px rgba(0,0,0,0.2)",
+                },
+              }}
+            />
+
+            <ChatBoxUi />
+          </NextAuthProvider>
         </Suspense>
       </body>
     </html>
