@@ -88,7 +88,7 @@ return (
                 <td className="px-6 py-4">
                   <div className="flex justify-center">
                     <Link
-                      href={`/dashboard/track-parcel/${parcel._id}`}
+                      href={`/dashboard/user/track-parcel/${parcel._id}`}
                       className="group relative inline-flex items-center px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 overflow-hidden"
                     >
                       <span className="relative z-10 flex items-center">
