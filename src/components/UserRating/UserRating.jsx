@@ -41,11 +41,7 @@ export default function UserRating() {
         text: `You rated: ${star} ⭐`,
         icon: "success",
         confirmButtonText: "Close",
-<<<<<<< HEAD
         confirmButtonColor: "#facc15", // হলুদ রঙ (matching the star)
-=======
-        confirmButtonColor: "#facc15",
->>>>>>> 94c1eab5053ca570d9ff7a4594fdb43c572a6acd
       });
     } else {
       Swal.fire({

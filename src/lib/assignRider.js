@@ -1,29 +1,7 @@
-import { ObjectId } from "mongodb";
+/* import { ObjectId } from "mongodb";
 import { dbConnect } from "./dbConnect";
+import { findAvailableRider } from "./riderAssignment/findAvailableRider";
 
-/**
- * 🔍 Find available rider in a district
- * Optionally exclude a specific rider (for reassignment)
- */
-async function findAvailableRider(districtId, excludeRiderId = null) {
-  const users = dbConnect("users");
-
-  const query = {
-    role: "rider",
-    districtId,
-    working_status: "duty", // ✅ only active riders
-  };
-
-  if (excludeRiderId) {
-    query._id = { $ne: new ObjectId(excludeRiderId) }; // exclude current rider
-  }
-
-  return await users.findOne(query);
-}
-
-/**
- * 🚴 Assign or Reassign Rider (for same-district delivery)
- */
 export async function assignRiderForDelivery(parcel, isReassign = false) {
   const parcels = dbConnect("parcels");
   const now = new Date();
@@ -87,11 +65,11 @@ export async function assignRiderForDelivery(parcel, isReassign = false) {
     } to parcel ${parcel.parcelId}`
   );
 }
-
+ */
 /**
  * 🏢 Assign or Reassign Rider (for cross-district delivery to warehouse)
  */
-export async function assignRiderToWarehouse(parcel, isReassign = false) {
+/* export async function assignRiderToWarehouse(parcel, isReassign = false) {
   const parcels = dbConnect("parcels");
   const now = new Date();
 
@@ -153,4 +131,24 @@ export async function assignRiderToWarehouse(parcel, isReassign = false) {
       isReassign ? "reassigned" : "assigned"
     } to deliver parcel ${parcel.parcelId} to warehouse`
   );
+} */
+
+import handleRiderAssignment from "./riderAssignment/handleRiderAssignment";
+
+
+
+// same district
+export async function assignRiderForDelivery(parcel, isReassign = false) {
+  return await handleRiderAssignment(parcel, "to_customer", isReassign);
+}
+
+// Cross-district (to warehouse)
+export async function assignRiderToWarehouse(parcel, isReassign = false) {
+  return await handleRiderAssignment(parcel, "to_warehouse", isReassign);
+}
+
+
+// final delivery (from wirehouse to receiver)
+export async function assignRiderForFinalDelivery(parcel, isReassign = false) {
+  return await handleRiderAssignment(parcel, "to_receiver_final", isReassign);
 }
