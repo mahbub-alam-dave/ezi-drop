@@ -9,10 +9,8 @@ import OtpModal from "../modals/OtpModal";
 
 const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
-  const [showOtpModal, setShowOtpModal] = useState(false)
-  const [otpModalData, setOtpModalData] = useState({})
-/*   const [registerEmail, setRegisterEmail] = useState("")
-  const [registerPass, setRegisterPass] = useState("") */
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otpModalData, setOtpModalData] = useState({});
   const { update } = useSession();
 
   const handleRegisterForm = async (e) => {
@@ -25,41 +23,49 @@ const RegisterForm = () => {
       const res = await registerUser(registerData);
 
       if (res.insertedId) {
+        //  Step 1: referral check before OTP generation
+        try {
+          const referralRes = await fetch("/api/referralCheck", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: registerData.email }),
+          });
+
+          const referralData = await referralRes.json();
+
+          if (referralData.referred) {
+            await Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "You are a referred user!",
+              showConfirmButton: true,
+            });
+          } else {
+            await Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "Registration successful!",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          }
+        } catch (error) {
+          console.error("Referral check error during registration:", error);
+        }
+
+        //  Step 2: generate OTP as before
         await fetch("/api/auth/generate-otp", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: registerData.email }),
         });
-        setOtpModalData({ email: registerData.email, password:registerData.password });
-        
-        setShowOtpModal(true); // open modal
 
-        /*         // login after registration
-        const signInAfterRegister = await signIn("credentials", {
+        setOtpModalData({
           email: registerData.email,
           password: registerData.password,
-          redirect: true,
         });
 
-        if (signInAfterRegister.ok) {
-          await update();
-          Swal.fire({
-            position: "center",
-            icon: "success",
-            title: "Registration & Login successful",
-            showConfirmButton: false,
-            timer: 1500,
-          }).then(() => {
-            router.push("/"); // redirect AFTER Swal closes
-          });
-        }
-        else {
-          Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Failed to login after registration",
-        });
-        } */
+        setShowOtpModal(true); // open modal
       } else {
         Swal.fire({
           icon: "error",
@@ -93,9 +99,7 @@ const RegisterForm = () => {
 
       <form onSubmit={handleRegisterForm} className="flex flex-col gap-4">
         <div>
-          <label htmlFor="name" className="">
-            Name
-          </label>
+          <label htmlFor="name">Name</label>
           <input
             type="text"
             name="name"
@@ -105,9 +109,7 @@ const RegisterForm = () => {
           />
         </div>
         <div>
-          <label htmlFor="email" className="">
-            Email
-          </label>
+          <label htmlFor="email">Email</label>
           <input
             type="email"
             name="email"
@@ -117,9 +119,7 @@ const RegisterForm = () => {
           />
         </div>
         <div>
-          <label htmlFor="password" className="">
-            Password
-          </label>
+          <label htmlFor="password">Password</label>
           <input
             type="password"
             name="password"
@@ -151,9 +151,10 @@ const RegisterForm = () => {
           </Link>
         </span>
       </form>
-      {showOtpModal && 
-      <OtpModal signInData={otpModalData} closeModal={setShowOtpModal} />
-      }
+
+      {showOtpModal && (
+        <OtpModal signInData={otpModalData} closeModal={setShowOtpModal} />
+      )}
     </div>
   );
 };

@@ -22,12 +22,7 @@ export default function OtpModal({ signInData, closeModal }) {
   // OTP verified → sign in
   await signIn("credentials", { email, password, redirect: true });
 
-  // referral update
-  await fetch("/api/referralupdate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email }),
-  });
+  
 
   // close modal
   closeModal(false);
