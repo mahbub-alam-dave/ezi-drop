@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { dbConnect } from "@/lib/dbConnect";
-import { assignRiderForDelivery, assignRiderToWarehouse } from "@/lib/assignRider";
+import { assignRiderForDelivery, assignRiderForFinalDelivery, assignRiderToWarehouse } from "@/lib/assignRider";
 
 export async function PATCH(req, { params }) {
   try {
@@ -40,11 +40,20 @@ export async function PATCH(req, { params }) {
     // 🔁 Reassign to a new rider
     let reassignedRider = null;
 
+     if (parcel.deliveryType === "to_receiver_final") {
+      // ✅ Final delivery reassignment
+      reassignedRider = await assignRiderForFinalDelivery(parcel, true);
+    } 
+
     if (parcel.pickupDistrictId === parcel.deliveryDistrictId) {
       reassignedRider = await assignRiderForDelivery(parcel, true);
-    } else {
+    }  
+      
+    if(parcel.deliveryType === "to_warehouse"){
       reassignedRider = await assignRiderToWarehouse(parcel, true);
     }
+
+        console.log(parcelId, reassignedRider)
 
     if (!reassignedRider) {
       return NextResponse.json({
@@ -53,8 +62,10 @@ export async function PATCH(req, { params }) {
       });
     }
 
+
+
     // 🧾 Log the reassignment event
-    await parcels.updateOne(
+/*     await parcels.updateOne(
       { _id: new ObjectId(parcelId) },
       {
         $push: {
@@ -67,7 +78,7 @@ export async function PATCH(req, { params }) {
           },
         },
       }
-    );
+    ); */
 
     return NextResponse.json({
       success: true,

@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { dbConnect } from "../dbConnect"
 import { findAvailableRider }  from "./findAvailableRider";
 
@@ -11,7 +12,7 @@ export default async function handleRiderAssignment(parcel, deliveryType, isReas
   if (deliveryType === "to_warehouse" || deliveryType === "to_customer") {
     districtForAssignment = parcel.pickupDistrictId; // pickup-side
   } else if (deliveryType === "to_receiver_final") {
-    districtForAssignment = parcel.deliverDistrictId; // receiver-side
+    districtForAssignment = parcel.deliveryDistrictId; // receiver-side
   } else {
     throw new Error(`Unknown delivery type: ${deliveryType}`);
   }
@@ -39,6 +40,7 @@ export default async function handleRiderAssignment(parcel, deliveryType, isReas
     );
     return null;
   }
+
 
   await parcels.updateOne(
     { _id: new ObjectId(parcel._id) },

@@ -133,6 +133,8 @@ export async function assignRiderForDelivery(parcel, isReassign = false) {
   );
 } */
 
+import handleRiderAssignment from "./riderAssignment/handleRiderAssignment";
+
 
 
 // same district

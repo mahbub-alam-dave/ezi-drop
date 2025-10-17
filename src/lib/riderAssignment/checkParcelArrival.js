@@ -1,51 +1,88 @@
-import { dbConnect } from "./dbConnect";
+// lib/checkParcelArrivals.js
 import { ObjectId } from "mongodb";
+import { dbConnect } from "./dbConnect";
 
-/**
- * ✅ Check parcels whose expectedArrival has passed and update them as arrived
- * @param {string} districtId - receiver district id
- * @param {string[]} statusList - optional, default ["dispatched"]
- */
-export async function checkParcelArrivals(districtId, statusList = ["dispatched"]) {
-  if (!districtId) return;
-
-  const transfers = dbConnect("transfers");
+export async function checkParcelArrivals() {
   const now = new Date();
+  const transfers = dbConnect("transfers");
+  const parcels = dbConnect("parcels");
 
-  // 1️⃣ Find parcels in the receiver district whose expectedArrival has passed
-  const parcelsToUpdate = await transfers
+  // 1️⃣ Find all dispatched transfers whose expectedArrival has passed
+  const dueTransfers = await transfers
     .find({
-      toDistrictId: districtId,
-      status: { $in: statusList },
+      status: "dispatched",
       expectedArrival: { $lte: now },
     })
     .toArray();
 
-  if (!parcelsToUpdate.length) return;
+  if (!dueTransfers.length) {
+    console.log("⏱️ No parcels due for arrival yet.");
+    return;
+  }
 
-  // 2️⃣ Update each parcel
-  const updates = parcelsToUpdate.map(async (parcel) => {
-    await transfers.updateOne(
-      { _id: new ObjectId(parcel._id) },
-      {
-        $set: {
-          status: "arrived_at_receiver_warehouse",
-          deliveryType: "to_receiver_final",
-          updatedAt: now,
-        },
-        $push: {
-          events: {
-            type: "arrived_at_receiver_warehouse",
-            role: "system",
-            by: "system",
-            at: now,
-            note: "Parcel reached receiver district warehouse.",
+  console.log(`📦 Checking ${dueTransfers.length} dispatched parcels for arrival.`);
+
+  for (const transfer of dueTransfers) {
+    try {
+      // 2️⃣ Update the transfer status to arrived
+      await transfers.updateOne(
+        { _id: new ObjectId(transfer._id) },
+        {
+          $set: {
+            status: "arrived",
+            arrivedAt: now,
+            updatedAt: now,
           },
-        },
-      }
-    );
-  });
+          $push: {
+            events: {
+              type: "parcel_arrived_receiver_warehouse",
+              role: "system",
+              at: now,
+              note: `Parcel arrived at ${transfer.toDistrictId} warehouse.`,
+            },
+          },
+        }
+      );
 
-  await Promise.all(updates);
-  return parcelsToUpdate.map(p => p._id.toString());
+      // 3️⃣ Update the corresponding parcel document
+      const parcel = await parcels.findOne({
+        transferId: new ObjectId(transfer._id),
+      });
+
+      if (!parcel) {
+        console.warn(`⚠️ No linked parcel found for transfer ${transfer._id}`);
+        continue;
+      }
+
+      await parcels.updateOne(
+        { _id: new ObjectId(parcel._id) },
+        {
+          $set: {
+            status: "arrived_at_receiver_warehouse",
+            deliveryType: "to_receiver_final", // 🚚 ready for final delivery
+            updatedAt: now,
+          },
+          $push: {
+            events: {
+              type: "parcel_arrived_receiver_warehouse",
+              role: "system",
+              at: now,
+              note: `Parcel arrived at ${parcel.deliveryDistrict} warehouse and ready for final delivery.`,
+            },
+          },
+        }
+      );
+
+      console.log(
+        `✅ Parcel ${parcel.parcelId} marked as arrived in ${parcel.deliveryDistrict}.`
+      );
+    } catch (err) {
+      console.error(
+        `❌ Error updating parcel for transfer ${transfer._id}:`,
+        err.message
+      );
+    }
+  }
+
+  console.log("🎯 Arrival check completed successfully.");
 }

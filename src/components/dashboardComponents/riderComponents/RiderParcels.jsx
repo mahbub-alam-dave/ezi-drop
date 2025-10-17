@@ -193,7 +193,7 @@ export default function RiderParcels() {
                   <td className="p-3 capitalize">{parcel.riderApprovalStatus}</td>
                   <td className="p-3">{parcel.amount} BDT</td>
                   <td className="p-3">
-                    {parcel.status !== "completed" || parcel.status !== "at_local_warehouse" ? (
+                    {parcel.riderApprovalStatus === "accepted" && parcel.status !== "completed" || parcel.status !== "at_local_warehouse" ? (
                       <Button
                         size="sm"
                         className="background-color-primary text-gray-100"

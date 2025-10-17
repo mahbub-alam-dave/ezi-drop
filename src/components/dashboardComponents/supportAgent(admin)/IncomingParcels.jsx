@@ -57,7 +57,7 @@ export default function IncomingParcels() {
   // ✅ Assign rider handler
   const handleAssignRider = async (parcelId) => {
     try {
-      const res = await fetch(`/api/assign-rider/${parcelId}`, { method: "POST" });
+      const res = await fetch(`/api/transfers/assign-rider/${parcelId}`, { method: "PATCH" });
       if (!res.ok) throw new Error("Failed to assign rider");
       alert("Rider assigned successfully!");
     } catch (err) {
