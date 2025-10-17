@@ -46,25 +46,27 @@ export default function Navbar() {
   };
 
   const confirmLogout = async () => {
-    try {
-      await signOut({ redirect: false });
-      setShowLogoutModal(false);
+  try {
+    // Sign out user
+    await signOut({ redirect: false });
 
-      // Show custom success modal
-      setShowSuccessModal(true);
+    // Show success modal
+    setShowLogoutModal(false);
+    setShowSuccessModal(true);
 
-      // Auto close success modal after 2 seconds and refresh the page
-      setTimeout(() => {
-        setShowSuccessModal(false);
-        // Redirect to home page - this will naturally refresh the state
-        router.push("/");
-        // Force a clean state by redirecting
-        router.refresh();
-      }, 1500);
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
-  };
+    // Wait for UI to show success animation
+    setTimeout(() => {
+      setShowSuccessModal(false);
+
+      // ✅ Force session refresh (important)
+      router.push("/");
+      window.location.reload(); // ensures UI and session both reset
+    }, 800);
+  } catch (error) {
+    console.error("Logout error:", error);
+  }
+};
+
 
   const cancelLogout = () => {
     setShowLogoutModal(false);

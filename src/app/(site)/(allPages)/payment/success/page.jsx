@@ -43,10 +43,10 @@ export default function SuccessPage() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen text-center">
+    <div className="flex flex-col justify-center items-center min-h-[60vh] text-center">
       <h1 className="text-3xl font-bold text-green-600">Payment Successful 🎉</h1>
       <p className="mt-2">Your parcel has been booked successfully.</p>
-
+      <div className="flex flex-col sm:flex-row gap-6">
         <button
         onClick={handleDownload}
         disabled={isDownloading}
@@ -61,6 +61,7 @@ export default function SuccessPage() {
       >
         Go to My Bookings
       </button>
+      </div>
     </div>
   );
 }
