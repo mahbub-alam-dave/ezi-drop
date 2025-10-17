@@ -1,6 +1,7 @@
 // lib/checkParcelArrivals.js
 import { ObjectId } from "mongodb";
-import { dbConnect } from "./dbConnect";
+import { dbConnect } from "../dbConnect";
+
 
 export async function checkParcelArrivals() {
   const now = new Date();

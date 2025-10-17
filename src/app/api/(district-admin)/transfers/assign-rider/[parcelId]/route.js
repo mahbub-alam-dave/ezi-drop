@@ -8,8 +8,10 @@ export async function PATCH(req, { params }) {
     const { parcelId } = params;
     const parcels = dbConnect("parcels");
 
+    console.log(parcelId)
+
     // 1️⃣ Find the parcel
-    const parcel = await parcels.findOne({ _id: new ObjectId(parcelId) });
+    const parcel = await parcels.findOne({ parcelId });
     if (!parcel) {
       return NextResponse.json(
         { success: false, message: "Parcel not found" },
@@ -25,19 +27,9 @@ export async function PATCH(req, { params }) {
       );
     }
 
-    // 3️⃣ Assign a rider for final delivery
-    const assignedRider = await assignRiderForFinalDelivery(parcel, false);
-
-    if (!assignedRider) {
-      return NextResponse.json({
-        success: false,
-        message: "No available rider found for final delivery.",
-      });
-    }
-
-    // 4️⃣ Add a final delivery log
+  // 4️⃣ Add a final delivery log
 await parcels.updateOne(
-  { _id: new ObjectId(parcelId) },
+  { parcelId },
   {
     $push: {
       events: {
@@ -50,6 +42,15 @@ await parcels.updateOne(
   }
 );
 
+    // 3️⃣ Assign a rider for final delivery
+    const assignedRider = await assignRiderForFinalDelivery(parcel, false);
+
+    if (!assignedRider) {
+      return NextResponse.json({
+        success: false,
+        message: "No available rider found for final delivery.",
+      });
+    }
 
     return NextResponse.json({
       success: true,

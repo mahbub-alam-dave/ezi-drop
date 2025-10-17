@@ -57,7 +57,8 @@ export default function MyBookingPage() {
   return (
    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-6">
   {/* Header Section */}
-  <div className="max-w-7xl mx-auto">
+  {/* max-w-7xl mx-auto */}
+  <div className="w-full">
     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
       <div className="mb-6 lg:mb-0">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">

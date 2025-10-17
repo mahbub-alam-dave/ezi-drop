@@ -172,7 +172,7 @@ const SendParcel = ({ districts, userData }) => {
         formData.append("image", file);
         
         const res = await axios.post(
-          `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMAGEAPI_KEY}`,
+          `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMAGE_UPLOAD_KEY}`,
           formData,
           {
             headers: {
