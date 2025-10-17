@@ -43,7 +43,7 @@ export async function PATCH(req, { params }) {
     /**
      * ✅ Case 1: Same district — mark as completed
      */
-    if (parcel.pickupDistrictId === parcel.deliveryDistrictId) {
+    if (parcel.pickupDistrictId === parcel.deliveryDistrictId || parcel.deliveryType === "to_receiver_final") {
       await parcels.updateOne(
         { _id: new ObjectId(parcelId) },
         {
@@ -59,7 +59,7 @@ export async function PATCH(req, { params }) {
               by: parcel.assignedRiderId,
               role: "rider",
               at: now,
-              note: "Parcel delivered successfully within same district",
+              note: "Parcel delivered successfully to the receiver",
             },
           },
         }

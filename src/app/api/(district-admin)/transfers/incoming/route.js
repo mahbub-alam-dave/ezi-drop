@@ -1,9 +1,9 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { dbConnect } from "@/lib/dbConnect";
-import { checkParcelArrivals } from "@/lib/checkParcelArrivals";
 import { ObjectId } from "mongodb";
 import { NextResponse } from "next/server";
+import { checkParcelArrivals } from "@/lib/riderAssignment/checkParcelArrival";
 
 export async function GET(req) {
   try {
@@ -26,7 +26,7 @@ export async function GET(req) {
     const parcels = await transfers
       .find({
         toDistrictId: districtId,
-        status: { $in: ["dispatched", "arrived_at_receiver_warehouse"] },
+        status: { $in: ["dispatched", "arrived"] },
       })
       .sort({ createdAt: -1 })
       .toArray();
