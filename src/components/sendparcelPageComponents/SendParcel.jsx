@@ -495,7 +495,7 @@ const SendParcel = ({ districts, userData }) => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                onClick={() => router.push("/dashboard/my-bookings")}
+                onClick={() => router.push("/dashboard/user/my-bookings")}
                 className="flex-1 rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)]
                  text-white font-medium py-3 transition-colors"
               >
