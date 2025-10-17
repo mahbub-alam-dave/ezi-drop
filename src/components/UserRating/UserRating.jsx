@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { Star as StarIcon } from "lucide-react";
 import Swal from "sweetalert2";
-import useLoadingSpinner from "@/hooks/useLoadingSpinner";
+import useLoadingSpinner from "@/Hooks/useLoadingSpinner";
+
 
 export default function UserRating() {
   const [rating, setRating] = useState(0);
@@ -53,7 +54,7 @@ export default function UserRating() {
     }
   };
 
-  if (loading) return useLoadingSpinner;
+  if (loading) return useLoadingSpinner();
 
   return (
     <div className="flex flex-col items-center space-y-3">
