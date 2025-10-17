@@ -82,6 +82,17 @@ export default function Navbar() {
     </>
   );
 
+  if (status === "loading") {
+    return (
+      <nav className="p-4 shadow bg-white">
+        <div className="flex justify-between items-center">
+          <h1 className="text-lg font-semibold">EZI Drop</h1>
+          <span className="text-gray-500 animate-pulse">Loading...</span>
+        </div>
+      </nav>
+    );
+  }
+
   return (
     // Navbar Z-index: z-[1000]
     <div className="relative">

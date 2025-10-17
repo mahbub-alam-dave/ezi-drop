@@ -73,7 +73,6 @@ const LoginForm = () => {
         }).then(() => {
           router.push("/");
           form.reset();
-          window.location.reload();
         });
     
       } else {

@@ -1,12 +1,11 @@
-import { ObjectId } from "mongodb";
 import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/dbConnect";
 
 export async function GET(req, { params }) {
   try {
-   const { id } = params; // ✅ ঠিকভাবে params destructure করা
+   const { parcelId } = await params; // ✅ ঠিকভাবে params destructure করা
     const collection = dbConnect("parcels");
-    const parcel = await collection.findOne({ _id: new ObjectId(id) });
+    const parcel = await collection.findOne({ parcelId });
 
     if (!parcel) {
       return NextResponse.json({ error: "Parcel not found" }, { status: 404 });
@@ -17,4 +16,4 @@ export async function GET(req, { params }) {
     console.error(error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
+}i
