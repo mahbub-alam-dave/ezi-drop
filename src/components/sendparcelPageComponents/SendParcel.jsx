@@ -11,6 +11,7 @@ import {
 import { useSession } from "next-auth/react";
 import { FiUploadCloud, FiTrash2 } from "react-icons/fi";
 import toast from "react-hot-toast";
+import FirstBookingBanner from "../sharedComponents/FirstBookingBanner";
 
 const SendParcel = ({ districts, userData }) => {
   const { data: session, status } = useSession();
@@ -24,7 +25,7 @@ const SendParcel = ({ districts, userData }) => {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState([]);
   const fileInputRef = useRef();
-  console.log(parcelId)
+  console.log(userData, userData.points)
 
   // Domestic form fields
   const pickupDistrictId = watch("pickupDistrictId");
@@ -462,7 +463,7 @@ const SendParcel = ({ districts, userData }) => {
 
   return (
     <>
-
+      <FirstBookingBanner userEmail={userData.email} />
       {/* ✅ Full Screen Loading Overlay */}
       {isSubmitting && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -520,7 +521,7 @@ const SendParcel = ({ districts, userData }) => {
 
       {/* Main Container */}
       <div
-        className="min-h-screen my-16 flex justify-center items-center p-4
+        className="min-h-screen my-12 flex justify-center items-center p-4
          text-[var(--color-text)] dark:text-[var(--color-text-dark)]"
       >
         <div
@@ -844,6 +845,27 @@ const SendParcel = ({ districts, userData }) => {
                 
               )}
             </div>
+
+            {/* Points Discount Option (only for domestic) */}
+            {/* activeTab === "domestic" && userData?.points > 0 && */}
+{ (
+  <div className="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-lg border border-yellow-300 dark:border-yellow-700">
+    <h4 className="font-semibold text-yellow-700 dark:text-yellow-300 mb-2">
+      🎁 You have {userData?.points} reward points!
+    </h4>
+    <div className="flex items-center space-x-3">
+      <input
+        type="checkbox"
+        {...register("usePoints")}
+        id="usePoints"
+        className="w-5 h-5 accent-yellow-500"
+      />
+      <label htmlFor="usePoints" className="text-sm text-gray-700 dark:text-gray-300">
+        Use my points to get up to {Math.min(userData?.points, 100)}% off delivery charge.
+      </label>
+    </div>
+  </div>
+)}
 
             {/* Cost Display and Submit Button */}
             {cost !== null && cost.amount > 0 && (

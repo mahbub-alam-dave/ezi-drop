@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import { districtsData } from '@/lib/getDistrictData';
 import { authOptions } from '@/lib/authOptions';
 import SendParcel from '@/components/sendparcelPageComponents/SendParcel';
+import FirstBookingBanner from '@/components/sharedComponents/FirstBookingBanner';
 
 const Page = async () => {
 
@@ -21,7 +22,8 @@ const Page = async () => {
       name: userInfo.name, 
       email: userInfo.email, 
       district: userInfo?.district || null, 
-      districtId: userInfo?.districtId || null
+      districtId: userInfo?.districtId || null,
+      points: userInfo?.points || 0
     }) 
     console.log(userData)
   }

@@ -22,8 +22,6 @@ export default function OtpModal({ signInData, closeModal }) {
   // OTP verified → sign in
   await signIn("credentials", { email, password, redirect: true });
 
-  
-
   // close modal
   closeModal(false);
 }
