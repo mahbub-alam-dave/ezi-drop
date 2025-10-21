@@ -12,6 +12,7 @@ import { useSession } from "next-auth/react";
 import { FiUploadCloud, FiTrash2 } from "react-icons/fi";
 import toast from "react-hot-toast";
 import FirstBookingBanner from "../sharedComponents/FirstBookingBanner";
+import Swal from "sweetalert2";
 
 const SendParcel = ({ districts }) => {
   const { data: session, status } = useSession();
@@ -64,9 +65,6 @@ const SendParcel = ({ districts }) => {
     };
     fetchUser();
   }, []);
-
-  console.log(userData)
-
 
 
 
@@ -268,7 +266,7 @@ const SendParcel = ({ districts }) => {
         deliveryDistrict: deliveryDistrictData.district,
         shipmentType: "domestic",
         parcelImages: imageUrls,
-        usePoints: formData.usePoints || false,
+        // usePoints: formData.usePoints || false,
       };
 
       console.log("Submitting domestic parcel:", parcelData);
@@ -337,7 +335,7 @@ const SendParcel = ({ districts }) => {
       } else {
         const resultData = await parcelRes.json();
         // toast.error(resultData.message || "Something went wrong");
-        Swal.fire({ icon: "error", title: "Failed", text: data.message });
+        Swal.fire({ icon: "error", title: "Failed", text: resultData.message || "Something went wrong" });
       }
     } catch (err) {
       console.error("Domestic submission error:", err);
@@ -493,7 +491,7 @@ const SendParcel = ({ districts }) => {
 
   return (
     <>
-      <FirstBookingBanner userEmail={userData.email} />
+      <FirstBookingBanner userEmail={userData?.email} />
       {/* ✅ Full Screen Loading Overlay */}
       {isSubmitting && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
