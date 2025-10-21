@@ -6,9 +6,7 @@ const FirstBookingBanner = ({ userEmail }) => {
   const [loading, setLoading] = useState(true);
 
   const {data: session} = useSession();
-  console.log(session?.user)
 
-  console.log(userEmail)
 
   useEffect(() => {
     const checkFirstBooking = async () => {

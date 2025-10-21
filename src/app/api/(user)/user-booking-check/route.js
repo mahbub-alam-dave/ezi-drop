@@ -5,7 +5,6 @@ import { NextResponse } from "next/server";
 export async function GET() {
     try {
     const session = await getServerSession();
-    console.log(session?.user?.email, "this is from booking check api")
     const email = session?.user?.email;
     if (!email) {
       return NextResponse.json({ success: false, message: "Email is required." });
