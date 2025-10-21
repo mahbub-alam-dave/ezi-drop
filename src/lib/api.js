@@ -7,7 +7,7 @@ import { collectionNames, dbConnect } from "./dbConnect";
 export async function getCurrentUser() {
   const session = await getServerSession(authOptions);
 
-  if (!session || !session.user?.email) {
+  if (!session || !session?.user?.email) {
     return null; // Not logged in
   }
 

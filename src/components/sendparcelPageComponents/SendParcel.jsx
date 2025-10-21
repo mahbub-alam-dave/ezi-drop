@@ -11,8 +11,10 @@ import {
 import { useSession } from "next-auth/react";
 import { FiUploadCloud, FiTrash2 } from "react-icons/fi";
 import toast from "react-hot-toast";
+import FirstBookingBanner from "../sharedComponents/FirstBookingBanner";
+import Swal from "sweetalert2";
 
-const SendParcel = ({ districts, userData }) => {
+const SendParcel = ({ districts }) => {
   const { data: session, status } = useSession();
   const [activeTab, setActiveTab] = useState("domestic");
   const { register, handleSubmit, reset, watch, setValue } = useForm();
@@ -24,9 +26,9 @@ const SendParcel = ({ districts, userData }) => {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState([]);
   const fileInputRef = useRef();
-  console.log(parcelId)
+  const [userData, setUserData] = useState({});
 
-  // Domestic form fields
+    // Domestic form fields
   const pickupDistrictId = watch("pickupDistrictId");
   const deliveryDistrictId = watch("deliveryDistrictId");
   const parcelType = watch("parcelType");
@@ -48,6 +50,23 @@ const SendParcel = ({ districts, userData }) => {
     () => districts.find((d) => d.districtId === deliveryDistrictId),
     [deliveryDistrictId, districts]
   );
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const res = await fetch("/api/check-user");
+      const userInfo = await res.json();
+      setUserData({
+        name: userInfo?.userData?.name,
+        email: userInfo?.userData?.email,
+        district: userInfo?.userData?.district || null,
+        districtId: userInfo?.userData?.districtId || null,
+        points: userInfo?.userData?.points || 0,
+      });
+    };
+    fetchUser();
+  }, []);
+
+
 
   // Cost calculation for domestic shipments (BDT)
   useEffect(() => {
@@ -247,6 +266,7 @@ const SendParcel = ({ districts, userData }) => {
         deliveryDistrict: deliveryDistrictData.district,
         shipmentType: "domestic",
         parcelImages: imageUrls,
+        // usePoints: formData.usePoints || false,
       };
 
       console.log("Submitting domestic parcel:", parcelData);
@@ -303,10 +323,19 @@ const SendParcel = ({ districts, userData }) => {
         setParcelId(data?.parcelId);
         console.log(data?.parcelId)
         reset();
-        setPreview([]); // Clear preview after successful submission
+        setPreview([]);
+        // show alert
+        Swal.fire({
+        icon: "success",
+        title: "Parcel booked!",
+        text: data.discountApplied
+          ? `You saved ৳${data.discountApplied} using ${data.pointsUsed} points!`
+          : "Your parcel booking was successful.",
+      });
       } else {
         const resultData = await parcelRes.json();
-        toast.error(resultData.message || "Something went wrong");
+        // toast.error(resultData.message || "Something went wrong");
+        Swal.fire({ icon: "error", title: "Failed", text: resultData.message || "Something went wrong" });
       }
     } catch (err) {
       console.error("Domestic submission error:", err);
@@ -462,7 +491,7 @@ const SendParcel = ({ districts, userData }) => {
 
   return (
     <>
-
+      <FirstBookingBanner userEmail={userData?.email} />
       {/* ✅ Full Screen Loading Overlay */}
       {isSubmitting && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -520,7 +549,7 @@ const SendParcel = ({ districts, userData }) => {
 
       {/* Main Container */}
       <div
-        className="min-h-screen my-16 flex justify-center items-center p-4
+        className="min-h-screen my-12 flex justify-center items-center p-4
          text-[var(--color-text)] dark:text-[var(--color-text-dark)]"
       >
         <div
@@ -844,6 +873,27 @@ const SendParcel = ({ districts, userData }) => {
                 
               )}
             </div>
+
+            {/* Points Discount Option (only for domestic) */}
+            {/* activeTab === "domestic" && userData?.points > 0 && */}
+{ activeTab === "domestic" && userData?.points > 0 && (
+  <div className="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-lg border border-yellow-300 dark:border-yellow-700">
+    <h4 className="font-semibold text-yellow-700 dark:text-yellow-300 mb-2">
+      🎁 You have {userData?.points} reward points!
+    </h4>
+    <div className="flex items-center space-x-3">
+      <input
+        type="checkbox"
+        {...register("usePoints")}
+        id="usePoints"
+        className="w-5 h-5 accent-yellow-500"
+      />
+      <label htmlFor="usePoints" className="text-sm text-gray-700 dark:text-gray-300">
+        Use my points to get up to {Math.min(userData?.points, 100)}% off delivery charge.
+      </label>
+    </div>
+  </div>
+)}
 
             {/* Cost Display and Submit Button */}
             {cost !== null && cost.amount > 0 && (

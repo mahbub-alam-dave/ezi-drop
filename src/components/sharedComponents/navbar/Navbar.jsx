@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { CiMenuBurger } from "react-icons/ci";
 import Sidebar from "./Sidebar";
 import { signOut, useSession } from "next-auth/react";
-import NotificationPanel from "@/components/NotificationPanel/NotificationPanel";
+// import NotificationPanel from "@/components/NotificationPanel/NotificationPanel";
 import { useRouter } from "next/navigation";
 
 export default function Navbar() {
@@ -197,27 +197,27 @@ export default function Navbar() {
                 />
               </button>
                             {/* Notification Panel */}
-              <div className="hidden md:flex  2xl:hidden ">
+{/*               <div className="hidden md:flex  2xl:hidden ">
                 {status === "authenticated" && currentUserId && (
                   <NotificationPanel
                     userId={currentUserId}
                     onUnseenChange={setUnseenNotifCount}
                   />
                 )}
-              </div>
+              </div> */}
             </div>
             
           </div>
 
           {/* Desktop Notification (right positioned) */}
-          <div className="hidden 2xl:flex justify-center items-center absolute right-6">
+{/*           <div className="hidden 2xl:flex justify-center items-center absolute right-6">
             {status === "authenticated" && currentUserId && (
               <NotificationPanel
                 userId={currentUserId}
                 onUnseenChange={setUnseenNotifCount}
               />
             )}
-          </div>
+          </div> */}
         </div>
 
         {/* Mobile Sidebar */}
