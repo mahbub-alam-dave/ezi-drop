@@ -38,85 +38,74 @@ const NewsLetter = () => {
   };
 
   return (
+ 
     <section
-      id="newsletter"
-      className="w-full flex justify-center mb-16 px-4 sm:px-6 lg:px-8 py-6 lg:py-12 
-       bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
-       text-[var(--color-text)] dark:text-[var(--color-text-dark)]
-       transition-colors duration-500"
+  id="newsletter"
+  className="w-full flex justify-center mb-16 px-4 sm:px-6 lg:px-8 py-6 lg:py-12 relative overflow-hidden"
+>
+  {/* Gradient Background */}
+  <div className="absolute inset-0 bg-gradient-to-r from-indigo-50 via-blue-50 to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-700 -z-10"></div>
+
+  <div className="w-full max-w-[1440px] grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+    {/* ===== Left Side Animation ===== */}
+    <motion.div
+      initial={{ opacity: 0, x: -60 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="flex justify-center"
     >
-      <div className="w-full max-w-[1440px] grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        {/* ===== Left Side Animation ===== */}
-        <motion.div
-          initial={{ opacity: 0, x: -60 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="flex justify-center"
-        >
-          <Lottie
-            animationData={animationData}
-            loop
-            className="w-full max-w-md max-h-[420px] dark:invert"
-          />
-        </motion.div>
+      <Lottie
+        animationData={animationData}
+        loop
+        className="w-full max-w-md max-h-[420px] dark:invert"
+      />
+    </motion.div>
 
-        {/* ===== Right Side Form ===== */}
-        <motion.div
-          // initial={{ opacity: 0, x: 60 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-          className="rounded-2xl 
-           dark:border-[var(--border-color-two)]
-           bg-white/80 dark:bg-[#10182e]/80
-           backdrop-blur-md  p-6 sm:p-10 lg:p-14"
-        >
-          <h2
-            className=" font-serif font-bold mb-8
-             text-2xl sm:text-3xl md:text-4xl"
-          >
-            Subscribe to Our Newsletter
-          </h2>
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col sm:flex-row gap-4"
-          >
-            <input
-              type="email"
-              placeholder="Your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="flex-1 min-w-[220px] rounded-lg border
-               border-[var(--border-color)]
-               dark:border-[var(--border-color-two)]
-               bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
-               placeholder:text-[var(--color-text-soft)]
-               dark:placeholder:text-[var(--color-text-soft-dark)]
-               focus:outline-none focus:ring-1 focus:ring-[var(--border-color-two)]
-               dark:focus:ring-[var(--color-primary-dark)]
-               px-4 py-3 text-base"
-            />
+    {/* ===== Right Side Form ===== */}
+    <motion.div
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+      className="rounded-2xl bg-white/80 dark:bg-[#10182e]/80 backdrop-blur-md p-6 sm:p-10 lg:p-14 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-2xl transition-all"
+    >
+      <h2 className="font-serif font-bold mb-8 text-2xl sm:text-3xl md:text-4xl bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent">
+        Subscribe to Our Newsletter
+      </h2>
 
-            <motion.button
-              whileHover={{
-                scale: 1.05,
-                boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
-              }}
-              whileTap={{ scale: 0.96 }}
-              type="submit"
-              className="w-full sm:w-auto rounded-lg bg-[var(--color-primary)]
-               hover:bg-[var(--color-primary-dark)]
-               text-white font-semibold px-6 py-3 text-base
-               transition-colors duration-300"
-            >
-              Subscribe
-            </motion.button>
-          </form>
-        </motion.div>
-      </div>
-    </section>
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col sm:flex-row gap-4"
+      >
+        <input
+          type="email"
+          placeholder="Your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className="flex-1 min-w-[220px] rounded-lg border border-gray-300 dark:border-gray-600
+                     bg-white/80 dark:bg-[#10182e]/80 placeholder:text-gray-500 dark:placeholder:text-gray-400
+                     focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 px-4 py-3 text-base transition-all"
+        />
+
+        <motion.button
+          whileHover={{
+            scale: 1.05,
+            boxShadow: "0 6px 16px rgba(0,0,0,0.25)",
+          }}
+          whileTap={{ scale: 0.96 }}
+          type="submit"
+          className="w-full sm:w-auto rounded-lg bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500
+                     hover:from-indigo-700 hover:via-purple-700 hover:to-cyan-600 text-white font-semibold px-6 py-3 text-base
+                     transition-all"
+        >
+          Subscribe
+        </motion.button>
+      </form>
+    </motion.div>
+  </div>
+</section>
+
   );
 };
 
