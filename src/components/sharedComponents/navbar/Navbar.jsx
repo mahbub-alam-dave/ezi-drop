@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
-
   const currentUserId = session?.user?.userId || session?.user?._id;
   const router = useRouter();
   const [dark, setDark] = useState(false);
@@ -17,6 +16,7 @@ export default function Navbar() {
   const [unseenNotifCount, setUnseenNotifCount] = useState(0);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
@@ -24,6 +24,14 @@ export default function Navbar() {
       setDark(true);
       document.documentElement.classList.add("dark");
     }
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const toggleTheme = () => {
@@ -46,27 +54,20 @@ export default function Navbar() {
   };
 
   const confirmLogout = async () => {
-  try {
-    // Sign out user
-    await signOut({ redirect: false });
+    try {
+      await signOut({ redirect: false });
+      setShowLogoutModal(false);
+      setShowSuccessModal(true);
 
-    // Show success modal
-    setShowLogoutModal(false);
-    setShowSuccessModal(true);
-
-    // Wait for UI to show success animation
-    setTimeout(() => {
-      setShowSuccessModal(false);
-
-      // ✅ Force session refresh (important)
-      router.push("/");
-      window.location.reload(); // ensures UI and session both reset
-    }, 800);
-  } catch (error) {
-    console.error("Logout error:", error);
-  }
-};
-
+      setTimeout(() => {
+        setShowSuccessModal(false);
+        router.push("/");
+        window.location.reload();
+      }, 800);
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
 
   const cancelLogout = () => {
     setShowLogoutModal(false);
@@ -74,81 +75,141 @@ export default function Navbar() {
 
   const navLinks = (
     <>
-      <Link href={"/"}>Home</Link>
-      <Link href={"/send-parcel"}>Parcel Booking</Link>
-      {status === "authenticated" && <Link href={"/dashboard"}>Dashboard</Link>}
-      <Link href={"/about"}>About</Link>
-      <Link href={"/contact"}>Contact</Link>
+      <Link href={"/"} className="nav-link group relative">
+        <span className="relative z-10">Home</span>
+        <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
+      </Link>
+      <Link href={"/send-parcel"} className="nav-link group relative">
+        <span className="relative z-10">Parcel Booking</span>
+        <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
+      </Link>
+      {status === "authenticated" && (
+        <Link href={"/dashboard"} className="nav-link group relative">
+          <span className="relative z-10">Dashboard</span>
+          <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
+        </Link>
+      )}
+      <Link href={"/about"} className="nav-link group relative">
+        <span className="relative z-10">About</span>
+        <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
+      </Link>
+      <Link href={"/contact"} className="nav-link group relative">
+        <span className="relative z-10">Contact</span>
+        <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
+      </Link>
     </>
   );
 
-  if (status === "loading") {
-    return (
-      <nav className="p-4 shadow bg-white">
-        <div className="flex justify-between items-center">
-          <h1 className="text-lg font-semibold">EZI Drop</h1>
-          <span className="text-gray-500 animate-pulse">Loading...</span>
-        </div>
-      </nav>
-    );
-  }
-
   return (
-    // Navbar Z-index: z-[1000]
     <div className="relative">
-      <div className=" w-full flex justify-center h-[100px] bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] px-6 md:px-8  fixed z-[1000] ">
+      <div
+        className={`w-full flex justify-center h-[100px] fixed z-[1000] transition-all duration-300 ${
+          scrolled
+            ? "bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-lg border-b border-gray-200/50 dark:border-gray-700/50"
+            : "bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]"
+        } px-6 md:px-8`}
+      >
         <div className="w-full max-w-[1440px] mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold">
-            <Link href={"/"}>Ezi Drop </Link>
-          </h1>
+          {/* Logo with animated gradient */}
+          <Link href={"/"}>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 cursor-pointer">
+              Ezi Drop
+            </h1>
+          </Link>
+
           <div className="flex items-center gap-8">
+            {/* Desktop Navigation with hover effects */}
             <nav>
-              <ul className="hidden lg:flex gap-8">{navLinks}</ul>
+              <ul className="hidden lg:flex gap-6 items-center">{navLinks}</ul>
             </nav>
 
-            {/* Login/Logout */}
-            <div className="flex gap-4">
+            {/* Action Buttons */}
+            <div className="flex gap-3 items-center">
+              {/* Theme Toggle with smooth animation */}
+              <button
+                className="hidden lg:flex relative w-12 h-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 hover:scale-110 transition-all duration-300 shadow-md hover:shadow-xl group overflow-hidden"
+                onClick={toggleTheme}
+              >
+                <span className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+                <span className="text-2xl relative z-10 transform group-hover:rotate-180 transition-transform duration-500">
+                  {dark ? "☀️" : "🌙"}
+                </span>
+              </button>
+
+              {/* Login/Logout Buttons */}
               {status === "authenticated" ? (
                 <button
                   onClick={handleLogout}
-                  className="hidden sm:block btn text-[var(--color-secondary)] dark:text-[var(--color-secondary-dark)] shadow-none border-color bg-transparent rounded-sm  border"
+                  className="hidden sm:flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-red-600 dark:text-red-400 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-950/30 dark:to-pink-950/30 hover:from-red-100 hover:to-pink-100 dark:hover:from-red-900/40 dark:hover:to-pink-900/40 border border-red-200 dark:border-red-800 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95 group"
                 >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 group-hover:rotate-12 transition-transform duration-300"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
                   Logout
                 </button>
               ) : (
                 <Link href={"/login"}>
-                  <button className="hidden sm:block btn bg-[var(--color-primary)] dark:bg-[var(--color-primary-dark)] rounded-sm text-white border-none">
-                    Login
+                  <button className="hidden sm:flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/50 hover:scale-105 active:scale-95 border-none group">
+                    <span className="group-hover:translate-x-[-2px] transition-transform duration-300">
+                      Login
+                    </span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 7l5 5m0 0l-5 5m5-5H6"
+                      />
+                    </svg>
                   </button>
                 </Link>
               )}
-            </div>
 
-            {/* Notification */}
-            <div className="hidden lg:flex gap-4 items-center z-[1001]">
-              {/* 2. Theme Toggle */}
-              <button className="hidden lg:block" onClick={toggleTheme}>
-                {dark ? "☀️" : "🌙"}
+
+              {/* Mobile Menu Button with animation */}
+              <button
+                className="flex lg:hidden relative w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 hover:scale-110 transition-all duration-300 shadow-md hover:shadow-xl items-center justify-center group"
+                onClick={handleMenuButton}
+              >
+                <span className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+                <CiMenuBurger
+                  size={24}
+                  className={`relative z-10 transition-transform duration-300 ${
+                    openMenu ? "rotate-90" : ""
+                  }`}
+                />
               </button>
-                        {/* 1. Notification Panel */}
-          <div className="2xl:hidden">
-            {status === "authenticated" && currentUserId && (
-              <NotificationPanel
-                userId={currentUserId}
-                onUnseenChange={setUnseenNotifCount}
-              />
-            )}
-          </div>
+                            {/* Notification Panel */}
+              <div className="hidden md:flex  2xl:hidden ">
+                {status === "authenticated" && currentUserId && (
+                  <NotificationPanel
+                    userId={currentUserId}
+                    onUnseenChange={setUnseenNotifCount}
+                  />
+                )}
+              </div>
             </div>
-            {/* 3. Menu Burger (Mobile) */}
-            <div
-              className="block lg:hidden text-color"
-              onClick={handleMenuButton}
-            >
-              <CiMenuBurger size={28} />
-            </div>
+            
           </div>
-          {/* 1. Notification Panel */}
+
+          {/* Desktop Notification (right positioned) */}
           <div className="hidden 2xl:flex justify-center items-center absolute right-6">
             {status === "authenticated" && currentUserId && (
               <NotificationPanel
@@ -159,9 +220,9 @@ export default function Navbar() {
           </div>
         </div>
 
+        {/* Mobile Sidebar */}
         {openMenu && (
-          // Mobile Menu Z-index: z-[999] top-[100px]
-          <div className="lg:hidden absolute right-0  z-[9999]">
+          <div className="lg:hidden absolute right-0 z-[9999]">
             <Sidebar
               setUnseenNotifCount={setUnseenNotifCount}
               setOpenMenu={setOpenMenu}
@@ -170,14 +231,14 @@ export default function Navbar() {
           </div>
         )}
 
-        {/* Logout Confirmation Modal */}
+        {/* Logout Confirmation Modal with enhanced design */}
         {showLogoutModal && (
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-2xl max-w-md w-[90%] mx-4">
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-md animate-fadeIn">
+            <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-2xl max-w-md w-[90%] mx-4 transform animate-scaleIn">
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
+                <div className="w-20 h-20 mx-auto mb-5 bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900/40 dark:to-pink-900/40 rounded-full flex items-center justify-center animate-bounce">
                   <svg
-                    className="w-8 h-8 text-red-600 dark:text-red-400"
+                    className="w-10 h-10 text-red-600 dark:text-red-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -186,26 +247,26 @@ export default function Navbar() {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                     />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text">
                   Confirm Logout
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                <p className="text-gray-600 dark:text-gray-300 mb-8 text-base">
                   Are you sure you want to logout from your account?
                 </p>
-                <div className="flex gap-3 justify-center">
+                <div className="flex gap-4 justify-center">
                   <button
                     onClick={cancelLogout}
-                    className="px-6 py-2 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-white rounded-lg transition-colors font-medium"
+                    className="px-8 py-3 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-white rounded-xl transition-all duration-300 font-semibold hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={confirmLogout}
-                    className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium"
+                    className="px-8 py-3 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white rounded-xl transition-all duration-300 font-semibold hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl hover:shadow-red-500/50"
                   >
                     Yes, Logout
                   </button>
@@ -215,14 +276,14 @@ export default function Navbar() {
           </div>
         )}
 
-        {/* Success Modal */}
+        {/* Success Modal with celebration animation */}
         {showSuccessModal && (
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-2xl max-w-md w-[90%] mx-4">
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-md animate-fadeIn">
+            <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-2xl max-w-md w-[90%] mx-4 transform animate-scaleIn">
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+                <div className="w-20 h-20 mx-auto mb-5 bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/40 dark:to-emerald-900/40 rounded-full flex items-center justify-center animate-bounce">
                   <svg
-                    className="w-8 h-8 text-green-600 dark:text-green-400"
+                    className="w-10 h-10 text-green-600 dark:text-green-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -230,15 +291,15 @@ export default function Navbar() {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
+                      strokeWidth={3}
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text">
                   Logout Successful!
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300">
+                <p className="text-gray-600 dark:text-gray-300 text-base">
                   You have been logged out successfully.
                 </p>
               </div>
@@ -246,6 +307,40 @@ export default function Navbar() {
           </div>
         )}
       </div>
+
+      <style jsx>{`
+        .nav-link {
+          @apply px-4 py-2 font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 rounded-lg;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes scaleIn {
+          from {
+            opacity: 0;
+            transform: scale(0.9);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 0.2s ease-out;
+        }
+
+        .animate-scaleIn {
+          animation: scaleIn 0.3s ease-out;
+        }
+      `}</style>
     </div>
   );
 }

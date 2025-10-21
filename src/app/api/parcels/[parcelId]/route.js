@@ -16,4 +16,4 @@ export async function GET(req, { params }) {
     console.error(error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}i
+}
