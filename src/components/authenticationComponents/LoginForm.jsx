@@ -64,6 +64,7 @@ const LoginForm = () => {
       }
 
       if (response?.ok) {
+        await update()
         Swal.fire({
           position: "center",
           icon: "success",
@@ -71,8 +72,8 @@ const LoginForm = () => {
           showConfirmButton: false,
           timer: 800,
         }).then(() => {
-          router.push("/");
-          form.reset();
+        window.location.href = "/";
+        form.reset();
         });
     
       } else {
