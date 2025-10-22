@@ -101,6 +101,7 @@ export default function Navbar() {
   );
 
   return (
+    <>
     <div className="relative">
       <div
         className={`w-full flex justify-center h-[100px] fixed z-[1000] transition-all duration-300 ${
@@ -231,9 +232,46 @@ export default function Navbar() {
           </div>
         )}
 
-        {/* Logout Confirmation Modal with enhanced design */}
+
+      </div>
+
+      <style jsx>{`
+        .nav-link {
+          @apply px-4 py-2 font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 rounded-lg;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes scaleIn {
+          from {
+            opacity: 0;
+            transform: scale(0.9);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 0.2s ease-out;
+        }
+
+        .animate-scaleIn {
+          animation: scaleIn 0.3s ease-out;
+        }
+      `}</style>
+    </div>
+            {/* Logout Confirmation Modal with enhanced design */}
         {showLogoutModal && (
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-md animate-fadeIn">
+          <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60 backdrop-blur-md animate-fadeIn">
             <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-2xl max-w-md w-[90%] mx-4 transform animate-scaleIn">
               <div className="text-center">
                 <div className="w-20 h-20 mx-auto mb-5 bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900/40 dark:to-pink-900/40 rounded-full flex items-center justify-center animate-bounce">
@@ -306,41 +344,6 @@ export default function Navbar() {
             </div>
           </div>
         )}
-      </div>
-
-      <style jsx>{`
-        .nav-link {
-          @apply px-4 py-2 font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 rounded-lg;
-        }
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes scaleIn {
-          from {
-            opacity: 0;
-            transform: scale(0.9);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-
-        .animate-fadeIn {
-          animation: fadeIn 0.2s ease-out;
-        }
-
-        .animate-scaleIn {
-          animation: scaleIn 0.3s ease-out;
-        }
-      `}</style>
-    </div>
+    </>
   );
 }
