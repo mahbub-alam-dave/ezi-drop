@@ -13,122 +13,95 @@ import {
   LineChart,
   Line,
   CartesianGrid,
-  AreaChart,
-  Area,
 } from "recharts";
 import UserRating from "@/components/UserRating/UserRating";
 import useLoadingSpinner from "@/hooks/useLoadingSpinner";
 
 export default function PerformancePage() {
   const [data, setData] = useState(null);
-  const [ratingSubmitted, setRatingSubmitted] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [ratingSubmitted, setRatingSubmitted] = useState(false);
+  const spinner = useLoadingSpinner();
 
-  // ✅ Hook top-level এ কল করতে হবে
-  const spinner = useLoadingSpinner;
-
-  // 🔄 Backend থেকে ডেটা ফেচ
   useEffect(() => {
-    fetch("/api/performance")
-      .then((res) => res.json())
-      .then((result) => {
-        console.log("Response:", res.status);
-        if (result.success && result.data?.length > 0) {
-          setData(result.data[0]);
-        } else {
-          Swal.fire("Error", "Failed to load performance data", "error");
+    const fetchData = async () => {
+      try {
+        let res = await fetch("/api/performance");
+        let result = await res.json();
+        let performanceData = result.data ?? [];
+
+        if (performanceData.length === 0) {
+          // Seed sample data if DB empty
+          await fetch("/api/performance", { method: "POST" });
+          res = await fetch("/api/performance");
+          result = await res.json();
+          performanceData = result.data ?? [];
         }
-      })
-      .catch(() => Swal.fire("Error", "Server connection failed", "error"))
-      .finally(() => setLoading(false));
+
+        setData(performanceData[0]);
+      } catch (err) {
+        console.error(err);
+        Swal.fire("Error", "Server connection failed", "error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
-
-  // 🔒 Loading / Empty Data হ্যান্ডেল
   if (loading) return spinner;
   if (!data) return <p className="text-center p-6">No performance data found.</p>;
 
-  // 📈 ক্যালকুলেশন (safe)
   const successRate = useMemo(
-    () =>
-      ((data?.successfulDeliveries ?? 0) /
-        (data?.totalDeliveries || 1)) *
-      100,
+    () => ((data?.successfulDeliveries ?? 0) / (data?.totalDeliveries || 1)) * 100,
     [data]
   );
 
   const avgRating = useMemo(() => {
     const ratings = data?.ratings ?? [];
-    if (ratings.length === 0) return 0;
-    return (ratings.reduce((sum, r) => sum + r, 0) / ratings.length).toFixed(2);
+    return ratings.length === 0 ? 0 : (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(2);
   }, [data]);
 
   const pointsGoal = 5000;
-  const pointsProgress = Math.min(
-    100,
-    Math.round(((data?.totalPoints ?? 0) / pointsGoal) * 100)
-  );
+  const pointsProgress = Math.min(100, Math.round(((data?.totalPoints ?? 0) / pointsGoal) * 100));
 
-  // 🎯 SweetAlert Notifications
   useEffect(() => {
     if (!ratingSubmitted && data) {
       if (data.totalPoints >= pointsGoal) {
-        Swal.fire({
-          title: "🎉 Congratulations!",
-          text: "You’ve reached your monthly points goal!",
-          icon: "success",
-          confirmButtonColor: "#3b82f6",
-        });
+        Swal.fire({ title: "🎉 Congrats!", text: "Monthly points goal achieved!", icon: "success" });
       } else if (successRate < 80) {
-        Swal.fire({
-          title: "⚠️ Low Performance",
-          text: "Your success rate is below 80%. Try to improve this month!",
-          icon: "warning",
-          confirmButtonColor: "#f97316",
-        });
+        Swal.fire({ title: "⚠️ Low Performance", text: "Success rate below 80%", icon: "warning" });
       }
     }
   }, [data, ratingSubmitted, successRate]);
 
-  // ⭐ User Rating Submit
   const handleRatingSubmit = (rating) => {
     setRatingSubmitted(true);
-    Swal.fire({
-      title: "Thanks for your feedback!",
-      text: `You rated ${rating} stars.`,
-      icon: "success",
-      confirmButtonColor: "#10b981",
-    });
+    Swal.fire({ title: "Thanks!", text: `You rated ${rating} stars`, icon: "success" });
   };
 
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-4xl font-extrabold bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] bg-clip-text text-transparent mb-8">
-        Your Performance Dashboard
+      <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-green-500 mb-8">
+        Performance Dashboard
       </h1>
 
-      {/* 📦 Top Metric Cards */}
+      {/* Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard title="Total Deliveries" value={data.totalDeliveries ?? 0} icon={<Hash size={28} />} />
+        <MetricCard title="Total Deliveries" value={data.totalDeliveries} icon={<Hash size={28} />} />
         <MetricCard
           title="Success Rate"
           value={`${successRate.toFixed(1)}%`}
           icon={<CheckCircle size={28} />}
           progress={successRate}
-          progressLabel="Based on successful vs total"
+          progressLabel="Successful vs Total"
           color="from-emerald-400 to-cyan-500"
         />
-        <MetricCard
-          title="Average Rating"
-          value={
-            <>
-              {avgRating} <Star className="inline-block text-yellow-500" size={18} />
-            </>
-          }
-        />
+        <MetricCard title="Average Rating" value={<>{avgRating} <Star className="text-yellow-500 inline-block" size={18} /></>} />
         <MetricCard
           title="Total Points"
-          value={data.totalPoints ?? 0}
+          value={data.totalPoints}
           icon={<Trophy size={28} />}
           progress={pointsProgress}
           progressLabel={`Goal: ${pointsGoal} pts`}
@@ -136,11 +109,11 @@ export default function PerformancePage() {
         />
       </div>
 
-      {/* 📊 Charts */}
+      {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ChartCard title="Monthly Deliveries">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data.monthly ?? []}>
+            <BarChart data={data.monthly}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
@@ -152,7 +125,7 @@ export default function PerformancePage() {
 
         <ChartCard title="Success & Points">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data.monthly ?? []}>
+            <LineChart data={data.monthly}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
@@ -164,17 +137,17 @@ export default function PerformancePage() {
         </ChartCard>
       </div>
 
-      {/* 🧾 Breakdown */}
+      {/* Breakdown */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-4">
         <h3 className="font-semibold mb-4">Quick Breakdown</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Breakdown label="Successful Deliveries" value={data.successfulDeliveries ?? 0} />
-          <Breakdown label="Failed Deliveries" value={(data.totalDeliveries ?? 0) - (data.successfulDeliveries ?? 0)} />
-          <Breakdown label="Total Ratings" value={data.ratings?.length ?? 0} />
+          <Breakdown label="Successful Deliveries" value={data.successfulDeliveries} />
+          <Breakdown label="Failed Deliveries" value={data.totalDeliveries - data.successfulDeliveries} />
+          <Breakdown label="Total Ratings" value={data.ratings.length} />
         </div>
       </div>
 
-      {/* ⭐ User Rating Section */}
+      {/* Rating */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-4 mt-6">
         <h3 className="font-semibold mb-4">Rate Your Experience</h3>
         <UserRating onSubmit={handleRatingSubmit} />
@@ -183,13 +156,13 @@ export default function PerformancePage() {
   );
 }
 
-/* 🔧 Reusable Components */
+/* Components */
 function MetricCard({ title, value, icon, progress, progressLabel, color }) {
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-4">
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-center">
         <div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">{title}</p>
+          <p className="text-sm text-gray-500">{title}</p>
           <div className="text-2xl font-bold flex items-center gap-2">{value}</div>
         </div>
         {icon && <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">{icon}</div>}
@@ -197,12 +170,9 @@ function MetricCard({ title, value, icon, progress, progressLabel, color }) {
       {progress && (
         <div className="mt-3">
           <div className="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div
-              className={`h-full rounded-full bg-gradient-to-r ${color}`}
-              style={{ width: `${progress}%` }}
-            />
+            <div className={`h-full rounded-full bg-gradient-to-r ${color}`} style={{ width: `${progress}%` }} />
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{progressLabel}</p>
+          <p className="text-xs text-gray-500 mt-1">{progressLabel}</p>
         </div>
       )}
     </div>
@@ -221,7 +191,7 @@ function ChartCard({ title, children }) {
 function Breakdown({ label, value }) {
   return (
     <div className="p-3 border rounded dark:border-gray-700">
-      <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>
+      <p className="text-sm text-gray-500">{label}</p>
       <p className="text-lg font-semibold">{value}</p>
     </div>
   );

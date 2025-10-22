@@ -1,20 +1,19 @@
 import { dbConnect } from "@/lib/dbConnect";
 import { NextResponse } from "next/server";
 
-// 📦 GET — Fetch performance data
+// GET - fetch performance data
 export async function GET() {
   try {
     const collection = await dbConnect("performance");
-    const performanceData = await collection.find({}).toArray();
-
-    return NextResponse.json({ success: true, data: performanceData });
-  } catch (error) {
-    console.error("DB Error:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    const data = await collection.find({}).toArray();
+    return NextResponse.json({ success: true, data });
+  } catch (err) {
+    console.error("DB Error:", err);
+    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
 }
 
-// 🧪 POST — Seed mock data (optional)
+// POST - seed sample data
 export async function POST() {
   try {
     const collection = await dbConnect("performance");
@@ -40,8 +39,8 @@ export async function POST() {
       message: "Sample performance data inserted!",
       id: inserted.insertedId,
     });
-  } catch (error) {
-    console.error("DB Error:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch (err) {
+    console.error("DB Error:", err);
+    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
 }
