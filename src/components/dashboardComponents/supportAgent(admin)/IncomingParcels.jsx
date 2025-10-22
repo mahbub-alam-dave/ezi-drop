@@ -70,7 +70,7 @@ export default function IncomingParcels() {
   };
 
   return (
-    <div className="space-y-4 pt-8">
+    <div className="space-y-4 pt-8 p-6">
       <h2 className="text-xl font-semibold">Incoming Parcels</h2>
 
       {/* Filters */}
@@ -79,13 +79,13 @@ export default function IncomingParcels() {
           placeholder="Search by Parcel ID..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="max-w-sm"
+          className="max-w-sm border border-color"
         />
 
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="border rounded-md px-3 py-2"
+          className="border rounded-md px-3 py-2 border-color"
         >
           <option value="all">All</option>
           <option value="dispatched">Dispatched</option>
@@ -96,9 +96,9 @@ export default function IncomingParcels() {
       </div>
 
       {/* Table */}
-      <div className="border rounded-md">
+      <div className="border rounded-md border-color">
         <Table>
-          <TableHeader>
+          <TableHeader className="text-color">
             <TableRow>
               <TableHead>Parcel ID</TableHead>
               <TableHead>From</TableHead>

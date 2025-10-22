@@ -86,10 +86,10 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaUsers className="inline-block mr-2" />
           Manage Users
         </Link>
-        <Link href="/dashboard/admin/assign-riders" className={linkClass("/dashboard/admin/assign-riders")}>
+{/*         <Link href="/dashboard/admin/assign-riders" className={linkClass("/dashboard/admin/assign-riders")}>
           <FaMotorcycle className="inline-block mr-2" />
           Assign Riders
-        </Link>
+        </Link> */}
         <Link
           href="/dashboard/admin/manage-candidates"
           className={linkClass("/dashboard/admin/manage-candidates")}
@@ -296,7 +296,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
   return (
     <div className="bg-gray-50 dark:bg-black">
       {/* ---- Topbar / Mobile Nav ---- */}
-      <header className=" lg:hidden fixed top-0  w-full  z-50 bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] shadow-md">
+      <header className=" lg:hidden fixed top-0 w-full z-50 bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] shadow-md">
         <div className="flex justify-between items-center p-4 h-[100px] ">
                     <Link href={"/"}>
                       <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 cursor-pointer">
