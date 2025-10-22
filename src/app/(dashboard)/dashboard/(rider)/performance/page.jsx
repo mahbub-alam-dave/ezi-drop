@@ -41,6 +41,7 @@ export default function PerformancePage() {
       .catch(() => Swal.fire("Error", "Server connection failed", "error"))
       .finally(() => setLoading(false));
   }, []);
+  
 
   // 🔒 Loading / Empty Data হ্যান্ডেল
   if (loading) return spinner;
