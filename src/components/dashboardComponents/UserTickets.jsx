@@ -27,7 +27,7 @@ export default function UserTickets({ userId }) {
   const openTicket = tickets.find((t) => t.status !== "resolved");
 
   return (
-    <div className="pt-8">
+    <div className="pt-8 px-6">
       <div className="flex flex-col gap-4 mb-6">
         <h2 className="text-2xl font-bold ">Get 24/7 support From Our District Agent</h2>
         <p className="max-w-6xl">Create a support tickets by selecting a reason from dropdown menu or you can add by yourselves. Then, Our support agent will connect you on chat to resolve your issue. Remember, it takes some time to enquiry, so we want your patience.</p>
