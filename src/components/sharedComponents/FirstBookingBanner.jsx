@@ -34,8 +34,10 @@ const FirstBookingBanner = ({ userEmail }) => {
   if (!eligible) return null;
 
   return (
-    <div className="background-color-primary text-gray-100 p-8 text-xl text-center mt-8 shadow-md">
-      🎉 You’re eligible for <strong>100% free delivery</strong> on your first booking <span className="">(Only domestic)</span>!
+    <div className="relative p-8 text-xl text-center mt-8 shadow-md">
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-10"></div>
+      <p className="z-10"> 🎉 You’re eligible for <strong>100% free delivery</strong> on your first booking <span className="text-[var(--color-primary)]">(Only domestic)</span>!
+</p>
     </div>
   );
 };

@@ -5,7 +5,7 @@ import { CiMenuBurger } from "react-icons/ci";
 import Sidebar from "./Sidebar";
 import { signOut, useSession } from "next-auth/react";
 // import NotificationPanel from "@/components/NotificationPanel/NotificationPanel";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
@@ -17,6 +17,7 @@ export default function Navbar() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pathname  = usePathname()
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
@@ -75,30 +76,41 @@ export default function Navbar() {
 
   const navLinks = (
     <>
-      <Link href={"/"} className="nav-link group relative">
+      <Link href={"/"} className="nav-link group relative px-4 py-2 ">
         <span className="relative z-10">Home</span>
         <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
       </Link>
-      <Link href={"/send-parcel"} className="nav-link group relative">
+      <Link href={"/send-parcel"} className="nav-link group relative px-4 py-2 ">
         <span className="relative z-10">Parcel Booking</span>
         <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
       </Link>
       {status === "authenticated" && (
-        <Link href={"/dashboard"} className="nav-link group relative">
+        <Link href={"/dashboard"} className="nav-link group relative px-4 py-2 ">
           <span className="relative z-10">Dashboard</span>
           <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
         </Link>
       )}
-      <Link href={"/about"} className="nav-link group relative">
+      <Link href={"/about"} className="nav-link group relative px-4 py-2 ">
         <span className="relative z-10">About</span>
         <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
       </Link>
-      <Link href={"/contact"} className="nav-link group relative">
+      <Link href={"/contact"} className="nav-link group relative px-4 py-2 ">
         <span className="relative z-10">Contact</span>
         <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg opacity-0 group-hover:opacity-10 transition-opacity duration-300"></span>
       </Link>
     </>
   );
+
+    const links = [
+    { href: "/", label: "Home" },
+    { href: "/send-parcel", label: "Parcel Booking" },
+    { href: "/about", label: "About" },
+    { href: "/contact", label: "Contact" },
+  ];
+
+    if (status === "authenticated") {
+    links.splice(2, 0, { href: "/dashboard", label: "Dashboard" }); // insert before About
+  }
 
   return (
     <>
@@ -121,7 +133,31 @@ export default function Navbar() {
           <div className="flex items-center gap-8">
             {/* Desktop Navigation with hover effects */}
             <nav>
-              <ul className="hidden lg:flex gap-6 items-center">{navLinks}</ul>
+              {/* <ul className="hidden lg:flex gap-6 items-center">{navLinks}</ul> */}
+              {links.map(({ href, label }) => {
+        const isActive = pathname === href;
+
+        return (
+          <Link
+            key={href}
+            href={href}
+            className={`nav-link group relative px-3 py-2 lg:mr-2 rounded-lg transition-all duration-300 ${
+              isActive
+                ? "text-blue-600 dark:text-purple-400 font-semibold"
+                : "text-gray-800 dark:text-gray-200 hover:text-blue-500"
+            }`}
+          >
+            <span className="relative z-10">{label}</span>
+            <span
+              className={`absolute inset-0 rounded-lg transition-all duration-300 ${
+                isActive
+                  ? "bg-gradient-to-r from-blue-500 to-purple-500 opacity-15"
+                  : "bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-10"
+              }`}
+            ></span>
+          </Link>
+        );
+      })}
             </nav>
 
             {/* Action Buttons */}
