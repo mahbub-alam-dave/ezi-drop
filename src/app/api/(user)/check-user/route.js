@@ -12,15 +12,7 @@ export async function POST(req) {
     const user = await db.findOne({ email });
     if (!user) return NextResponse.json({ message: "User not found" }, { status: 404 });
 
-    const userData = {
-      name: user.name,
-      email: user.email,
-      district: user.district || null,
-      districtId: user.districtId || null,
-      points: user.points || 0
-    }
-
-    return NextResponse.json({ emailVerified: user.emailVerified, userData });
+    return NextResponse.json({ emailVerified: user.emailVerified });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ message: "Failed to check user" }, { status: 500 });
@@ -45,7 +37,7 @@ export async function GET() {
       points: user.points || 0
     }
 
-    return NextResponse.json({ emailVerified: user.emailVerified, userData });
+    return NextResponse.json({ userData });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ message: "Failed to check user" }, { status: 500 });

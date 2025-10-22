@@ -42,9 +42,9 @@ const SupportsTicket = ({ displayArea }) => {
 
   return (
     <div
-      className={`${
+      className={`p-6 ${
         displayArea
-          ? "bg-white dark:bg-gray-800 rounded-2xl p-7 border border-slate-200 dark:border-slate-700 shadow-sm"
+          ? "bg-white dark:bg-gray-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm"
           : " pt-8"
       }`}
     >

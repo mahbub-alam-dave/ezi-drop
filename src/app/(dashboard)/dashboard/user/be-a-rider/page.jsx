@@ -44,7 +44,7 @@ const BeARider = () => {
   };
 
   return (
-    <section className="min-h-screen flex justify-center items-center px-4 py-10 text-color">
+    <section className="min-h-screen flex justify-center items-center px-6 py-10 text-color">
       <div className="w-full max-w-5xl rounded-2xl shadow-xl p-6 sm:p-10 md:p-14 md:py-18 bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] transition-colors duration-300">
         <h1 className="text-center text-2xl md:text-3xl font-bold mb-8 text-color">
           Become a Rider

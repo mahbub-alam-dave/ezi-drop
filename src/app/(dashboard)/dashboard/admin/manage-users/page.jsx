@@ -100,7 +100,7 @@ export default function ManageRider() {
   // 5. Normal Render
   return (
     <div className="p-4 sm:p-6 bg-gradient-to-br from-base-400 min-h-screen">
-      <div className="max-w-7xl mx-auto">
+      <div className="w-full">
         {/* Header */}
         <div className="mb-8 text-center sm:text-left">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -132,7 +132,7 @@ export default function ManageRider() {
               <select
                 value={selectedRole}
                 onChange={(e) => setSelectedRole(e.target.value)}
-                className="px-4 py-3 text-base-200 bg-base-400 border border-base-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none shadow-sm min-w-[140px]"
+                className="px-4 py-3 text-color bg-base-400 border border-base-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none shadow-sm min-w-[140px]"
               >
                 <option value="all">All Roles</option>
                 <option value="admin">Admin</option>
@@ -149,19 +149,19 @@ export default function ManageRider() {
             <table className="min-w-full divide-y divide-base-200/70">
               <thead className="bg-base-50/90">
                 <tr>
-                  <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-base-700 uppercase tracking-wide">
+                  <th scope="col" className="px-6 py-4 text-center text-sm font-semibold text-base-700 uppercase tracking-wide">
                     User
                   </th>
-                  <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-base-700 uppercase tracking-wide">
+                  <th scope="col" className="px-6 py-4 text-center text-sm font-semibold text-base-700 uppercase tracking-wide">
                     Email
                   </th>
-                  <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-base-700 uppercase tracking-wide">
+                  <th scope="col" className="px-6 py-4 text-center text-sm font-semibold text-base-700 uppercase tracking-wide">
                     Role
                   </th>
-                  <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-base-700 uppercase tracking-wide">
+                  <th scope="col" className="px-6 py-4 text-center text-sm font-semibold text-base-700 uppercase tracking-wide">
                     Status
                   </th>
-                  <th scope="col" className="px-6 py-4 text-right text-sm font-semibold text-base-700 uppercase tracking-wide">
+                  <th scope="col" className="px-6 py-4 text-center text-sm font-semibold text-base-700 uppercase tracking-wide">
                     Actions
                   </th>
                 </tr>

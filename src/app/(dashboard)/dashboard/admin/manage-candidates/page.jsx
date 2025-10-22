@@ -1,156 +1,233 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { Search } from "lucide-react";
+import useLoadingSpinner from "@/Hooks/useLoadingSpinner";
 
-export default function ManageCandidatesPage() {
-  const [applications, setApplications] = useState([
-    {
-      id: 1,
-      name: "Ahmed",
-      email: "ahmed@example.com",
-      phone: "+8801789456105",
-      address: "Dhaka, Bangladesh",
-      experience: "2 years",
-      licenseNo: "DL-2024-9876",
-      vehicleType: "Motorbike",
-      status: "Pending",
-    },
-    {
-      id: 2,
-      name: "Alam",
-      email: "alom@example.com",
-      phone: "+88017123450000",
-      address: "Chattogram, Bangladesh",
-      experience: "3 years",
-      licenseNo: "DL-2023-1122",
-      vehicleType: "Scooter",
-      status: "Pending",
-    },
-  ]);
+export default function AssignRiders() {
+  const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedApp, setSelectedApp] = useState(null);
 
-  const [selected, setSelected] = useState(null);
+  // 🔹 Fetch all applications from backend
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        const res = await fetch("/api/rider-applications");
+        const data = await res.json();
+        setApplications(data);
+      } catch (error) {
+        console.error("Error loading applications:", error);
+        Swal.fire("Error", "Failed to load applications", "error");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchApplications();
+  }, []);
 
-  const handleStatus = (id, newStatus) => {
-    setApplications((prev) =>
-      prev.map((app) =>
-        app.id === id ? { ...app, status: newStatus } : app
-      )
-    );
-    setSelected(null);
+  // 🔹 Filter logic (by name/email/district)
+  const filteredApplications = applications.filter(
+    (app) =>
+      app.applicantName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      app.applicantEmail?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      app.district?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // 🔹 Accept Rider
+  const handleAccept = async (userId, appId) => {
+    try {
+      const confirm = await Swal.fire({
+        title: "Approve this rider?",
+        text: "This will change the user's role to Rider.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, approve",
+      });
+      if (!confirm.isConfirmed) return;
+
+      // Update status in application collection
+      const res = await fetch(`/api/rider-applications/update-status/${appId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "accepted" }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update application");
+
+      // Update user role
+      await fetch(`/api/users/update-role/${userId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: "rider" }),
+      });
+
+      Swal.fire("Approved!", "User is now a rider.", "success");
+      setApplications((prev) => prev.filter((a) => a._id !== appId));
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", "Failed to approve application", "error");
+    }
   };
 
-  return (
-    <div className="p-6 background-color min-h-screen">
-      <h1 className="text-4xl font-extrabold bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] bg-clip-text text-transparent mb-8">
-        Manage Rider Applications
-      </h1>
+  // 🔹 Reject Rider
+  const handleReject = async (appId) => {
+    try {
+      const confirm = await Swal.fire({
+        title: "Reject this application?",
+        text: "This action cannot be undone.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, reject",
+        cancelButtonText: "Cancel",
+      });
+      if (!confirm.isConfirmed) return;
 
-      <div className="overflow-x-auto rounded-xl shadow border border-[var(--color-border)] background-color">
-        <table className="min-w-full">
-          <thead className="bg-[var(--color-primary)] text-white">
-            <tr>
-              <th className="px-6 py-3 text-left">Applicant Name</th>
-              <th className="px-6 py-3 text-left">Email</th>
-              <th className="px-6 py-3 text-left">Phone</th>
-              <th className="px-6 py-3 text-left">Status</th>
-              <th className="px-6 py-3 text-left">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {applications.map((app) => (
-              <tr
-                key={app.id}
-                className="border-t hover:bg-[var(--color-muted)] transition-all"
-              >
-                <td className="px-6 py-3 text-color">{app.name}</td>
-                <td className="px-6 py-3 text-color-soft">{app.email}</td>
-                <td className="px-6 py-3 text-color-soft">{app.phone}</td>
-                <td
-                  className={`px-6 py-3 font-semibold ${
-                    app.status === "Accepted"
-                      ? "text-green-600"
-                      : app.status === "Rejected"
-                      ? "text-red-600"
-                      : "text-yellow-600"
-                  }`}
-                >
-                  {app.status}
-                </td>
-                <td className="px-6 py-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => setSelected(app)}
-                    className="text-sm background-color-secondary text-white hover:opacity-90 transition"
-                  >
-                    View Details
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      const res = await fetch(`/api/rider-applications/update-status/${appId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "rejected" }),
+      });
+
+      if (!res.ok) throw new Error("Failed to reject application");
+
+      Swal.fire("Rejected!", "Application has been rejected.", "success");
+      setApplications((prev) => prev.filter((a) => a._id !== appId));
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", "Failed to reject application", "error");
+    }
+  };
+
+  if (loading) return useLoadingSpinner;
+
+  return (
+      // bg-clip-text bg-gradient-to-r from-green-500 to-blue-500
+    <section className="p-6">
+      <div className="flex flex-col sm:flex-row justify-between mb-6">
+        <h2 className="text-4xl font-extrabold text-color">
+          Assign Riders
+        </h2>
       </div>
 
-      {/* Modal */}
-      <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
-        <DialogContent className="max-w-md background-color">
-          <DialogHeader>
-            <DialogTitle className="text-color">Applicant Details</DialogTitle>
-            <DialogDescription className="text-color-soft">
-              View and manage the selected rider’s application.
-            </DialogDescription>
-          </DialogHeader>
+      {/* 🔍 Stylish Search Bar */}
+      <div className="relative w-full sm:w-96 mb-10">
+        <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+          <Search className="w-5 h-5 text-gray-400" />
+        </div>
+        <input
+          type="text"
+          placeholder="Search by name, email, or district..."
+          className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
 
-          {selected && (
-            <div className="space-y-3 mt-4 text-color">
-              <p>
-                <strong>Name:</strong> {selected.name}
-              </p>
-              <p>
-                <strong>Email:</strong> {selected.email}
-              </p>
-              <p>
-                <strong>Phone:</strong> {selected.phone}
-              </p>
-              <p>
-                <strong>Address:</strong> {selected.address}
-              </p>
-              <p>
-                <strong>Experience:</strong> {selected.experience}
-              </p>
-              <p>
-                <strong>License No:</strong> {selected.licenseNo}
-              </p>
-              <p>
-                <strong>Vehicle Type:</strong> {selected.vehicleType}
-              </p>
+      {filteredApplications.length === 0 ? (
+        <p>No rider applications found.</p>
+      ) : (
+        <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+          <table className="min-w-full divide-y divide-gray-200 text-sm">
+            <thead className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100">
+              <tr>
+                <th className="px-4 py-2 text-left">#</th>
+                <th className="px-4 py-2 text-left">Name</th>
+                <th className="px-4 py-2 text-left">Email</th>
+                <th className="px-4 py-2 text-left">Mobile</th>
+                <th className="px-4 py-2 text-left">District</th>
+                <th className="px-4 py-2 text-left">Status</th>
+                <th className="px-4 py-2 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+              {filteredApplications.map((app, i) => (
+                <tr key={app._id}>
+                  <td className="px-4 py-2">{i + 1}</td>
+                  <td className="px-4 py-2">{app.applicantName}</td>
+                  <td className="px-4 py-2">{app.applicantEmail}</td>
+                  <td className="px-4 py-2">{app.mobileNumber}</td>
+                  <td className="px-4 py-2">{app.district}</td>
+                  <td className="px-4 py-2 capitalize">{app.status || "Pending"}</td>
+                  <td className="px-4 py-2 flex gap-2">
+                    <Button variant="outline" size="sm" onClick={() => setSelectedApp(app)}>
+                      View
+                    </Button>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="background-color-primary text-gray-100"
+                      onClick={() => handleAccept(app.userId, app._id)}
+                    >
+                      Accept
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="bg-red-500 dark:bg-red-600 text-gray-100"
+                      onClick={() => handleReject(app._id)}
+                    >
+                      Reject
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-              <div className="flex gap-3 mt-6">
-                <Button
-                  className="background-color-primary text-white hover:opacity-90"
-                  onClick={() => handleStatus(selected.id, "Accepted")}
+      {/* 🔹 Modal for Application Details */}
+      {selectedApp && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg w-[90%] max-w-lg p-6">
+            <h3 className="text-xl font-semibold mb-4">Rider Application Details</h3>
+            <div className="space-y-2 text-sm text-gray-700 dark:text-gray-200">
+              <p><strong>Name:</strong> {selectedApp.applicantName}</p>
+              <p><strong>Email:</strong> {selectedApp.applicantEmail}</p>
+              <p><strong>Phone:</strong> {selectedApp.mobileNumber}</p>
+              <p><strong>District:</strong> {selectedApp.district}</p>
+              <p><strong>Education:</strong> {selectedApp.education}</p>
+              <p><strong>Summary:</strong> {selectedApp.profileSummary}</p>
+              <p>
+                <strong>Resume:</strong>{" "}
+                <a
+                  href={selectedApp.resumeLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 underline"
                 >
-                  Accept
-                </Button>
-                <Button
-                  className="background-color-secondary text-white hover:opacity-90"
-                  onClick={() => handleStatus(selected.id, "Rejected")}
-                >
-                  Reject
-                </Button>
-              </div>
+                  {selectedApp.resumeLink}
+                </a>
+              </p>
             </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
+            <div className="mt-6 flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setSelectedApp(null)}>Close</Button>
+              <Button
+                className="bg-green-600 hover:bg-green-700"
+                onClick={() => {
+                  handleAccept(selectedApp.userId, selectedApp._id);
+                  setSelectedApp(null);
+                }}
+              >
+                Accept
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  handleReject(selectedApp._id);
+                  setSelectedApp(null);
+                }}
+              >
+                Reject
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
   );
 }
