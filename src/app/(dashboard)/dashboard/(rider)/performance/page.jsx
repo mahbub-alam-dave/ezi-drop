@@ -17,7 +17,7 @@ import {
   Area,
 } from "recharts";
 import UserRating from "@/components/UserRating/UserRating";
-import useLoadingSpinner from "@/hooks/useLoadingSpinner"; // ✅ Hook import
+import useLoadingSpinner from "@/hooks/useLoadingSpinner";
 
 export default function PerformancePage() {
   const [data, setData] = useState(null);
@@ -25,13 +25,14 @@ export default function PerformancePage() {
   const [loading, setLoading] = useState(true);
 
   // ✅ Hook top-level এ কল করতে হবে
-  const spinner = useLoadingSpinner("Loading performance data...");
+  const spinner = useLoadingSpinner;
 
   // 🔄 Backend থেকে ডেটা ফেচ
   useEffect(() => {
     fetch("/api/performance")
       .then((res) => res.json())
       .then((result) => {
+        console.log("Response:", res.status);
         if (result.success && result.data?.length > 0) {
           setData(result.data[0]);
         } else {
@@ -41,7 +42,7 @@ export default function PerformancePage() {
       .catch(() => Swal.fire("Error", "Server connection failed", "error"))
       .finally(() => setLoading(false));
   }, []);
-  
+
 
   // 🔒 Loading / Empty Data হ্যান্ডেল
   if (loading) return spinner;
