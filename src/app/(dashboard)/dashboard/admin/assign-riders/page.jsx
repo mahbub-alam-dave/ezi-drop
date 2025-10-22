@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { Button } from "@/components/ui/button";
-import useLoadingSpinner from "@/hooks/useLoadingSpinner";
 import { Search } from "lucide-react";
+import useLoadingSpinner from "@/Hooks/useLoadingSpinner";
 
 export default function AssignRiders() {
   const [applications, setApplications] = useState([]);

@@ -15,7 +15,7 @@ export async function GET(req) {
   }
 
   try {
-    const notifications = await dbConnect("notifications");
+    const notifications = dbConnect("notifications");
     const userObjId = new ObjectId(userId);
 
     // Fetch all notifications for the user

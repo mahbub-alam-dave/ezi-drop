@@ -25,6 +25,20 @@ export async function middleware(req) {
         return NextResponse.redirect(new URL("/404", req.url)); {/* will be 403 */}
       }
     }
+    // Example: if you want rider to access /dashboard/rider
+    if (pathname.startsWith("/dashboard/rider")) {
+      if (token.role !== "rider") {
+        return NextResponse.redirect(new URL("/404", req.url)); {/* will be 403 */}
+      }
+    }
+
+        if (pathname.startsWith("/dashboard/user")) {
+      if (token.role !== "user") {
+        return NextResponse.redirect(new URL("/404", req.url)); {/* will be 403 */}
+      }
+    }
+
+  
   }
 
   return NextResponse.next();

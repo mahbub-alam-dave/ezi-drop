@@ -9,10 +9,8 @@ import OtpModal from "../modals/OtpModal";
 
 const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
-  const [showOtpModal, setShowOtpModal] = useState(false)
-  const [otpModalData, setOtpModalData] = useState({})
-/*   const [registerEmail, setRegisterEmail] = useState("")
-  const [registerPass, setRegisterPass] = useState("") */
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otpModalData, setOtpModalData] = useState({});
   const { update } = useSession();
 
   const handleRegisterForm = async (e) => {
@@ -24,50 +22,90 @@ const RegisterForm = () => {
     try {
       const res = await registerUser(registerData);
 
-      if (res.insertedId) {
+/*       if (res.insertedId) {
+        //  Step 1: referral check before OTP generation
+        try {
+          const referralRes = await fetch("/api/referralCheck", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: registerData.email }),
+          });
+
+          const referralData = await referralRes.json();
+
+          if (referralData.referred) {
+            await Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "You are a referred user!",
+              showConfirmButton: true,
+            });
+          } else {
+            await Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "Registration successful!",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          }
+        } catch (error) {
+          console.error("Referral check error during registration:", error);
+        }
+
+        //  Step 2: generate OTP as before
         await fetch("/api/auth/generate-otp", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: registerData.email }),
         });
-        setOtpModalData({ email: registerData.email, password:registerData.password });
-        
-        setShowOtpModal(true); // open modal
 
-        /*         // login after registration
-        const signInAfterRegister = await signIn("credentials", {
+        setOtpModalData({
           email: registerData.email,
           password: registerData.password,
-          redirect: true,
         });
 
-        if (signInAfterRegister.ok) {
-          await update();
-          Swal.fire({
-            position: "center",
-            icon: "success",
-            title: "Registration & Login successful",
-            showConfirmButton: false,
-            timer: 1500,
-          }).then(() => {
-            router.push("/"); // redirect AFTER Swal closes
-          });
-        }
-        else {
-          Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Failed to login after registration",
-        });
-        } */
+        setShowOtpModal(true); // open modal
       } else {
         Swal.fire({
           icon: "error",
           title: "Oops...",
           text: "Registration failed!",
         });
-      }
-    } catch (error) {
+      } */
+    console.log(res)
+        if (res.insertedId) {
+      await Swal.fire({
+        position: "center",
+        icon: "success",
+        title: res.message || "Registration successful!",
+        showConfirmButton: true,
+      });
+
+      // Now proceed to OTP or login
+      // await sendOtp(registerData.email); or router.push("/login");
+      // /  Step 2: generate OTP as before
+        await fetch("/api/auth/generate-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: registerData.email }),
+        });
+
+        setOtpModalData({
+          email: registerData.email,
+          password: registerData.password,
+        });
+
+        setShowOtpModal(true); // open modal
+    } else {
+      await Swal.fire({
+        icon: "error",
+        title: "Registration failed",
+        text: data.message || "Something went wrong. Please try again.",
+      });
+    }
+    
+      } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
@@ -93,9 +131,7 @@ const RegisterForm = () => {
 
       <form onSubmit={handleRegisterForm} className="flex flex-col gap-4">
         <div>
-          <label htmlFor="name" className="">
-            Name
-          </label>
+          <label htmlFor="name">Name</label>
           <input
             type="text"
             name="name"
@@ -105,9 +141,7 @@ const RegisterForm = () => {
           />
         </div>
         <div>
-          <label htmlFor="email" className="">
-            Email
-          </label>
+          <label htmlFor="email">Email</label>
           <input
             type="email"
             name="email"
@@ -117,9 +151,7 @@ const RegisterForm = () => {
           />
         </div>
         <div>
-          <label htmlFor="password" className="">
-            Password
-          </label>
+          <label htmlFor="password">Password</label>
           <input
             type="password"
             name="password"
@@ -134,7 +166,7 @@ const RegisterForm = () => {
           className={`px-6 py-3 cursor-pointer rounded-full mt-4 w-full font-medium text-lg ${
             loading
               ? "bg-gray-400 cursor-not-allowed text-gray-200"
-              : "bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] text-white"
+              : "bg-[var(--color-primary)] dark:bg-[var(--color-primary-dark)] text-gray-100 hover:bg-[var(--color-primary-dark)] dark:hover:bg-[var(--color-primary)]"
           }`}
         >
           {loading ? "loading..." : "Register"}
@@ -151,9 +183,10 @@ const RegisterForm = () => {
           </Link>
         </span>
       </form>
-      {showOtpModal && 
-      <OtpModal signInData={otpModalData} closeModal={setShowOtpModal} />
-      }
+
+      {showOtpModal && (
+        <OtpModal signInData={otpModalData} closeModal={setShowOtpModal} />
+      )}
     </div>
   );
 };

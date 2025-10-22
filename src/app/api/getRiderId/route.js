@@ -3,6 +3,7 @@ import { dbConnect } from "@/lib/dbConnect";
 import { getServerSession } from "next-auth/next";
 
 export async function GET(req) {
+  
   try {
     // Logged-in user session 
     const session = await getServerSession(authOptions);

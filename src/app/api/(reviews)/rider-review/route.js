@@ -10,7 +10,7 @@ export async function POST(request) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    const riderReviewCollection = await dbConnect(collectionNames.riderReview);
+    const riderReviewCollection = dbConnect(collectionNames.riderReview);
     const existing = await riderReviewCollection.findOne({ riderId });
 
     const reviewData = { reviewerId, review, rating, date: new Date() };

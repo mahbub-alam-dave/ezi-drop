@@ -64,17 +64,18 @@ const LoginForm = () => {
       }
 
       if (response?.ok) {
+        await update()
         Swal.fire({
           position: "center",
           icon: "success",
           title: "Logged In successfully",
           showConfirmButton: false,
-          timer: 1500,
+          timer: 800,
         }).then(() => {
-          router.push("/");
-          form.reset();
-          update();
+        window.location.href = "/";
+        form.reset();
         });
+    
       } else {
         Swal.fire({ icon: "error", title: "Oops...", text: "Invalid credentials" });
       }
@@ -137,7 +138,7 @@ const LoginForm = () => {
           className={`px-6 py-3 cursor-pointer rounded-full mt-4 w-full font-medium text-lg ${
             loading
               ? "bg-gray-400 cursor-not-allowed text-gray-200"
-              : "bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] text-white hover:bg-[var(--color-secondary-dark)] dark:hover:bg-[var(--color-secondary)]"
+              : "bg-[var(--color-primary)] dark:bg-[var(--color-primary-dark)] text-gray-100 hover:bg-[var(--color-primary-dark)] dark:hover:bg-[var(--color-primary)]"
           }`}
         >
           Login

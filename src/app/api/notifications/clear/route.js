@@ -14,7 +14,7 @@ export async function POST(req) {
   }
 
   try {
-    const notifications = await dbConnect("notifications");
+    const notifications = dbConnect("notifications");
     const userObjId = new ObjectId(userId);
 
     if (action === "mark_all_seen") {

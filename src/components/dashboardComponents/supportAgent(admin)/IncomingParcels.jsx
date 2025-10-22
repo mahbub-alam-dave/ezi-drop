@@ -12,12 +12,14 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { showErrorAlert, showSuccessAlert } from "@/utility/alerts";
 
 export default function IncomingParcels() {
   const [parcels, setParcels] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const [riderAssigned, setRiderAssigned] = useState(false)
 
   // ✅ Fetch incoming parcels
   useEffect(() => {
@@ -57,11 +59,13 @@ export default function IncomingParcels() {
   // ✅ Assign rider handler
   const handleAssignRider = async (parcelId) => {
     try {
-      const res = await fetch(`/api/assign-rider/${parcelId}`, { method: "POST" });
+      const res = await fetch(`/api/transfers/assign-rider/${parcelId}`, { method: "PATCH" });
       if (!res.ok) throw new Error("Failed to assign rider");
-      alert("Rider assigned successfully!");
+      showSuccessAlert("Rider Assigned", data.message || "Rider assigned successfully!");
+      setRiderAssigned(true)
     } catch (err) {
       console.error(err);
+      showErrorAlert("Assignment Failed", err.message || "Something went wrong.");
     }
   };
 
@@ -134,13 +138,19 @@ export default function IncomingParcels() {
                       {new Date(parcel.createdAt).toLocaleString()}
                     </TableCell>
                     <TableCell>
-                      <Button
+                      {
+                        riderAssigned === true ?
+                        <span>Rider assigned</span>
+                        :
+                        <Button
                         onClick={() => handleAssignRider(parcel.parcelId)}
                         disabled={!readyToAssign}
                         className="text-sm"
                       >
                         {readyToAssign ? "Assign Rider" : "Waiting..."}
                       </Button>
+                      }
+                      
                     </TableCell>
                   </TableRow>
                 );

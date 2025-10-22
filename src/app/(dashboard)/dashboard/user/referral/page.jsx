@@ -96,7 +96,7 @@ export default function ReferralPage() {
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-5xl bg-white dark:bg-gray-900 p-8"
+        className="w-full max-w-5xl mt-12 bg-white dark:bg-gray-900 p-12 rounded-2xl"
       >
         {/* Hero Section */}
         <div className="text-center mb-10">

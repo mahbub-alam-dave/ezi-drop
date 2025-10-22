@@ -1,7 +1,7 @@
 "use client";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import React, { useState } from "react";
 import {
   FaUserCog,
@@ -33,7 +33,6 @@ const DashboardLayoutClient = ({ userData, children }) => {
 
   // ✅ শুধু একবার useSession()
   const { data: session, status } = useSession();
-  console.log(session?.user?.role, session?.user?.district)
 
   const linkClass = (path) =>
     `px-6 py-2 rounded-md transition-colors duration-200
@@ -57,7 +56,9 @@ const DashboardLayoutClient = ({ userData, children }) => {
       // Auto close success modal after 1.5 seconds
       setTimeout(() => {
         setShowSuccessModal(false);
-      }, 1500);
+        // redirect("/login")
+        window.location.reload();
+      }, 800);
     } catch (error) {
       console.error("Logout error:", error);
     }
@@ -72,45 +73,45 @@ const DashboardLayoutClient = ({ userData, children }) => {
     adminLinks: (
       <>
         <Link
-          href="/dashboard/overview"
-          className={linkClass("/dashboard/overview")}
+          href="/dashboard/admin/overview"
+          className={linkClass("/dashboard/admin/overview")}
         >
           <FaTachometerAlt className="inline-block mr-2" />
           Overview
         </Link>
         <Link
-          href="/dashboard/manage-users"
-          className={linkClass("/dashboard/manage-users")}
+          href="/dashboard/admin/manage-users"
+          className={linkClass("/dashboard/admin/manage-users")}
         >
           <FaUsers className="inline-block mr-2" />
           Manage Users
         </Link>
-        <Link href="/dashboard/assign-riders" className={linkClass("/dashboard/assign-riders")}>
+        <Link href="/dashboard/admin/assign-riders" className={linkClass("/dashboard/admin/assign-riders")}>
           <FaMotorcycle className="inline-block mr-2" />
           Assign Riders
         </Link>
         <Link
-          href="/dashboard/manage-candidates"
-          className={linkClass("/dashboard/manage-candidates")}
+          href="/dashboard/admin/manage-candidates"
+          className={linkClass("/dashboard/admin/manage-candidates")}
         >
           <FaUserTie className="inline-block mr-2" />
           Manage Candidate
         </Link>
         <Link
-          href="/dashboard/profile"
-          className={linkClass("/dashboard/profile")}
+          href="/dashboard/admin/profile"
+          className={linkClass("/dashboard/admin/profile")}
         >
           <FaUser className="inline-block mr-2" />
           Profile
         </Link>
         <Link
-          href="/dashboard/manage-order"
-          className={linkClass("/dashboard/manage-order")}
+          href="/dashboard/admin/manage-order"
+          className={linkClass("/dashboard/admin/manage-order")}
         >
           <FaClipboardList className="inline-block mr-2" />
           Manage Order
         </Link>
-        <Link href="/dashboard/chat" className={linkClass("/dashboard/chat")}>
+        <Link href="/dashboard/admin/chat" className={linkClass("/dashboard/admin/chat")}>
           <FaComment className="inline-block mr-2" />
           Chat
         </Link>
@@ -119,18 +120,18 @@ const DashboardLayoutClient = ({ userData, children }) => {
     riderLinks: (
       <>
         <Link
-          href="/dashboard/rider/rider-overview"
-          className={linkClass("/dashboard/rider/rider-overview")}
+          href="/dashboard/rider/overview"
+          className={linkClass("/dashboard/rider/overview")}
         >
           <FaTachometerAlt className="inline-block mr-2" />
-          Rider Dashboard
+          Overview
         </Link>
         <Link
-          href="/dashboard/rider/manage-parcels"
-          className={linkClass("/dashboard/rider/manage-parcels")}
+          href="/dashboard/rider/my-parcels"
+          className={linkClass("/dashboard/rider/my-parcels")}
         >
-          <FaChartLine className="inline-block mr-2" />
-          Manage Parcels
+          <FaTruck className="inline-block mr-2" />
+          My Parcels
         </Link>
         <Link
           href="/dashboard/rider/performance"
@@ -140,17 +141,17 @@ const DashboardLayoutClient = ({ userData, children }) => {
           Performance
         </Link>
 
-        <Link href="/dashboard/order" className={linkClass("/dashboard/order")}>
+{/*         <Link href="/dashboard/order" className={linkClass("/dashboard/order")}>
           <FaTruck className="inline-block mr-2" />
           Order
-        </Link>
-        <Link
+        </Link> */}
+{/*         <Link
           href="/dashboard/rider/delivery-history"
           className={linkClass("/dashboard/rider/delivery-history")}
         >
           <FaHistory className="inline-block mr-2" />
           Delivery History
-        </Link>
+        </Link> */}
         <Link
           href="/dashboard/profile"
           className={linkClass("/dashboard/profile")}
@@ -170,111 +171,111 @@ const DashboardLayoutClient = ({ userData, children }) => {
     userLinks: (
       <>
         <Link
-          href="/dashboard/user-overview"
-          className={linkClass("/dashboard/user-overview")}
+          href="/dashboard/user/overview"
+          className={linkClass("/dashboard/user/overview")}
         >
           <FaTachometerAlt className="inline-block mr-2" />
           Overview
         </Link>
-        <Link
-          href="/dashboard/send-parcel"
-          className={linkClass("/dashboard/send-parcel")}
+{/*         <Link
+          href="/dashboard/user/send-parcel"
+          className={linkClass("/dashboard/user/send-parcel")}
         >
           <FaBox className="inline-block mr-2" />
           Send Parcel
-        </Link>
+        </Link> */}
+                <Link
+  href="/dashboard/user/my-bookings"
+  className={linkClass("/dashboard/user/my-bookings")}
+>
+  <FaCalendarAlt className="inline-block mr-2" />
+  My Bookings
+</Link>
         {/* Track Parcel */}
         <Link
-          href="/dashboard/track-parcel"
-          className={linkClass("/dashboard/track-parcel")}
+          href="/dashboard/user/track-parcel"
+          className={linkClass("/dashboard/user/track-parcel")}
         >
           <FaSearch className="inline-block mr-2" />
           Track Parcel
         </Link>
-        <Link
-          href="/dashboard/orders-history"
-          className={linkClass("/dashboard/orders-history")}
+{/*         <Link
+          href="/dashboard/user/orders-history"
+          className={linkClass("/dashboard/user/orders-history")}
         >
           <FaClipboardList className="inline-block mr-2" />
           Orders History
-        </Link>
+        </Link> */}
         <Link
-          href="/dashboard/profile"
-          className={linkClass("/dashboard/profile")}
-        >
-          <FaUser className="inline-block mr-2" />
-          Profile
-        </Link>
-        <Link
-          href="/dashboard/referral"
-          className={linkClass("/dashboard/referral")}
-        >
-          <MdPersonAddAlt1 className="inline-block mr-2" />
-          referral
-        </Link>
-        <Link
-          href="/dashboard/resulation-center"
-          className={linkClass("/dashboard/resulation-center")}
-        >
-          <VscCommentUnresolved className="inline-block mr-2" />
-          Resulation Center
-        </Link>
-        <Link
-          href="/dashboard/be-a-rider"
-          className={linkClass("/dashboard/be-a-rider")}
+          href="/dashboard/user/be-a-rider"
+          className={linkClass("/dashboard/user/be-a-rider")}
         >
           <FaUserPlus className="inline-block mr-2" />
           Be A Rider
         </Link>
         <Link
-  href="/dashboard/my-bookings"
-  className={linkClass("/dashboard/my-bookings")}
->
-  <FaCalendarAlt className="inline-block mr-2" />
-  My Bookings
-</Link>
-        <Link
-          href="/dashboard/userChat"
-          className={linkClass("/dashboard/userChat")}
+          href="/dashboard/user/userChat"
+          className={linkClass("/dashboard/user/userChat")}
         >
           <FaComments className="inline-block mr-2" />
           Chat
+        </Link>
+                <Link
+          href="/dashboard/user/resulation-center"
+          className={linkClass("/dashboard/user/resulation-center")}
+        >
+          <VscCommentUnresolved className="inline-block mr-2" />
+          Resulation Center
+        </Link>
+                <Link
+          href="/dashboard/user/profile"
+          className={linkClass("/dashboard/user/profile")}
+        >
+          <FaUser className="inline-block mr-2" />
+          Profile
+        </Link>
+                <Link
+          href="/dashboard/user/referral"
+          className={linkClass("/dashboard/user/referral")}
+        >
+          <MdPersonAddAlt1 className="inline-block mr-2" />
+          referral
         </Link>
       </>
     ),
     districtAgentLinks: (
       <>
         <Link
-          href="/dashboard/district-agent/overview"
-          className={linkClass("/dashboard/district-agent/overview")}
+          href="/dashboard/district-admin/overview"
+          className={linkClass("/dashboard/district-admin/overview")}
         >
           <FaTachometerAlt className="inline-block mr-2" />
           Overview
         </Link>
         <Link
-          href="/dashboard/district-agent/outgoing-parcels"
-          className={linkClass("/dashboard/district-agent/outgoing-parcels")}
+          href="/dashboard/district-admin/outgoing-parcels"
+          className={linkClass("/dashboard/district-admin/outgoing-parcels")}
         >
           <FaClipboardList className="inline-block mr-2" />
           Outgoing Parcels
         </Link>
         <Link
-          href="/dashboard/district-agent/incoming-parcels"
-          className={linkClass("/dashboard/district-agent/incoming-parcels")}
+          href="/dashboard/district-admin/incoming-parcels"
+          className={linkClass("/dashboard/district-admin/incoming-parcels")}
         >
           <FaClipboardList className="inline-block mr-2" />
           Incoming Parcels
         </Link>
         <Link
-          href="/dashboard/district-agent/profile"
-          className={linkClass("/dashboard/district-agent/profile")}
+          href="/dashboard/district-admin/profile"
+          className={linkClass("/dashboard/district-admin/profile")}
         >
           <FaUser className="inline-block mr-2" />
           Profile
         </Link>
         <Link
-          href="/dashboard/district-agent/resulation-center"
-          className={linkClass("/dashboard/district-agent/resulation-center")}
+          href="/dashboard/district-admin/resulation-center"
+          className={linkClass("/dashboard/district-admin/resulation-center")}
         >
           <VscCommentUnresolved className="inline-block mr-2" />
           Resulation Center
@@ -316,7 +317,8 @@ const DashboardLayoutClient = ({ userData, children }) => {
             {status === "authenticated" && (
               <button
                 onClick={handleLogout}
-                className="px-6 py-2 text-left bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] rounded-sm text-white border-none mt-4"
+                // bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)]
+                className="px-6 py-2 text-left bg-transparent text-[var(--color-secondary)] rounded-sm dark:text-[var(--color-secondary-dark)] border border-color shadow-none mt-4"
               >
                 Logout
               </button>
@@ -340,7 +342,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
         {status === "authenticated" && (
           <button
             onClick={handleLogout}
-            className="w-full mt-4 btn bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] rounded-sm text-white border-none"
+            className="w-full mt-4 btn bg-transparent text-[var(--color-secondary)] rounded-sm dark:text-[var(--color-secondary-dark)] border border-color shadow-none hover:bg-gray-200 dark:hover:bg-gray-400"
           >
             Logout
           </button>

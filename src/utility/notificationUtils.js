@@ -11,7 +11,7 @@ import { ObjectId } from "mongodb";
  */
 export async function createNotification(userId, role, message, link = "/") {
   try {
-    const notifications = await dbConnect("notifications");
+    const notifications = dbConnect("notifications");
 
     // Ensure userId is a valid ObjectId
     const userObjId = new ObjectId(userId);

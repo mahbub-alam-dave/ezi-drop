@@ -17,7 +17,8 @@ import {
   Area,
 } from "recharts";
 import UserRating from "@/components/UserRating/UserRating";
-import useLoadingSpinner from "@/hooks/useLoadingSpinner"; // ✅ Hook import
+import useLoadingSpinner from "@/Hooks/useLoadingSpinner";
+// ✅ Hook import
 
 export default function PerformancePage() {
   const [data, setData] = useState(null);

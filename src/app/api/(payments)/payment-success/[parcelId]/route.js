@@ -48,8 +48,8 @@ export async function GET(req, { params }) {
   // 4️⃣ Email notification with attached PDF
   if (parcel.senderEmail) {
     await sendEmail({
-      // to: parcel.senderEmail,
-      to: "dakterkhujun@gmail.com",
+      to: parcel.senderEmail,
+      // to: "dakterkhujun@gmail.com",
       subject: "Your EZI Drop Booking Confirmation ✅",
       text: `Dear ${parcel.senderName || "Customer"},\n\nYour payment and booking for parcel ${parcel.parcelId} are confirmed.\n\nThank you for choosing EZI Drop!`,
       attachments: [
