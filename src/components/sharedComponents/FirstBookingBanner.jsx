@@ -12,6 +12,11 @@ const FirstBookingBanner = ({ userEmail }) => {
     const checkFirstBooking = async () => {
       try {
         const res = await fetch(`/api/user-booking-check?email=${userEmail}`);
+        if (!res.ok) {
+        const text = await res.text();
+        console.error("API error:", res.status, text);
+        return; // or handle gracefully
+      }
         const data = await res.json();
         if (data.success && data.eligible) {
           setEligible(true);
