@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { Star, CheckCircle, Trophy, Hash } from "lucide-react";
 import {
@@ -15,70 +15,68 @@ import {
   CartesianGrid,
 } from "recharts";
 import UserRating from "@/components/UserRating/UserRating";
-import useLoadingSpinner from "@/hooks/useLoadingSpinner";
 
 export default function PerformancePage() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // ✅ Demo data directly in component
+  const [data, setData] = useState({
+    totalDeliveries: 180,
+    successfulDeliveries: 150,
+    totalPoints: 4200,
+    ratings: [4, 5, 5, 3, 4, 5],
+    monthly: [
+      { month: "Jan", deliveries: 40, success: 35, points: 900 },
+      { month: "Feb", deliveries: 30, success: 28, points: 700 },
+      { month: "Mar", deliveries: 35, success: 33, points: 820 },
+      { month: "Apr", deliveries: 25, success: 22, points: 620 },
+      { month: "May", deliveries: 50, success: 45, points: 1160 },
+    ],
+  });
+
   const [ratingSubmitted, setRatingSubmitted] = useState(false);
-  const spinner = useLoadingSpinner();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        let res = await fetch("/api/performance");
-        let result = await res.json();
-        let performanceData = result.data ?? [];
-
-        if (performanceData.length === 0) {
-          // Seed sample data if DB empty
-          await fetch("/api/performance", { method: "POST" });
-          res = await fetch("/api/performance");
-          result = await res.json();
-          performanceData = result.data ?? [];
-        }
-
-        setData(performanceData[0]);
-      } catch (err) {
-        console.error(err);
-        Swal.fire("Error", "Server connection failed", "error");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (loading) return spinner;
-  if (!data) return <p className="text-center p-6">No performance data found.</p>;
 
   const successRate = useMemo(
-    () => ((data?.successfulDeliveries ?? 0) / (data?.totalDeliveries || 1)) * 100,
+    () => ((data.successfulDeliveries ?? 0) / (data.totalDeliveries || 1)) * 100,
     [data]
   );
 
   const avgRating = useMemo(() => {
-    const ratings = data?.ratings ?? [];
-    return ratings.length === 0 ? 0 : (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(2);
+    const ratings = data.ratings ?? [];
+    return ratings.length === 0
+      ? 0
+      : (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(2);
   }, [data]);
 
   const pointsGoal = 5000;
-  const pointsProgress = Math.min(100, Math.round(((data?.totalPoints ?? 0) / pointsGoal) * 100));
+  const pointsProgress = Math.min(
+    100,
+    Math.round(((data.totalPoints ?? 0) / pointsGoal) * 100)
+  );
 
   useEffect(() => {
     if (!ratingSubmitted && data) {
       if (data.totalPoints >= pointsGoal) {
-        Swal.fire({ title: "🎉 Congrats!", text: "Monthly points goal achieved!", icon: "success" });
+        Swal.fire({
+          title: "🎉 Congrats!",
+          text: "Monthly points goal achieved!",
+          icon: "success",
+        });
       } else if (successRate < 80) {
-        Swal.fire({ title: "⚠️ Low Performance", text: "Success rate below 80%", icon: "warning" });
+        Swal.fire({
+          title: "⚠️ Low Performance",
+          text: "Success rate below 80%",
+          icon: "warning",
+        });
       }
     }
   }, [data, ratingSubmitted, successRate]);
 
   const handleRatingSubmit = (rating) => {
     setRatingSubmitted(true);
-    Swal.fire({ title: "Thanks!", text: `You rated ${rating} stars`, icon: "success" });
+    Swal.fire({
+      title: "Thanks!",
+      text: `You rated ${rating} stars`,
+      icon: "success",
+    });
   };
 
   return (
@@ -98,7 +96,15 @@ export default function PerformancePage() {
           progressLabel="Successful vs Total"
           color="from-emerald-400 to-cyan-500"
         />
-        <MetricCard title="Average Rating" value={<>{avgRating} <Star className="text-yellow-500 inline-block" size={18} /></>} />
+        <MetricCard
+          title="Average Rating"
+          value={
+            <>
+              {avgRating}{" "}
+              <Star className="text-yellow-500 inline-block" size={18} />
+            </>
+          }
+        />
         <MetricCard
           title="Total Points"
           value={data.totalPoints}
@@ -130,8 +136,18 @@ export default function PerformancePage() {
               <XAxis dataKey="month" />
               <YAxis />
               <Tooltip />
-              <Line type="monotone" dataKey="success" stroke="#10b981" strokeWidth={2} />
-              <Line type="monotone" dataKey="points" stroke="#f97316" strokeWidth={2} />
+              <Line
+                type="monotone"
+                dataKey="success"
+                stroke="#10b981"
+                strokeWidth={2}
+              />
+              <Line
+                type="monotone"
+                dataKey="points"
+                stroke="#f97316"
+                strokeWidth={2}
+              />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -141,8 +157,14 @@ export default function PerformancePage() {
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow p-4">
         <h3 className="font-semibold mb-4">Quick Breakdown</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Breakdown label="Successful Deliveries" value={data.successfulDeliveries} />
-          <Breakdown label="Failed Deliveries" value={data.totalDeliveries - data.successfulDeliveries} />
+          <Breakdown
+            label="Successful Deliveries"
+            value={data.successfulDeliveries}
+          />
+          <Breakdown
+            label="Failed Deliveries"
+            value={data.totalDeliveries - data.successfulDeliveries}
+          />
           <Breakdown label="Total Ratings" value={data.ratings.length} />
         </div>
       </div>
@@ -163,14 +185,23 @@ function MetricCard({ title, value, icon, progress, progressLabel, color }) {
       <div className="flex justify-between items-center">
         <div>
           <p className="text-sm text-gray-500">{title}</p>
-          <div className="text-2xl font-bold flex items-center gap-2">{value}</div>
+          <div className="text-2xl font-bold flex items-center gap-2">
+            {value}
+          </div>
         </div>
-        {icon && <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">{icon}</div>}
+        {icon && (
+          <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
+            {icon}
+          </div>
+        )}
       </div>
       {progress && (
         <div className="mt-3">
           <div className="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div className={`h-full rounded-full bg-gradient-to-r ${color}`} style={{ width: `${progress}%` }} />
+            <div
+              className={`h-full rounded-full bg-gradient-to-r ${color}`}
+              style={{ width: `${progress}%` }}
+            />
           </div>
           <p className="text-xs text-gray-500 mt-1">{progressLabel}</p>
         </div>
