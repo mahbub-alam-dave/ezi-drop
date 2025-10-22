@@ -181,5 +181,7 @@ export default function BannerSection() {
       {/* Bottom Gradient */}
       <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-white/50 to-transparent dark:from-gray-900/50 pointer-events-none"></div>
     </section>
+  
+
   );
 }

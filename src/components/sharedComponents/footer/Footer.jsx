@@ -36,6 +36,7 @@ export default function Footer() {
   };
 
   return (
+   
     <footer className="bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] px-6 md:px-8 py-16 relative">
       <div className="w-full max-w-[1440px] mx-auto">
        
@@ -199,5 +200,8 @@ export default function Footer() {
       )}
       <ChatBox />
     </footer>
+
+
+
   );
 }
