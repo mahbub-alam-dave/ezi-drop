@@ -11,7 +11,7 @@ export default function PerformancePage() {
   const [loading, setLoading] = useState(false);
   const [ratingSubmitted, setRatingSubmitted] = useState(false);
 
-  // 🔹 Fetch data
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
