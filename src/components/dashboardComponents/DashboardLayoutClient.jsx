@@ -115,6 +115,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaComment className="inline-block mr-2" />
           Chat
         </Link>
+        
       </>
     ),
     riderLinks: (
@@ -134,12 +135,12 @@ const DashboardLayoutClient = ({ userData, children }) => {
           My Parcels
         </Link>
         <Link
-          href="/dashboard/rider/performance"
-          className={linkClass("/dashboard/rider/performance")}
-        >
-          <FaChartLine className="inline-block mr-2" />
-          Performance
-        </Link>
+            href="/dashboard/rider/performance"
+            className={linkClass("/dashboard/rider/performance")}
+          >
+            <FaChartLine className="inline-block mr-2" />
+            Performance
+          </Link>
 
 {/*         <Link href="/dashboard/order" className={linkClass("/dashboard/order")}>
           <FaTruck className="inline-block mr-2" />
