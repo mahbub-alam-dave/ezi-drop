@@ -1,4 +1,4 @@
-"use client"
+/* "use client"
 import React, { useState } from 'react';
 
 const OverviewFilter = () => {
@@ -39,4 +39,87 @@ const OverviewFilter = () => {
     );
 };
 
-export default OverviewFilter;
+export default OverviewFilter; */
+
+// /components/dashboard/overview/OverviewFilter.jsx
+'use client';
+
+import { useDashboard } from '@/contexts/DashboardContexts';
+import { useState, useEffect } from 'react';
+
+export default function OverviewFilter() {
+  const { role, selectedDistrict, setSelectedDistrict, dateRange, setDateRange } = useDashboard();
+  const [districts, setDistricts] = useState([]);
+
+  useEffect(() => {
+        if (role === 'admin') {
+    const fetchDistricts = async () => {
+      try {
+        const res = await fetch("/api/districts");
+        const data = await res.json();
+        if (data.success) setDistricts(data.data);
+      } catch (error) {
+        console.error("Failed to load districts:", error);
+      }
+    };
+    fetchDistricts();
+  }
+  }, [role]);
+  
+  const handleDateRangeChange = (range) => {
+    const endDate = new Date();
+    let startDate = new Date();
+    
+    switch(range) {
+      case '7days':
+        startDate.setDate(endDate.getDate() - 7);
+        break;
+      case '30days':
+        startDate.setDate(endDate.getDate() - 30);
+        break;
+      case '90days':
+        startDate.setDate(endDate.getDate() - 90);
+        break;
+      default:
+        startDate.setDate(endDate.getDate() - 7);
+    }
+    
+    setDateRange({
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString()
+    });
+  };
+  
+  return (
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-8">
+      <div className="flex flex-wrap gap-4">
+        {/* District Filter - Only for main admin */}
+        {role === 'admin' && (
+          <select
+            value={selectedDistrict}
+            onChange={(e) => setSelectedDistrict(e.target.value)}
+            className="px-4 py-2 border rounded-lg dark:bg-gray-700"
+          >
+            <option value="all">All Districts</option>
+            {districts.map((district) => (
+              <option key={district.DistrictId} value={district.districtId}>
+                {district.district}
+              </option>
+            ))}
+          </select>
+        )}
+        
+        {/* Date Range Filter */}
+        <select
+          onChange={(e) => handleDateRangeChange(e.target.value)}
+          className="px-4 py-2 border rounded-lg dark:bg-gray-700"
+          defaultValue="7days"
+        >
+          <option value="7days">Last 7 Days</option>
+          <option value="30days">Last 30 Days</option>
+          <option value="90days">Last 90 Days</option>
+        </select>
+      </div>
+    </div>
+  );
+}
