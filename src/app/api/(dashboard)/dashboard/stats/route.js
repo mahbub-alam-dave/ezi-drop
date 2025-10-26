@@ -31,16 +31,26 @@ export async function GET(request) {
       }
     };
     
-    const districtFilter = districtId && districtId !== 'all' 
-      ? { pickupDistrictId: districtId } 
-      : {};
+const orderDistrictFilter = districtId && districtId !== 'all'
+  ? { pickupDistrictId: districtId }
+  : {};
+
+// Apply district restriction for district_admin
+if (session.user.role === 'district_admin') {
+  orderDistrictFilter.pickupDistrictId = session.user.districtId;
+}
+
+// ✅ 2. District filter for Users/Riders (uses districtId)
+const userDistrictFilter = districtId && districtId !== 'all'
+  ? { districtId }
+  : {};
+
+if (session.user.role === 'district_admin') {
+  userDistrictFilter.districtId = session.user.districtId;
+}
+
     
-    // Check user role and apply district restriction for district_admin
-    if (session.user.role === 'district_admin') {
-      districtFilter.pickupDistrictId = session.user.districtId;
-    }
-    
-    const queryFilter = { ...dateFilter, ...districtFilter };
+    const queryFilter = { ...dateFilter, ...orderDistrictFilter };
     
     // Fetch all stats in parallel
     const [
@@ -64,15 +74,15 @@ export async function GET(request) {
         { $match: queryFilter },
         { $group: { _id: null, total: { $sum: '$amount' } } }
       ]).toArray(),
-      Rider.countDocuments({...districtFilter, role:'rider'}),
+      Rider.countDocuments({...userDistrictFilter, role:'rider'}),
     //   User.countDocuments({ ...districtFilter,  }),
     User.countDocuments({
-  ...districtFilter,
+  ...userDistrictFilter,
   role: { $nin: ["rider", "district_admin", "admin"] }
 }),
       // Previous period for trend calculation
       Order.countDocuments({
-        ...districtFilter,
+        ...queryFilter,
         createdAt: {
           $gte: new Date(new Date(startDate) - (new Date(endDate) - new Date(startDate))),
           $lt: new Date(startDate)

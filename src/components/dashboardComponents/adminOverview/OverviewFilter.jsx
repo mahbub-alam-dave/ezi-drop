@@ -102,7 +102,7 @@ export default function OverviewFilter() {
           >
             <option value="all">All Districts</option>
             {districts.map((district) => (
-              <option key={district.DistrictId} value={district._id}>
+              <option key={district.DistrictId} value={district.districtId}>
                 {district.district}
               </option>
             ))}
