@@ -13,17 +13,18 @@ import ServiceAreas from "@/components/dashboardComponents/adminOverview/Service
 import RecentActivities from "@/components/dashboardComponents/adminOverview/RecentActivities";
 import TopCouriers from "@/components/dashboardComponents/adminOverview/TopCouriers";
 import ActionToolbar from "@/components/dashboardComponents/adminOverview/ActionToolbar";
+import DashboardOverview from "@/components/dashboardComponents/DashboardOverview";
 
 const AdminOverview = () => {
   // ========== STATES ==========
-  const [alerts, setAlerts] = useState([]);
-  const [systemHealth, setSystemHealth] = useState({});
+/*   const [alerts, setAlerts] = useState([]);
+  const [systemHealth, setSystemHealth] = useState({}); */
 
   // ===== LOADING & ANIMATION STATES =====
   const [isLoading, setIsLoading] = useState(true);
 
   // ========== SIMULATED DATA FETCH ==========
-  useEffect(() => {
+/*   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -56,7 +57,16 @@ const AdminOverview = () => {
     };
 
     fetchData();
-  }, []);
+  }, []); */
+
+  useEffect(() => {
+    const fetchData = async () => {
+    setIsLoading(true);
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setIsLoading(false)
+    }
+    fetchData()
+  },[])
 
   // ========== SKELETON LOADER ==========
   const SkeletonLoader = () => (
@@ -116,81 +126,25 @@ const AdminOverview = () => {
   if (isLoading) return <SkeletonLoader />;
 
   return (
-    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen text-slate-800 dark:text-white">
-      {/* ===== HEADER ===== */}
+/*     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen text-slate-800 dark:text-white">
       <OverviewHeader />
-
-      {/* ===== AI INSIGHT BANNER ===== */}
       <AIinsightBanner />
-
-      {/* ===== FILTERS ===== */}
       <OverviewFilter />
-
-      {/* ===== METRICS GRID ===== */}
       <MetricsGrid />
-
-      {/* ===== CHARTS SECTION ===== */}
       <OverviewCharts />
-
-      {/* ===== NEW FEATURE ROW: MAP + HEATMAP + SUPPORT ===== */}
       <MapAndHeatmap />
-
-      {/* ===== NEW ROW: SUPPORT + BILLING + SERVICE AREAS ===== */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
-        {/* 3. SUPPORT TICKETS */}
-        {/* <div className="bg-white dark:bg-gray-800 rounded-2xl p-7 border border-slate-200 dark:border-slate-700 shadow-sm">
-          <div className="flex justify-between items-center mb-5">
-            <h2 className="text-xl font-bold text-slate-800 dark:text-white">Support Tickets</h2>
-            <button className="text-sm text-blue-600 hover:underline font-medium">View All</button>
-          </div>
-          <div className="space-y-4">
-            {supportTickets.map((ticket, i) => (
-              <div key={i} className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-2">
-                  <span className="font-medium text-slate-800 dark:text-white">{ticket.id}</span>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    ticket.priority === 'high' ? 'bg-red-100 text-red-800' :
-                    ticket.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-green-100 text-green-800'
-                  }`}>
-                    {ticket.priority}
-                  </span>
-                </div>
-                <p className="text-slate-700 dark:text-slate-300 text-sm mb-2">{ticket.subject}</p>
-                <div className="flex justify-between items-center">
-                  <span className="text-xs text-slate-500">by {ticket.customer}</span>
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    ticket.status === 'open' ? 'bg-red-100 text-red-800' :
-                    ticket.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
-                    'bg-green-100 text-green-800'
-                  }`}>
-                    {ticket.status.replace('_', ' ')}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div> */}
         <SupportsTicket displayArea={"page"} />
-
-        {/* 4. BILLING SUMMARY */}
         <BillingSummary />
-
-        {/* 5. SERVICE AREAS */}
         <ServiceAreas />
       </div>
-
-      {/* ===== BOTTOM GRIDS ===== */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
-        {/* Recent Activities */}
         <RecentActivities />
-        {/* Top Couriers */}
         <TopCouriers />
       </div>
-
-      {/* ===== STICKY QUICK ACTION TOOLBAR ===== */}
       <ActionToolbar />
-    </div>
+    </div> */
+    <DashboardOverview role="admin" />
   );
 };
 

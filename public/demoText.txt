@@ -151,3 +151,13 @@ export async function assignRiderToWarehouse(parcel) {
 
   console.log(`🚚 Rider ${availableRider.name} assigned to deliver parcel ${parcel.parcelId} to warehouse`);
 }
+
+
+delivery status:
+not_picked
+pending_rider_approval
+awaiting_pickup
+completed
+in_transit_to_warehouse
+at_local_warehouse
+awaiting_pickup_from_warehouse
