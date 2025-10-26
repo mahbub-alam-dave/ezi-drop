@@ -1,7 +1,7 @@
 // /app/api/dashboard/stats/route.js
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import dbConnect from '@/lib/dbConnect';
+import { dbConnect } from '@/lib/dbConnect';
 /* import Order from '@/models/Order';
 import User from '@/models/User';
 import Rider from '@/models/Rider'; */
@@ -13,10 +13,10 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await dbConnect();
+    // await dbConnect();
     const User = dbConnect("users");
     const Rider = dbConnect("users");
-    const Order = dbConnect("Parcels");
+    const Order = dbConnect("parcels");
     
     const { searchParams } = new URL(request.url);
     const districtId = searchParams.get('districtId'); // null for 'all'
@@ -32,12 +32,12 @@ export async function GET(request) {
     };
     
     const districtFilter = districtId && districtId !== 'all' 
-      ? { districtId } 
+      ? { pickupDistrictId: districtId } 
       : {};
     
     // Check user role and apply district restriction for district_admin
     if (session.user.role === 'district_admin') {
-      districtFilter.districtId = session.user.districtId;
+      districtFilter.pickupDistrictId = session.user.districtId;
     }
     
     const queryFilter = { ...dateFilter, ...districtFilter };
@@ -47,6 +47,7 @@ export async function GET(request) {
       totalOrders,
       deliveredOrders,
       pendingOrders,
+      inTransitOrders,
       cancelledOrders,
       revenueData,
       totalRiders,
@@ -55,12 +56,14 @@ export async function GET(request) {
     ] = await Promise.all([
       Order.countDocuments(queryFilter),
       Order.countDocuments({ ...queryFilter, status: 'delivered' }),
-      Order.countDocuments({ ...queryFilter, status: 'pending' }),
+      // Order.countDocuments({ ...queryFilter, status: 'pending' }),
+      Order.countDocuments({ ...queryFilter, status: { $in: ["not_picked", "pending_rider_approval", "awaiting_pickup" ]} }),
+      Order.countDocuments({ ...queryFilter, status: { $in: ["in_transit_to_warehouse", "at_local_warehouse", "awaiting_pickup_from_warehouse" ]} }),
       Order.countDocuments({ ...queryFilter, status: 'cancelled' }),
       Order.aggregate([
         { $match: queryFilter },
         { $group: { _id: null, total: { $sum: '$amount' } } }
-      ]),
+      ]).toArray(),
       Rider.countDocuments({...districtFilter, role:'rider'}),
     //   User.countDocuments({ ...districtFilter,  }),
     User.countDocuments({
@@ -76,6 +79,9 @@ export async function GET(request) {
         }
       })
     ]);
+
+    console.log("Revenue aggregation result:", revenueData);
+
     
     // Calculate trends
     const orderTrend = previousPeriodOrders > 0 

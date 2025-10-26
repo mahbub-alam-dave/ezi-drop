@@ -58,6 +58,7 @@ export function DashboardProvider({ children, role }) {
       ]);
       
       setStats(statsData);
+      console.log(stats)
     //   setChartData(chartsData);
     //   setTopCouriers(couriersData);
     //   setRecentActivities(activitiesData);

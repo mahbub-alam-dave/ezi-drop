@@ -13,17 +13,18 @@ import ServiceAreas from "@/components/dashboardComponents/adminOverview/Service
 import RecentActivities from "@/components/dashboardComponents/adminOverview/RecentActivities";
 import TopCouriers from "@/components/dashboardComponents/adminOverview/TopCouriers";
 import ActionToolbar from "@/components/dashboardComponents/adminOverview/ActionToolbar";
+import DashboardOverview from "@/components/dashboardComponents/DashboardOverview";
 
 const AdminOverview = () => {
   // ========== STATES ==========
-  const [alerts, setAlerts] = useState([]);
-  const [systemHealth, setSystemHealth] = useState({});
+/*   const [alerts, setAlerts] = useState([]);
+  const [systemHealth, setSystemHealth] = useState({}); */
 
   // ===== LOADING & ANIMATION STATES =====
   const [isLoading, setIsLoading] = useState(true);
 
   // ========== SIMULATED DATA FETCH ==========
-  useEffect(() => {
+/*   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -56,7 +57,16 @@ const AdminOverview = () => {
     };
 
     fetchData();
-  }, []);
+  }, []); */
+
+  useEffect(() => {
+    const fetchData = async () => {
+    setIsLoading(true);
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setIsLoading(false)
+    }
+    fetchData()
+  },[])
 
   // ========== SKELETON LOADER ==========
   const SkeletonLoader = () => (
@@ -116,47 +126,25 @@ const AdminOverview = () => {
   if (isLoading) return <SkeletonLoader />;
 
   return (
-    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen text-slate-800 dark:text-white">
-      {/* ===== HEADER ===== */}
+/*     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen text-slate-800 dark:text-white">
       <OverviewHeader />
-
-      {/* ===== AI INSIGHT BANNER ===== */}
       <AIinsightBanner />
-
-      {/* ===== FILTERS ===== */}
       <OverviewFilter />
-
-      {/* ===== METRICS GRID ===== */}
       <MetricsGrid />
-
-      {/* ===== CHARTS SECTION ===== */}
       <OverviewCharts />
-
-      {/* ===== NEW FEATURE ROW: MAP + HEATMAP + SUPPORT ===== */}
       <MapAndHeatmap />
-
-      {/* ===== NEW ROW: SUPPORT + BILLING + SERVICE AREAS ===== */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
-        {/* support tickets */}
         <SupportsTicket displayArea={"page"} />
-        {/* 4. BILLING SUMMARY */}
         <BillingSummary />
-
-        {/* 5. SERVICE AREAS */}
         <ServiceAreas />
       </div>
-
-      {/* ===== BOTTOM GRIDS ===== */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
-        {/* Recent Activities */}
         <RecentActivities />
-        {/* Top Couriers */}
         <TopCouriers />
       </div>
-
-      {/* ===== STICKY QUICK ACTION TOOLBAR ===== */}
       <ActionToolbar />
-    </div>
+    </div> */
+    <DashboardOverview role="admin" />
   );
 };
 
