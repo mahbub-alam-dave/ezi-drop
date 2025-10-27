@@ -29,6 +29,14 @@ supportAgent:
 ]
 
 
+rider: 
+email: abulbashar.dhaka@ezidrop.com
+password: aaaaaa
+district_agent:
+email:agentkhulna@ezidrop.com
+password: aaaaaa
+
+
 rider:
 
 [
