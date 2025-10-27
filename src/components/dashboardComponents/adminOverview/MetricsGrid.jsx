@@ -16,7 +16,6 @@ const MetricsGrid = () => {
 
   // Memoize metrics to prevent unnecessary recalculations
   const metrics = useMemo(() => {
-    // Check if stats exists and is not null
     if (!stats || stats === null) return [];
 
     return [
@@ -51,7 +50,7 @@ const MetricsGrid = () => {
       {
         title: 'Total Riders',
         value: stats.totalRiders?.count ?? 0,
-        trend: '0%',
+        trend: stats.totalRiders?.trend ?? '0%',
         icon: '🏍️',
         color: 'from-amber-500 to-amber-600'
       },
@@ -103,7 +102,17 @@ const MetricsGrid = () => {
               <h3 className="text-2xl font-bold text-slate-800 dark:text-white mt-1">
                 {metric.value}
               </h3>
-
+              <p className={`text-sm mt-2 flex items-center font-medium ${
+                metric.trend.includes('+') ? 'text-green-600' : 
+                metric.trend.includes('-') ? 'text-red-600' : 
+                'text-slate-500'
+              }`}>
+                <span className="mr-1">
+                  {metric.trend.includes('+') ? '📈' : 
+                   metric.trend.includes('-') ? '📉' : '➖'}
+                </span>
+                {metric.trend} vs last period
+              </p>
             </div>
             <div className={`p-4 rounded-2xl bg-gradient-to-br ${metric.color} text-white shadow-lg group-hover:scale-105 transition-transform duration-300`}>
               <span className="text-2xl">{metric.icon}</span>

@@ -161,3 +161,15 @@ completed
 in_transit_to_warehouse
 at_local_warehouse
 awaiting_pickup_from_warehouse
+
+
+collectionName: bookingHistory
+sample data: 
+{
+  bookingId: parcel._id,
+  userId: session.user.userId,
+  userEmail: session.user.email,
+  amount: parcel.amount,
+  paymentDate: parcel.updatedAt,
+  ...etc
+}
