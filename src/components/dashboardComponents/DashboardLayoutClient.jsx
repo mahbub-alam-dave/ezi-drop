@@ -192,6 +192,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
   <FaCalendarAlt className="inline-block mr-2" />
   My Bookings
 </Link>
+    <Link
+  href="/dashboard/user/payment-history"
+  className={linkClass("/dashboard/user/payment-history")}
+>
+  <FaCalendarAlt className="inline-block mr-2" />
+  payment history 
+</Link>
         {/* Track Parcel */}
         <Link
           href="/dashboard/user/track-parcel"
