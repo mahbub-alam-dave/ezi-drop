@@ -137,7 +137,6 @@ export async function GET(request) {
       })
     ]);
 
-    console.log("Revenue aggregation result:", revenueData);
 
     // Helper function to calculate trend percentage
     const calculateTrend = (current, previous) => {

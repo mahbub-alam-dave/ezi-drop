@@ -2,10 +2,11 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { dbConnect } from '@/lib/dbConnect';
+import { authOptions } from '@/lib/authOptions';
 
 export async function GET(request) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -24,7 +25,9 @@ export async function GET(request) {
       }
     };
 
-    if (session.user.role === 'admin') {
+    console.log(session?.user?.userId)
+
+    if (session?.user?.role === 'admin') {
       // Admin sees all districts
       const [districtStats, districts] = await Promise.all([
         Order.aggregate([
@@ -84,11 +87,11 @@ export async function GET(request) {
         activeDistricts: districtStats.length
       });
 
-    } else if (session.user.role === 'district_admin') {
+    } else if (session?.user?.role === 'district_admin') {
       // District admin sees upazilas (zones) within their district
       const districtFilter = {
         ...dateFilter,
-        pickupDistrictId: session.user.districtId
+        pickupDistrictId: session?.user?.districtId
       };
 
       const [upazilaStats, districtInfo] = await Promise.all([
