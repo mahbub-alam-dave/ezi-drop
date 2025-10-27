@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useDashboard } from '@/contexts/DashboardContexts';
 
-
 const MapAndHeatmap = () => {
   const { role, dateRange, selectedDistrict } = useDashboard();
   const [geoData, setGeoData] = useState(null);
@@ -20,6 +19,11 @@ const MapAndHeatmap = () => {
           endDate: dateRange.endDate,
         });
 
+        // Pass selected district to API
+        if (selectedDistrict) {
+          params.append('districtId', selectedDistrict);
+        }
+
         const res = await fetch(`/api/dashboard/maps?${params}`);
         const data = await res.json();
         setGeoData(data);
@@ -31,7 +35,7 @@ const MapAndHeatmap = () => {
     };
 
     fetchGeoData();
-  }, [dateRange, selectedDistrict]);
+  }, [dateRange, selectedDistrict]); // Re-fetch when district changes
 
   // Color scale based on delivery count
   const getHeatColor = (count, maxCount) => {
@@ -73,7 +77,7 @@ const MapAndHeatmap = () => {
         <div className="flex justify-between items-center mb-5">
           <h2 className="text-xl font-bold text-slate-800 dark:text-white">
             {getLocationTypeLabel()}-wise Distribution
-            {geoData.districtName && (
+            {geoData.districtName && geoData.viewLevel === 'district' && (
               <span className="text-sm font-normal text-slate-500 dark:text-slate-400 ml-2">
                 ({geoData.districtName})
               </span>

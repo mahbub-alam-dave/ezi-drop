@@ -17,6 +17,7 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
+    const districtId = searchParams.get('districtId'); // Get selected district from query
     
     const dateFilter = {
       createdAt: {
@@ -25,10 +26,22 @@ export async function GET(request) {
       }
     };
 
-    console.log(session?.user?.userId)
+    console.log('Session user:', session?.user);
+    console.log('Selected district:', districtId);
 
+    // Determine the effective district to query
+    let effectiveDistrictId = null;
+    
     if (session?.user?.role === 'admin') {
-      // Admin sees all districts
+      // Admin can filter by district or see all
+      effectiveDistrictId = (districtId && districtId !== 'all') ? districtId : null;
+    } else if (session?.user?.role === 'district_admin') {
+      // District admin always sees their own district
+      effectiveDistrictId = session.user.districtId;
+    }
+
+    // If no specific district is selected (admin viewing all districts)
+    if (!effectiveDistrictId) {
       const [districtStats, districts] = await Promise.all([
         Order.aggregate([
           { $match: dateFilter },
@@ -84,74 +97,74 @@ export async function GET(request) {
         type: 'districts',
         data: enrichedStats,
         totalDistricts: districts.length,
-        activeDistricts: districtStats.length
-      });
-
-    } else if (session?.user?.role === 'district_admin') {
-      // District admin sees upazilas (zones) within their district
-      const districtFilter = {
-        ...dateFilter,
-        pickupDistrictId: session?.user?.districtId
-      };
-
-      const [upazilaStats, districtInfo] = await Promise.all([
-        Order.aggregate([
-          { $match: districtFilter },
-          {
-            $group: {
-              _id: '$pickupUpazila', // Group by upazila
-              totalOrders: { $sum: 1 },
-              delivered: {
-                $sum: { $cond: [{ $eq: ['$status', 'delivered'] }, 1, 0] }
-              },
-              pending: {
-                $sum: {
-                  $cond: [
-                    { $in: ['$status', ['not_picked', 'pending_rider_approval', 'awaiting_pickup']] },
-                    1,
-                    0
-                  ]
-                }
-              },
-              inTransit: {
-                $sum: {
-                  $cond: [
-                    { $in: ['$status', ['in_transit_to_warehouse', 'at_local_warehouse', 'awaiting_pickup_from_warehouse']] },
-                    1,
-                    0
-                  ]
-                }
-              },
-              revenue: { $sum: '$amount' }
-            }
-          },
-          { $sort: { totalOrders: -1 } }
-        ]).toArray(),
-        District.findOne({ districtId: session.user.districtId })
-      ]);
-
-      const enrichedStats = upazilaStats.map(stat => ({
-        id: stat._id || 'unassigned',
-        name: stat._id || 'Unassigned Upazila',
-        totalOrders: stat.totalOrders,
-        delivered: stat.delivered,
-        pending: stat.pending,
-        inTransit: stat.inTransit,
-        revenue: stat.revenue,
-        deliveryRate: stat.totalOrders > 0 
-          ? Math.round((stat.delivered / stat.totalOrders) * 100) 
-          : 0
-      }));
-
-      return NextResponse.json({
-        type: 'upazilas',
-        data: enrichedStats,
-        districtName: districtInfo?.district || session.user.districtId,
-        totalUpazilas: upazilaStats.length
+        activeDistricts: districtStats.length,
+        viewLevel: 'country'
       });
     }
 
-    return NextResponse.json({ error: 'Invalid role' }, { status: 403 });
+    // If a specific district is selected (admin filtered by district OR district_admin)
+    const districtFilter = {
+      ...dateFilter,
+      pickupDistrictId: effectiveDistrictId
+    };
+
+    const [upazilaStats, districtInfo] = await Promise.all([
+      Order.aggregate([
+        { $match: districtFilter },
+        {
+          $group: {
+            _id: '$pickupUpazila', // Group by upazila
+            totalOrders: { $sum: 1 },
+            delivered: {
+              $sum: { $cond: [{ $eq: ['$status', 'delivered'] }, 1, 0] }
+            },
+            pending: {
+              $sum: {
+                $cond: [
+                  { $in: ['$status', ['not_picked', 'pending_rider_approval', 'awaiting_pickup']] },
+                  1,
+                  0
+                ]
+              }
+            },
+            inTransit: {
+              $sum: {
+                $cond: [
+                  { $in: ['$status', ['in_transit_to_warehouse', 'at_local_warehouse', 'awaiting_pickup_from_warehouse']] },
+                  1,
+                  0
+                ]
+              }
+            },
+            revenue: { $sum: '$amount' }
+          }
+        },
+        { $sort: { totalOrders: -1 } }
+      ]).toArray(),
+      District.findOne({ districtId: effectiveDistrictId })
+    ]);
+
+    const enrichedStats = upazilaStats.map(stat => ({
+      id: stat._id || 'unassigned',
+      name: stat._id || 'Unassigned Upazila',
+      totalOrders: stat.totalOrders,
+      delivered: stat.delivered,
+      pending: stat.pending,
+      inTransit: stat.inTransit,
+      revenue: stat.revenue,
+      deliveryRate: stat.totalOrders > 0 
+        ? Math.round((stat.delivered / stat.totalOrders) * 100) 
+        : 0
+    }));
+
+    return NextResponse.json({
+      type: 'upazilas',
+      data: enrichedStats,
+      districtName: districtInfo?.district || effectiveDistrictId,
+      districtId: effectiveDistrictId,
+      totalUpazilas: upazilaStats.length,
+      viewLevel: 'district'
+    });
 
   } catch (error) {
     console.error('Geographic stats error:', error);
