@@ -44,8 +44,8 @@ export async function handlePostPaymentFunctionality(parcelId) {
           secretCodeHash: otpHash,
           secretCodeExpiresAt: otpExpiry,
           // wirehouseAddress: warehouse?.address || "",
-          pickupWirehouse: {location: pickupWarehouse?.address || "", lon: pickupWarehouse?.coords[0] || "", lat: pickupWarehouse?.coords[1] || ""},
-          deliveryWirehouse: {location: deliverWarehouse?.address || "", lon: deliverWarehouse?.coords[0] || "", lat: deliverWarehouse?.coords[1] || ""},
+          pickupDistrictWarehouse: {location: pickupWarehouse?.address || "", lon: pickupWarehouse?.coords[0] || "", lat: pickupWarehouse?.coords[1] || ""},
+          deliveryDistrictWarehouse: {location: deliverWarehouse?.address || "", lon: deliverWarehouse?.coords[0] || "", lat: deliverWarehouse?.coords[1] || ""},
           updatedAt: new Date(),
         },
         $push: {

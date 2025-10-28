@@ -18,15 +18,28 @@ export async function POST(req) {
   }));
 
   // 2️⃣ Ask LLM to re-rank routes
-  const prompt = `
-  You are an intelligent route planner for delivery riders.
-  Given multiple routes with distance, duration, and summary, choose the most efficient and safe one.
-  Consider traffic conditions, total distance, and congestion likelihood.
-  Respond in JSON format:
-  { "bestRouteId": number, "reason": string }
-  
-  Routes: ${JSON.stringify(routes)}
-  `;
+const prompt = `
+You are a smart logistics route planner for Ezi Drop's delivery riders.
+You are given multiple possible routes between a start and end location.
+Each route includes summary, distance, and duration.
+
+Your job:
+- Choose the best route for the rider.
+- Consider distance, duration, road quality, safety (urban vs rural), traffic congestion likelihood, and fuel efficiency.
+- Prefer safer and faster routes, even if slightly longer.
+- Avoid areas that are congested or unsafe at night.
+- Explain the reasoning clearly but briefly (1–2 sentences).
+
+Return your answer in strict JSON format:
+{
+  "bestRouteId": number,
+  "reason": string,
+  "advice": string
+}
+
+Here are the routes:
+${JSON.stringify(routes, null, 2)}
+`;
 
   const llmRes = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
