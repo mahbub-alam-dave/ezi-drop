@@ -2,10 +2,11 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { dbConnect } from '@/lib/dbConnect';
+import { authOptions } from '@/lib/authOptions';
 
 export async function GET(request) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -70,7 +71,12 @@ export async function GET(request) {
       totalRiders,
       totalUsers,
       weeklyDeliveries,
-      statusBreakdown
+      statusBreakdown,
+      // Billing-related aggregations
+      deliveredRevenue,
+      pendingPayoutsData,
+      unpaidInvoices,
+      cancelledRefunds
     ] = await Promise.all([
       Order.countDocuments(queryFilter),
       Order.countDocuments({ ...queryFilter, status: 'delivered' }),
@@ -106,6 +112,55 @@ export async function GET(request) {
             count: { $sum: 1 }
           }
         }
+      ]).toArray(),
+      // Billing: Delivered orders revenue
+      Order.aggregate([
+        { $match: { ...queryFilter, status: 'delivered' } },
+        { $group: { _id: null, total: { $sum: '$amount' } } }
+      ]).toArray(),
+      // Billing: Pending payouts (in-transit orders)
+      Order.aggregate([
+        { 
+          $match: { 
+            ...queryFilter, 
+            status: { 
+              $in: [
+                'not_picked', 
+                'pending_rider_approval', 
+                'awaiting_pickup',
+                'in_transit_to_warehouse', 
+                'at_local_warehouse', 
+                'awaiting_pickup_from_warehouse'
+              ] 
+            } 
+          } 
+        },
+        { $group: { _id: null, total: { $sum: '$amount' } } }
+      ]).toArray(),
+      // Billing: Unpaid invoices
+      Order.aggregate([
+        { 
+          $match: { 
+            ...queryFilter, 
+            $or: [
+              { payment: { $exists: false } },
+              { payment: 'pending' },
+              { payment: { $ne: 'done' } }
+            ]
+          } 
+        },
+        { 
+          $group: { 
+            _id: null, 
+            count: { $sum: 1 },
+            total: { $sum: '$amount' } 
+          } 
+        }
+      ]).toArray(),
+      // Billing: Cancelled/Refunds
+      Order.aggregate([
+        { $match: { ...queryFilter, status: 'cancelled' } },
+        { $group: { _id: null, total: { $sum: '$amount' } } }
       ]).toArray()
     ]);
 
@@ -137,6 +192,7 @@ export async function GET(request) {
       })
     ]);
 
+    console.log("Revenue aggregation result:", revenueData);
 
     // Helper function to calculate trend percentage
     const calculateTrend = (current, previous) => {
@@ -157,7 +213,7 @@ export async function GET(request) {
     const ridersTrend = calculateTrend(totalRiders, prevTotalRiders);
     const usersTrend = calculateTrend(totalUsers, prevTotalUsers);
 
-    // Map day numbers to day names (MongoDB's $dayOfWeek: 1=Sunday, 2=Monday, etc.)
+    // Map day numbers to day names
     const dayMap = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const weeklyData = Array(7).fill(0).map((_, i) => ({
       day: dayMap[i],
@@ -167,7 +223,7 @@ export async function GET(request) {
 
     // Fill in actual delivery counts
     weeklyDeliveries.forEach(item => {
-      const dayIndex = item._id - 1; // Convert MongoDB day (1-7) to array index (0-6)
+      const dayIndex = item._id - 1;
       if (dayIndex >= 0 && dayIndex < 7) {
         weeklyData[dayIndex].deliveries = item.count;
       }
@@ -221,7 +277,17 @@ export async function GET(request) {
       totalRiders: { count: totalRiders, active: totalRiders, trend: ridersTrend },
       totalUsers: { count: totalUsers, trend: usersTrend },
       weeklyDeliveries: weeklyData,
-      statusData: statusDataArray
+      statusData: statusDataArray,
+      // Billing Summary
+      billing: {
+        weeklyRevenue: deliveredRevenue[0]?.total || 0,
+        pendingPayouts: pendingPayoutsData[0]?.total || 0,
+        unpaidInvoices: {
+          count: unpaidInvoices[0]?.count || 0,
+          amount: unpaidInvoices[0]?.total || 0
+        },
+        refunds: cancelledRefunds[0]?.total || 0
+      }
     };
     
     return NextResponse.json(stats);

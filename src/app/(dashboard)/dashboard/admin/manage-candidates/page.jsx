@@ -102,7 +102,7 @@ export default function AssignRiders() {
     }
   };
 
-  if (loading) return useLoadingSpinner;
+  if (loading) return <useLoadingSpinner/>;
 
   return (
       // bg-clip-text bg-gradient-to-r from-green-500 to-blue-500

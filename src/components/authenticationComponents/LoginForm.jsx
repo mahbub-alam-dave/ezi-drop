@@ -25,7 +25,7 @@ const LoginForm = () => {
     const password = form.password.value;
 
     try {
-      // ✅ Step 1: Check if user exists and verified
+      // Step 1: Check if user exists and verified
       const res = await fetch(`/api/check-user`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -40,7 +40,6 @@ const LoginForm = () => {
       }
 
       if (!data.emailVerified) {
-        // ✅ Step 2: Generate OTP and show modal
         await fetch("/api/auth/generate-otp", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -52,7 +51,7 @@ const LoginForm = () => {
         return;
       }
 
-      // ✅ Step 3: If verified, sign in normally
+      // Step 2: Sign in
       const response = await signIn("credentials", {
         email,
         password,
@@ -60,11 +59,23 @@ const LoginForm = () => {
       });
 
       if (response.error) {
-        setError(response.error); // Will show "Account locked. Try again later."
+        setError(response.error);
       }
 
       if (response?.ok) {
-        await update()
+        await update(); // refresh session
+
+        // ✅ Add login notification
+        await fetch("/api/notifications/add", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: data._id || data.userId, // API থেকে userId
+            message: "Login Successful!",
+            type: "login",
+          }),
+        });
+
         Swal.fire({
           position: "center",
           icon: "success",
@@ -72,10 +83,9 @@ const LoginForm = () => {
           showConfirmButton: false,
           timer: 800,
         }).then(() => {
-        window.location.href = "/";
-        form.reset();
+          window.location.href = "/";
+          form.reset();
         });
-    
       } else {
         Swal.fire({ icon: "error", title: "Oops...", text: "Invalid credentials" });
       }
@@ -86,6 +96,77 @@ const LoginForm = () => {
       setLoading(false);
     }
   };
+
+  // const handleLogin = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setError("");
+  //   const form = e.target;
+  //   const email = form.email.value;
+  //   const password = form.password.value;
+
+  //   try {
+  //     // ✅ Step 1: Check if user exists and verified
+  //     const res = await fetch(`/api/check-user`, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ email }),
+  //     });
+
+  //     const data = await res.json();
+
+  //     if (!res.ok) {
+  //       Swal.fire({ icon: "error", title: "Oops...", text: data.message });
+  //       return;
+  //     }
+
+  //     if (!data.emailVerified) {
+  //       // ✅ Step 2: Generate OTP and show modal
+  //       await fetch("/api/auth/generate-otp", {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({ email }),
+  //       });
+
+  //       setOtpModalData({ email, password });
+  //       setShowOtpModal(true);
+  //       return;
+  //     }
+
+  //     // ✅ Step 3: If verified, sign in normally
+  //     const response = await signIn("credentials", {
+  //       email,
+  //       password,
+  //       redirect: false,
+  //     });
+
+  //     if (response.error) {
+  //       setError(response.error); // Will show "Account locked. Try again later."
+  //     }
+
+  //     if (response?.ok) {
+  //       await update()
+  //       Swal.fire({
+  //         position: "center",
+  //         icon: "success",
+  //         title: "Logged In successfully",
+  //         showConfirmButton: false,
+  //         timer: 800,
+  //       }).then(() => {
+  //       window.location.href = "/";
+  //       form.reset();
+  //       });
+
+  //     } else {
+  //       Swal.fire({ icon: "error", title: "Oops...", text: "Invalid credentials" });
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     Swal.fire({ icon: "error", title: "Oops...", text: "Something went wrong" });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <div>
@@ -135,15 +216,14 @@ const LoginForm = () => {
         <button
           type="submit"
           disabled={loading}
-          className={`px-6 py-3 cursor-pointer rounded-full mt-4 w-full font-medium text-lg ${
-            loading
+          className={`px-6 py-3 cursor-pointer rounded-full mt-4 w-full font-medium text-lg ${loading
               ? "bg-gray-400 cursor-not-allowed text-gray-200"
               : "bg-[var(--color-primary)] dark:bg-[var(--color-primary-dark)] text-gray-100 hover:bg-[var(--color-primary-dark)] dark:hover:bg-[var(--color-primary)]"
-          }`}
+            }`}
         >
           Login
         </button>
-        
+
         <span className="mt-6 text-center">Or Sign Up with</span>
         <SocialLogin />
         <span className="text-center">
@@ -156,7 +236,7 @@ const LoginForm = () => {
           </Link>
         </span>
       </form>
-      
+
       {showOtpModal && (
         <OtpModal signInData={otpModalData} closeModal={setShowOtpModal} />
       )}
