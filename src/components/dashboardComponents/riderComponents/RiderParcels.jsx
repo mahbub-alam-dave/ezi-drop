@@ -7,6 +7,7 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@
 import { Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { showErrorAlert, showSuccessAlert } from "@/utility/alerts";
+import RouteSuggestionModal from "./RouteSuggestionModal";
 
 export default function RiderParcels() {
   const [newOrders, setNewOrders] = useState([]);
@@ -19,7 +20,9 @@ export default function RiderParcels() {
    const [secretCode, setSecretCode] = useState("");
    const [parcelId, setParcelId] = useState(null);
    const [error, setError] = useState("")
-   const [success, setSuccess] = useState("")
+   const [success, setSuccess] = useState("");
+
+   const [selectedParcel, setSelectedParcel] = useState(null);
 
 
   // const riderId = "currentRiderId"; // replace with logged-in rider _id
@@ -126,6 +129,7 @@ async function handleReject(parcelId) {
       setLoading(false);
     }
   }
+  
 
   return (
     <div className="p-6 space-y-6">
@@ -158,6 +162,7 @@ async function handleReject(parcelId) {
                   <Button onClick={() => handleReject(parcel._id)} className="border-color w-full">
                     Reject
                   </Button>
+                  <Button onClick={() => setSelectedParcel(parcel)}>Get AI Route</Button>
                 </div>
               </div>
             ))}
@@ -276,6 +281,14 @@ async function handleReject(parcelId) {
             </div>
           </div>
         </div>
+      )}
+      {/* ai route suggestion modal */}
+      {selectedParcel && (
+        <RouteSuggestionModal
+          parcel={selectedParcel}
+          open={!!selectedParcel}
+          onClose={() => setSelectedParcel(null)}
+        />
       )}
     </div>
   );
