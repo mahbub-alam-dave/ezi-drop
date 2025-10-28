@@ -1,9 +1,11 @@
 "use client"
-import React from "react";
+import React, { useState } from "react";
 import { useDashboard } from '@/contexts/DashboardContexts';
+import BillingDetailsModal from "./BillingDetailModal";
 
 const BillingSummary = () => {
   const { stats } = useDashboard();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const billing = stats?.billing || {
     weeklyRevenue: 0,
@@ -27,6 +29,7 @@ const BillingSummary = () => {
   }
 
   return (
+     <>
     <div className="bg-white dark:bg-gray-800 rounded-2xl p-7 border border-slate-200 dark:border-slate-700 shadow-sm">
       <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-5">
         Billing Summary
@@ -94,10 +97,18 @@ const BillingSummary = () => {
         </div>
       </div>
 
-      <button className="w-full mt-6 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white py-3 rounded-xl font-medium transition-all duration-200 shadow hover:shadow-lg">
+      <button 
+      onClick={() => setIsModalOpen(true)}
+      className="w-full mt-6 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white py-3 rounded-xl font-medium transition-all duration-200 shadow hover:shadow-lg">
         View Detailed Billing
       </button>
     </div>
+    {/* Billing Details Modal */}
+      <BillingDetailsModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
+     </>
   );
 };
 
