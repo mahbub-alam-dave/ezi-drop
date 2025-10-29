@@ -1,3 +1,4 @@
+"use client"
 import { useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
 import { Star, CheckCircle, Trophy, Hash, TrendingUp, AlertCircle, DollarSign, XCircle } from "lucide-react";
