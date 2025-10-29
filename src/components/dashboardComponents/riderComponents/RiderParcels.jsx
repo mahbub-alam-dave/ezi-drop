@@ -77,7 +77,6 @@ export default function RiderParcels() {
     showErrorAlert("Accept Failed", error.message || "Something went wrong while accepting the parcel.");
   }
 }
-
 async function handleReject(parcelId) {
   try {
     const res = await fetch(`/api/riders/reject/${parcelId}`, { method: "PATCH" });
