@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CiCamera } from "react-icons/ci";
+import RiderStatusInfo from "../RiderStatus/RiderStatus";
 
 export default function ManageProfile({ userData, allDistricts }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -711,6 +712,7 @@ console.log(userDetails)
   return (
     <div className="min-h-screen background-color text-color p-6">
       <div className="w-full pt-8">  {/* max-w-7xl mx-auto */}
+      
         {/* Header Section */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
           <div>
@@ -744,6 +746,7 @@ console.log(userDetails)
             >
               Edit Profile
             </button>
+            <RiderStatusInfo  />
           </div>
         </div>
 
