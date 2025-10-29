@@ -104,52 +104,57 @@ const OurServices = () => {
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
           >
+            {/* 1. Parcel Booking */}
             <ServiceCard
-              icon="⚡"
-              title="Express & Next-Day Delivery"
-              description="Need it there fast? Our priority delivery ensures your parcels reach their destination on the same day or the very next business day."
+              icon="📝"
+              title="Parcel Booking"
+              description="Simple online parcel booking system to quickly initiate and schedule your deliveries with ease."
             />
-            {/* NEW CARD: Replaced COD with 24/7 Support */}
+            {/* 2. Automatic Cost Calculation */}
             <ServiceCard
-              icon="📞"
-              title="24/7 Dedicated Support"
-              description="Our team is always available to help. Get immediate assistance via chat, phone, or email for all your delivery inquiries and issues."
+              icon="🧮"
+              title="Automatic Cost Calculation"
+              description="Get instant and accurate delivery cost calculation based on weight, distance, and parcel type."
             />
+            {/* 3. Digital Proofing */}
             <ServiceCard
-              icon="📦"
-              title="Bulk Logistics & Corporate Plans"
-              description="Tailored logistics solutions for e-commerce and corporate clients. Manage high volumes with dedicated support and scalable infrastructure."
+              icon="📸"
+              title="Digital Proofing (POD)"
+              description="Ensure transparency with digital Proof of Delivery (POD) via photo and signature upon successful completion."
             />
+            {/* 4. Role Based Dashboard Access */}
             <ServiceCard
-              icon="🛡️"
-              title="Insured & Fragile Handling"
-              description="We treat every parcel with care. Get specialized handling for fragile, delicate, or high-value items, coupled with insurance coverage."
+              icon="👥"
+              title="Role Based Dashboard Access"
+              description="Secure and customized dashboard access based on user roles, ensuring data privacy and operational control."
             />
           </motion.div>
         </div>
 
         {/* --- 2. Feature Details Section (3 Big Features) --- */}
         <div className="space-y-20">
+          {/* 1. AI Chatbot & Live Messaging & Customer Support */}
           <FeatureSection
-            title="Real-time Tracking and Notifications"
-            description="Never lose sight of your shipment. Our advanced tracking system provides live updates from the moment of pickup until delivery completion. Receive instant SMS and email notifications at every milestone."
-            icon="🗺️"
+            title="AI Chatbot, Live Messaging & Support"
+            description="Our AI Chatbot provides immediate 24/7 support. Connect instantly with riders and dedicated customer support via live messaging."
+            icon="💬"
             alignRight={false}
           />
 
-          {/* Secure Payment System */}
+          {/* 2. Multiple Payment & Smart Costing */}
           <FeatureSection
-            title="Secure and Flexible Payment System"
-            description="Your security is our priority. We offer end-to-end encrypted payment options, including Mobile Banking, Credit/Debit Cards, and Secure Cash-on-Delivery (COD) reconciliation, ensuring every transaction is safe and verified."
-            icon="🔒"
-            alignRight={true}
+            title="Multiple Payment & Smart Costing"
+            description="Secure multiple payment options are available. Benefit from automatic cost calculation that provides accurate, real-time pricing."
+            icon="💳"
+            alignRight={true} // Changed alignment for visual flow
           />
-          {/* Flexible Pickup and Drop-off Points */}
+
+          {/* 3. Automatic Rider Assignment & AI Route Suggestion */}
           <FeatureSection
-            title="Flexible Pickup and Drop-off Points"
-            description="Enjoy maximum convenience. Choose from multiple flexible pickup options, or utilize our wide network of drop-off points strategically located across the country for easier booking."
-            icon="📍"
-            alignRight={false}
+            title="Auto Rider Assignment & AI Routing"
+            description="Automatic rider assignment ensures quick pickup. AI route suggestion provides riders with the most efficient routes for faster delivery."
+            icon="🤖"
+            alignRight={false} // Changed alignment for visual flow
           />
         </div>
 
@@ -173,7 +178,7 @@ const OurServices = () => {
           </p>
           <div className="pt-4">
             <a
-              href="/send-parcel" // Replace with actual link to signup/booking
+              href="#" // Replace with actual link to signup/booking
               // Button contrast is fine (white button on primary background)
               className="inline-block px-10 py-4 bg-white text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] font-bold text-lg rounded-xl shadow-lg hover:bg-gray-100 transition-colors transform hover:scale-105"
             >
