@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { showErrorAlert, showSuccessAlert } from "@/utility/alerts";
+import RouteSuggestionModal from "./RouteSuggestionModal";
 
 export default function RiderParcels() {
   const [newOrders, setNewOrders] = useState([]);
@@ -14,11 +16,12 @@ export default function RiderParcels() {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
   // modal
-   const [isOpen, setIsOpen] = useState(false);
-   const [secretCode, setSecretCode] = useState("");
-   const [parcelId, setParcelId] = useState(null);
-   const [error, setError] = useState("")
-   const [success, setSuccess] = useState("")
+  const [isOpen, setIsOpen] = useState(false);
+  const [secretCode, setSecretCode] = useState("");
+  const [parcelId, setParcelId] = useState(null);
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("");
+  const [selectedParcel, setSelectedParcel] = useState(null);
 
 
   // const riderId = "currentRiderId"; // replace with logged-in rider _id
@@ -31,7 +34,7 @@ export default function RiderParcels() {
   async function fetchData() {
     try {
       setLoading(true);
-      const res = await fetch(`/api/riders/${riderId}/parcels?status=${filter}`);
+      const res = await fetch(`/api/riders/my-parcels?status=${filter}`);
       const data = await res.json();
       setNewOrders(data.newOrders || []);
       setParcels(data.parcels || []);
@@ -50,11 +53,7 @@ export default function RiderParcels() {
     fetchData();
   }, [filter]);
 
-/*     if (loading) {
-    return <p>Loading session...</p>;
-  } */
-
-  async function handleAccept(parcelId) {
+/*   async function handleAccept(parcelId) {
     await fetch(`/api/riders/accept/${parcelId}`, { method: "PATCH" });
     fetchData();
   }
@@ -62,12 +61,37 @@ export default function RiderParcels() {
   async function handleReject(parcelId) {
     await fetch(`/api/riders/reject/${parcelId}`, { method: "PATCH" });
     fetchData();
-  }
-
-/*   async function handleComplete(parcelId) {
-    await fetch(`/api/riders/complete/${parcelId}`, { method: "PATCH" });
-    fetchData();
   } */
+
+  async function handleAccept(parcelId) {
+  try {
+    const res = await fetch(`/api/riders/accept/${parcelId}`, { method: "PATCH" });
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message || "Failed to accept parcel");
+
+    showSuccessAlert("Parcel Accepted", data.message || "You have successfully accepted the parcel.");
+    fetchData();
+  } catch (error) {
+    console.error(error);
+    showErrorAlert("Accept Failed", error.message || "Something went wrong while accepting the parcel.");
+  }
+}
+async function handleReject(parcelId) {
+  try {
+    const res = await fetch(`/api/riders/reject/${parcelId}`, { method: "PATCH" });
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message || "Failed to reject parcel");
+
+    showSuccessAlert("Parcel Rejected", data.message || "You have successfully rejected the parcel.");
+    fetchData();
+  } catch (error) {
+    console.error(error);
+    showErrorAlert("Reject Failed", error.message || "Something went wrong while rejecting the parcel.");
+  }
+}
+
 
   const filteredParcels = parcels.filter(
     (p) =>
@@ -96,13 +120,14 @@ export default function RiderParcels() {
       if (!res.ok) throw new Error(data.message || "Something went wrong");
 
       setSuccess("✅ Delivery completed successfully");
-      setTimeout(() => setIsOpen(false), 1200);
+      setTimeout(() => setIsOpen(false), 1000);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   }
+  
 
   return (
     <div className="p-6 space-y-6">
@@ -135,6 +160,7 @@ export default function RiderParcels() {
                   <Button onClick={() => handleReject(parcel._id)} className="border-color w-full">
                     Reject
                   </Button>
+                  
                 </div>
               </div>
             ))}
@@ -193,11 +219,11 @@ export default function RiderParcels() {
                   <td className="p-3 capitalize">{parcel.riderApprovalStatus}</td>
                   <td className="p-3">{parcel.amount} BDT</td>
                   <td className="p-3">
-                    {parcel.status !== "completed" || parcel.status !== "at_local_warehouse" ? (
+                    {parcel.riderApprovalStatus === "accepted" && parcel.status !== "completed" || parcel.status !== "at_local_warehouse" ? (
+                      <div className="flex gap-2 items-center">
                       <Button
                         size="sm"
                         className="background-color-primary text-gray-100"
-                        // onClick={() => handleComplete(parcel._id)}
                         onClick={() => {
                           setIsOpen(true)
                           setParcelId(parcel._id)
@@ -205,6 +231,8 @@ export default function RiderParcels() {
                       >
                         Complete Order
                       </Button>
+                      <Button size="sm" onClick={() => setSelectedParcel(parcel)}>Get AI Route</Button>
+                      </div>
                     ) : (
                       <span className="text-[var(--color-primary)] font-semibold">Completed</span>
                     )}
@@ -253,6 +281,14 @@ export default function RiderParcels() {
             </div>
           </div>
         </div>
+      )}
+      {/* ai route suggestion modal */}
+      {selectedParcel && (
+        <RouteSuggestionModal
+          parcel={selectedParcel}
+          open={!!selectedParcel}
+          onClose={() => setSelectedParcel(null)}
+        />
       )}
     </div>
   );

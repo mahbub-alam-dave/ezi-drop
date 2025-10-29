@@ -26,7 +26,15 @@ export async function PATCH(req, { params }) {
       newStatus = "in_transit_to_warehouse";
       newRiderDeliveryStatus = "in_transit_to_warehouse";
       eventNote = "Rider accepted parcel for delivery to local warehouse.";
-    } else {
+    } 
+
+    else if(parcel.deliveryType === "to_receiver_final") {
+      newStatus = "awaiting_pickup_from_warehouse";
+      newRiderDeliveryStatus = "assigned_for_final_delivery";
+      eventNote = "Rider accepted parcel to pickup form the wirehouse and deliver to the receiver"
+    }
+    
+    else {
       newStatus = "awaiting_pickup"; // Rider accepted but not yet picked up
       newRiderDeliveryStatus = "assigned";
       eventNote = "Rider accepted parcel for direct delivery.";

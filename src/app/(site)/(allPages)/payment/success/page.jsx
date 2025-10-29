@@ -7,7 +7,27 @@ export default function SuccessPage() {
   const router = useRouter();
   const parcelId = searchParams.get("parcelId");
   const [isDownloading, setIsDownloading] = useState(false);
-
+   const gateway = searchParams.get("gateway"); // "sslcommerz" বা "stripe"
+  const session_id = searchParams.get("session_id"); // Stripe session
+  
+useEffect(() => {
+    const savePayment = async () => {
+      if (gateway === "stripe") {
+        await fetch("/api/payment/stripe-save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ session_id }),
+        });
+      } else if (gateway === "sslcommerz") {
+        await fetch("/api/payment/sslcommerz-save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(Object.fromEntries(new URLSearchParams(window.location.search))),
+        });
+      }
+    };
+    savePayment();
+  }, [gateway, session_id, parcelId]);
 
   useEffect(() => {
     if (parcelId) {
@@ -43,10 +63,10 @@ export default function SuccessPage() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen text-center">
+    <div className="flex flex-col justify-center items-center min-h-[60vh] text-center">
       <h1 className="text-3xl font-bold text-green-600">Payment Successful 🎉</h1>
       <p className="mt-2">Your parcel has been booked successfully.</p>
-
+      <div className="flex flex-col sm:flex-row gap-6">
         <button
         onClick={handleDownload}
         disabled={isDownloading}
@@ -61,6 +81,7 @@ export default function SuccessPage() {
       >
         Go to My Bookings
       </button>
+      </div>
     </div>
   );
 }

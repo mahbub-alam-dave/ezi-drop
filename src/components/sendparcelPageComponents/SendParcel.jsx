@@ -1,15 +1,20 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { redirect, useRouter } from "next/navigation";
+import axios from "axios";
 import {
   SelectFieldDistrict,
   SelectFieldUpazila,
 } from "@/utility/selectDistrict";
 import { useSession } from "next-auth/react";
+import { FiUploadCloud, FiTrash2 } from "react-icons/fi";
+import toast from "react-hot-toast";
+import FirstBookingBanner from "../sharedComponents/FirstBookingBanner";
+import Swal from "sweetalert2";
 
-const SendParcel = ({ districts, userData }) => {
+const SendParcel = ({ districts }) => {
   const { data: session, status } = useSession();
   const [activeTab, setActiveTab] = useState("domestic");
   const { register, handleSubmit, reset, watch, setValue } = useForm();
@@ -18,8 +23,12 @@ const SendParcel = ({ districts, userData }) => {
   const [showModal, setShowModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState([]);
+  const fileInputRef = useRef();
+  const [userData, setUserData] = useState({});
 
-  // Domestic form fields
+    // Domestic form fields
   const pickupDistrictId = watch("pickupDistrictId");
   const deliveryDistrictId = watch("deliveryDistrictId");
   const parcelType = watch("parcelType");
@@ -37,12 +46,27 @@ const SendParcel = ({ districts, userData }) => {
     [pickupDistrictId, districts]
   );
 
-  // console.log(pickupDistrictData)
-
   const deliveryDistrictData = useMemo(
     () => districts.find((d) => d.districtId === deliveryDistrictId),
     [deliveryDistrictId, districts]
   );
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const res = await fetch("/api/check-user");
+      const userInfo = await res.json();
+      setUserData({
+        name: userInfo?.userData?.name,
+        email: userInfo?.userData?.email,
+        district: userInfo?.userData?.district || null,
+        districtId: userInfo?.userData?.districtId || null,
+        points: userInfo?.userData?.points || 0,
+      });
+    };
+    fetchUser();
+  }, []);
+
+
 
   // Cost calculation for domestic shipments (BDT)
   useEffect(() => {
@@ -76,7 +100,7 @@ const SendParcel = ({ districts, userData }) => {
       let baseCost = 0;
       if (internationalWeight && destinationCountry && serviceType) {
         const weight = parseFloat(internationalWeight);
-        
+
         // Base rates by service type
         const serviceRates = {
           express: { base: 45, perKg: 25 },
@@ -85,7 +109,7 @@ const SendParcel = ({ districts, userData }) => {
         };
 
         const rates = serviceRates[serviceType];
-        
+
         // Country-specific multipliers
         const countryMultipliers = {
           usa: 1.2,
@@ -102,11 +126,11 @@ const SendParcel = ({ districts, userData }) => {
         };
 
         const multiplier = countryMultipliers[destinationCountry] || countryMultipliers.other;
-        
+
         // Calculate base cost
         baseCost = rates.base + (Math.max(weight - 1, 0) * rates.perKg);
         baseCost *= multiplier;
-        
+
         // Parcel type surcharges
         const parcelSurcharges = {
           Electronics: 15,
@@ -118,11 +142,11 @@ const SendParcel = ({ districts, userData }) => {
         };
 
         baseCost += parcelSurcharges[internationalParcelType] || 0;
-        
+
         // Insurance (optional)
         const insurance = watch("insurance") === "yes" ? 20 : 0;
         baseCost += insurance;
-        
+
         // Round to 2 decimal places
         baseCost = Math.round(baseCost * 100) / 100;
       }
@@ -144,6 +168,78 @@ const SendParcel = ({ districts, userData }) => {
     }
   };
 
+  // Upload images with proper state management
+  const uploadImages = async (files) => {
+    setUploading(true);
+    const urls = [];
+    
+    try {
+      for (const file of files) {
+        // Validate file size (10MB limit)
+        if (file.size > 10 * 1024 * 1024) {
+          toast.error(`File ${file.name} is too large. Maximum size is 10MB.`);
+          continue;
+        }
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+          toast.error(`File ${file.name} is not an image.`);
+          continue;
+        }
+
+        const formData = new FormData();
+        formData.append("image", file);
+        
+        const res = await axios.post(
+          `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMAGE_UPLOAD_KEY}`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+            timeout: 30000, // 30 seconds timeout
+          }
+        );
+        
+        if (res?.data?.data?.url) {
+          urls.push(res.data.data.url);
+        } else {
+          console.error('Upload failed for file:', file.name);
+          toast.error(`Failed to upload ${file.name}`);
+        }
+      }
+      
+      return urls;
+    } catch (error) {
+      console.error('Image upload error:', error);
+      toast.error('Failed to upload images. Please try again.');
+      return urls; // Return whatever URLs were successfully uploaded
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // Handle preview
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      setPreview(files.map((file) => URL.createObjectURL(file)));
+    }
+  };
+
+  const handleRemovePreview = (index) => {
+    const newPreview = [...preview];
+    URL.revokeObjectURL(newPreview[index]); // Clean up memory
+    newPreview.splice(index, 1);
+    setPreview(newPreview);
+    const dt = new DataTransfer();
+    const files = fileInputRef.current.files;
+    Array.from(files)
+      .filter((_, i) => i !== index)
+      .forEach((f) => dt.items.add(f));
+    fileInputRef.current.files = dt.files;
+  };
+
   const onSubmitDomestic = async (data) => {
     if (!session?.user && status === "unauthenticated") {
       alert("Please login to book a parcel");
@@ -157,11 +253,20 @@ const SendParcel = ({ districts, userData }) => {
 
     setIsSubmitting(true);
     try {
+      // Upload images first
+      const imageFiles = fileInputRef.current.files;
+      let imageUrls = [];
+      if (imageFiles.length > 0) {
+        imageUrls = await uploadImages(imageFiles);
+      }
+
       const parcelData = {
         ...data,
         pickupDistrict: pickupDistrictData.district,
         deliveryDistrict: deliveryDistrictData.district,
         shipmentType: "domestic",
+        parcelImages: imageUrls,
+        // usePoints: formData.usePoints || false,
       };
 
       console.log("Submitting domestic parcel:", parcelData);
@@ -215,11 +320,22 @@ const SendParcel = ({ districts, userData }) => {
         await saveUserDistrict();
         setShowModal(true);
         const data = await parcelRes.json();
-        setParcelId(data.parcelId);
+        setParcelId(data?.parcelId);
+        console.log(data?.parcelId)
         reset();
+        setPreview([]);
+        // show alert
+        Swal.fire({
+        icon: "success",
+        title: "Parcel booked!",
+        text: data.discountApplied
+          ? `You saved ৳${data.discountApplied} using ${data.pointsUsed} points!`
+          : "Your parcel booking was successful.",
+      });
       } else {
-        const errData = await parcelRes.json();
-        alert(errData.message || "Something went wrong");
+        const resultData = await parcelRes.json();
+        // toast.error(resultData.message || "Something went wrong");
+        Swal.fire({ icon: "error", title: "Failed", text: resultData.message || "Something went wrong" });
       }
     } catch (err) {
       console.error("Domestic submission error:", err);
@@ -253,12 +369,20 @@ const SendParcel = ({ districts, userData }) => {
 
     setIsSubmitting(true);
     try {
+      // Upload images first
+      const imageFiles = fileInputRef.current.files;
+      let imageUrls = [];
+      if (imageFiles.length > 0) {
+        imageUrls = await uploadImages(imageFiles);
+      }
+
       const parcelData = {
         ...data,
         pickupDistrict: pickupDistrictData.district,
         shipmentType: "international",
         cost: cost?.amount || 0,
-        currency: cost?.currency || "USD"
+        currency: cost?.currency || "USD",
+        parcelImages: imageUrls,
       };
 
       console.log("Submitting international parcel:", parcelData);
@@ -270,7 +394,7 @@ const SendParcel = ({ districts, userData }) => {
       const pickupRes = await fetch(
         `/api/geocode?address=${encodeURIComponent(pickupAddress)}`
       );
-      
+
       if (!pickupRes.ok) {
         const errorText = await pickupRes.text();
         console.error("Geocode API error:", errorText);
@@ -321,9 +445,10 @@ const SendParcel = ({ districts, userData }) => {
         await saveUserDistrict();
         setShowModal(true);
         setParcelId(responseData.parcelId);
-        
+
         // Reset form
         reset();
+        setPreview([]); // Clear preview after successful submission
         // Reset international specific fields
         setValue("destinationCountry", "");
         setValue("internationalWeight", "");
@@ -339,7 +464,7 @@ const SendParcel = ({ districts, userData }) => {
         setValue("contentsDescription", "");
         setValue("customsValue", "");
         setValue("insurance", "");
-        
+
       } else {
         throw new Error(responseData.message || "Failed to submit international parcel");
       }
@@ -366,6 +491,21 @@ const SendParcel = ({ districts, userData }) => {
 
   return (
     <>
+      <FirstBookingBanner userEmail={userData?.email} />
+      {/* ✅ Full Screen Loading Overlay */}
+      {isSubmitting && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-2xl flex flex-col items-center gap-4">
+            <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+              Submitting your parcel...
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+              Please wait while we process your request
+            </p>
+          </div>
+        </div>
+      )}
       {/* Success Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
@@ -384,11 +524,11 @@ const SendParcel = ({ districts, userData }) => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                onClick={() => router.push("/user-dashboard/my-bookings")}
+                onClick={() => router.push("/dashboard/user/my-bookings")}
                 className="flex-1 rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)]
                  text-white font-medium py-3 transition-colors"
               >
-                See Your Booking
+                My Bookings
               </button>
               <button
                 onClick={() =>
@@ -409,7 +549,7 @@ const SendParcel = ({ districts, userData }) => {
 
       {/* Main Container */}
       <div
-        className="min-h-screen my-16 flex justify-center items-center p-4
+        className="min-h-screen my-12 flex justify-center items-center p-4
          text-[var(--color-text)] dark:text-[var(--color-text-dark)]"
       >
         <div
@@ -428,21 +568,19 @@ const SendParcel = ({ districts, userData }) => {
           <div className="flex border-b border-gray-200 dark:border-gray-700 mb-8">
             <button
               onClick={() => handleTabChange("domestic")}
-              className={`py-3 px-6 font-medium text-lg transition-colors ${
-                activeTab === "domestic"
+              className={`py-3 px-6 font-medium text-lg transition-colors ${activeTab === "domestic"
                   ? "border-b-2 border-[var(--color-primary)] text-[var(--color-primary)]"
                   : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-              }`}
+                }`}
             >
               🇧🇩 Domestic
             </button>
             <button
               onClick={() => handleTabChange("overseas")}
-              className={`py-3 px-6 font-medium text-lg transition-colors ${
-                activeTab === "overseas"
+              className={`py-3 px-6 font-medium text-lg transition-colors ${activeTab === "overseas"
                   ? "border-b-2 border-[var(--color-primary)] text-[var(--color-primary)]"
                   : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-              }`}
+                }`}
             >
               🌍 International
             </button>
@@ -450,7 +588,7 @@ const SendParcel = ({ districts, userData }) => {
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-10"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-8"
           >
             {/* Left Column - Common Fields */}
             <div className="space-y-4">
@@ -513,6 +651,16 @@ const SendParcel = ({ districts, userData }) => {
                     register={register("special")}
                     placeholder="Any specific instructions for the delivery person..."
                   />
+                  <div className="">
+                    <FileInputField
+                      label="Upload Parcel Images (Multiple)"
+                      fileInputRef={fileInputRef}
+                      uploading={uploading}
+                      preview={preview}
+                      handleFileChange={handleFileChange}
+                      handleRemovePreview={handleRemovePreview}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -603,7 +751,7 @@ const SendParcel = ({ districts, userData }) => {
                           { value: "other", label: "🌍 Other Country" },
                         ]}
                       />
-                      
+
                       <div className="grid grid-cols-2 gap-4">
                         <SelectField
                           label="Service Type *"
@@ -652,11 +800,12 @@ const SendParcel = ({ districts, userData }) => {
                         type="number"
                         step="0.01"
                         placeholder="0.00"
-                        register={register("customsValue", { 
+                        register={register("customsValue", {
                           required: true,
-                          valueAsNumber: true 
+                          valueAsNumber: true
                         })}
                       />
+                    
 
                       <div className="flex items-center space-x-3 p-3 bg-white dark:bg-gray-800 rounded-lg border">
                         <input
@@ -682,7 +831,7 @@ const SendParcel = ({ districts, userData }) => {
                         register={register("receiverName", { required: true })}
                         placeholder="As per official ID"
                       />
-                      
+
                       <div className="grid grid-cols-2 gap-4">
                         <InputField
                           label="Phone Number *"
@@ -721,17 +870,38 @@ const SendParcel = ({ districts, userData }) => {
                     </div>
                   </div>
                 </>
+                
               )}
             </div>
+
+            {/* Points Discount Option (only for domestic) */}
+            {/* activeTab === "domestic" && userData?.points > 0 && */}
+{ activeTab === "domestic" && userData?.points > 0 && (
+  <div className="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-lg border border-yellow-300 dark:border-yellow-700">
+    <h4 className="font-semibold text-yellow-700 dark:text-yellow-300 mb-2">
+      🎁 You have {userData?.points} reward points!
+    </h4>
+    <div className="flex items-center space-x-3">
+      <input
+        type="checkbox"
+        {...register("usePoints")}
+        id="usePoints"
+        className="w-5 h-5 accent-yellow-500"
+      />
+      <label htmlFor="usePoints" className="text-sm text-gray-700 dark:text-gray-300">
+        Use my points to get up to {Math.min(userData?.points, 100)}% off delivery charge.
+      </label>
+    </div>
+  </div>
+)}
 
             {/* Cost Display and Submit Button */}
             {cost !== null && cost.amount > 0 && (
               <div className="lg:col-span-2 mt-4">
-                <div className={`p-4 rounded-lg border ${
-                  cost.currency === "USD" 
+                <div className={`p-4 rounded-lg border ${cost.currency === "USD"
                     ? "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800"
                     : "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
-                }`}>
+                  }`}>
                   <div className="flex justify-between items-center">
                     <div>
                       <h3 className="font-semibold text-lg">
@@ -757,7 +927,8 @@ const SendParcel = ({ districts, userData }) => {
               </div>
             )}
 
-            <div className="lg:col-span-2">
+            {/* Submit */}
+            <div className="lg:col-span-2 mt-6">
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -783,7 +954,7 @@ const SendParcel = ({ districts, userData }) => {
   );
 };
 
-// Helper Components (same as before)
+// Helper Components
 const InputField = ({ label, register, type = "text", defaultValue, readOnly, placeholder = "" }) => (
   <div>
     <label className="block mb-2 font-medium text-gray-700 dark:text-gray-300">{label}</label>
@@ -815,9 +986,7 @@ const SelectField = ({ label, register, options = [], disabled = false }) => (
       <option value="">Select {label}</option>
       {options.map((opt) =>
         typeof opt === "object" ? (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
+          <option key={opt.value} value={opt.value}>{opt.label}</option>
         ) : (
           <option key={opt} value={opt}>
             {opt}
@@ -840,6 +1009,111 @@ const TextAreaField = ({ label, register, placeholder = "" }) => (
                  transition-colors duration-200 resize-none"
       rows={3}
     />
+  </div>
+);
+
+// Updated FileInputField Component
+const FileInputField = ({ 
+  label, 
+  fileInputRef, 
+  uploading, 
+  preview = [], 
+  handleFileChange, 
+  handleRemovePreview 
+}) => (
+  <div className="flex flex-col gap-3">
+    <label className="block font-medium text-gray-700 dark:text-gray-300">
+      {label}
+    </label>
+
+    {/* Drag & Drop Area */}
+    <div
+      onClick={() => !uploading && fileInputRef.current?.click()}
+      className={`relative flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-8 cursor-pointer transition-all duration-200 ${
+        uploading 
+          ? 'border-gray-300 bg-gray-100 dark:border-gray-600 dark:bg-gray-700 cursor-not-allowed' 
+          : 'border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500 bg-white dark:bg-gray-800'
+      }`}
+    >
+      {uploading ? (
+        <div className="flex flex-col items-center gap-2">
+          <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
+            Uploading images...
+          </p>
+        </div>
+      ) : (
+        <>
+          <FiUploadCloud className="text-3xl text-blue-500 mb-3" />
+          <p className="text-sm text-gray-600 dark:text-gray-300 text-center mb-2">
+            <span className="text-blue-600 dark:text-blue-400 font-medium">Click to upload</span> or drag and drop
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+            PNG, JPG, JPEG up to 10MB each
+          </p>
+        </>
+      )}
+    </div>
+
+    {/* Hidden Input */}
+    <input
+      type="file"
+      accept="image/*"
+      multiple
+      ref={fileInputRef}
+      onChange={handleFileChange}
+      className="hidden"
+      disabled={uploading}
+    />
+
+    {/* Preview Images */}
+    {preview.length > 0 && (
+      <div className="mt-4">
+        <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+          Selected Images ({preview.length})
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {preview.map((src, index) => (
+            <div 
+              key={index} 
+              className="relative group aspect-square rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"
+            >
+              <img 
+                src={src} 
+                alt={`Preview ${index + 1}`} 
+                className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105" 
+              />
+              
+              {/* Remove Button */}
+              <button 
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemovePreview(index);
+                }}
+                disabled={uploading}
+                className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <FiTrash2 size={14} />
+              </button>
+              
+              {/* Image Number Badge */}
+              <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full">
+                {index + 1}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {/* Upload Status */}
+    {uploading && (
+      <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 text-sm mt-2">
+        <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        Processing images... Please wait
+      </div>
+    )}
   </div>
 );
 

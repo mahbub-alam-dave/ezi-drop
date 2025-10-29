@@ -1,4 +1,3 @@
-// src/components/NotificationPanel.jsx
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -78,7 +77,7 @@ export default function NotificationPanel({ userId, onUnseenChange }) {
   if (!userId) return null;
 
   return (
-    <div className="relative" ref={panelRef}>
+    <div className="" ref={panelRef}>
       {/* Notification Icon */}
       <button
         onClick={() => setIsOpen(!isOpen)}

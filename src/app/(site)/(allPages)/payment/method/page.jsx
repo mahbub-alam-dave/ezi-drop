@@ -89,7 +89,7 @@ const handlePayment = async (e) => {
 };
 
   return (
-    <div className="flex justify-center items-center py-10 background-color">
+    <div className="flex min-h-[40vh] justify-center items-center py-10 background-color">
       <form
         onSubmit={handlePayment}
         className="background-color p-6 rounded-lg shadow-md w-full max-w-md border border-[var(--color-border)]"

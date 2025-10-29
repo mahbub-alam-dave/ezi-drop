@@ -12,12 +12,14 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { showErrorAlert, showSuccessAlert } from "@/utility/alerts";
 
 export default function IncomingParcels() {
   const [parcels, setParcels] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const [riderAssigned, setRiderAssigned] = useState(false)
 
   // ✅ Fetch incoming parcels
   useEffect(() => {
@@ -57,16 +59,18 @@ export default function IncomingParcels() {
   // ✅ Assign rider handler
   const handleAssignRider = async (parcelId) => {
     try {
-      const res = await fetch(`/api/assign-rider/${parcelId}`, { method: "POST" });
+      const res = await fetch(`/api/transfers/assign-rider/${parcelId}`, { method: "PATCH" });
       if (!res.ok) throw new Error("Failed to assign rider");
-      alert("Rider assigned successfully!");
+      showSuccessAlert("Rider Assigned", data.message || "Rider assigned successfully!");
+      setRiderAssigned(true)
     } catch (err) {
       console.error(err);
+      showErrorAlert("Assignment Failed", err.message || "Something went wrong.");
     }
   };
 
   return (
-    <div className="space-y-4 pt-8">
+    <div className="space-y-4 pt-8 p-6">
       <h2 className="text-xl font-semibold">Incoming Parcels</h2>
 
       {/* Filters */}
@@ -75,13 +79,13 @@ export default function IncomingParcels() {
           placeholder="Search by Parcel ID..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="max-w-sm"
+          className="max-w-sm border border-color"
         />
 
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="border rounded-md px-3 py-2"
+          className="border rounded-md px-3 py-2 border-color"
         >
           <option value="all">All</option>
           <option value="dispatched">Dispatched</option>
@@ -92,9 +96,9 @@ export default function IncomingParcels() {
       </div>
 
       {/* Table */}
-      <div className="border rounded-md">
+      <div className="border rounded-md border-color">
         <Table>
-          <TableHeader>
+          <TableHeader className="text-color">
             <TableRow>
               <TableHead>Parcel ID</TableHead>
               <TableHead>From</TableHead>
@@ -134,13 +138,19 @@ export default function IncomingParcels() {
                       {new Date(parcel.createdAt).toLocaleString()}
                     </TableCell>
                     <TableCell>
-                      <Button
+                      {
+                        riderAssigned === true ?
+                        <span>Rider assigned</span>
+                        :
+                        <Button
                         onClick={() => handleAssignRider(parcel.parcelId)}
                         disabled={!readyToAssign}
                         className="text-sm"
                       >
                         {readyToAssign ? "Assign Rider" : "Waiting..."}
                       </Button>
+                      }
+                      
                     </TableCell>
                   </TableRow>
                 );

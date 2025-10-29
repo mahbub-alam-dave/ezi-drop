@@ -1,4 +1,5 @@
 import { dbConnect } from "@/lib/dbConnect";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 // helper function to generate unique parcelId
@@ -27,12 +28,6 @@ function calculateCost(parcelData) {
   return baseCost;
 }
 
-/* async function getDistrictId(districtName) {
-  const district = await dbConnect("districts").findOne({
-    district: { $regex: `^${districtName}$`, $options: "i" }, // "i" = ignore case
-  });
-  return district ? district.districtId : null;
-} */
 
 // Get Data
 export async function GET() {
@@ -52,18 +47,46 @@ export async function POST(request) {
   try {
     const body = await request.json(); // form data
     const collection = dbConnect("parcels");
+    const session = await getServerSession()
 
-/*     const [senderDistrictId, receiverDistrictId] = await Promise.all([
-      getDistrictId(body.pickupDistrict),
-      getDistrictId(body.deliveryDistrict),
-    ]); */
+    const users = dbConnect("users");
 
-    const amount = calculateCost(body);
+    const user = await users.findOne({ email: session?.user?.email });
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
+
+
+    let amount = calculateCost(body);
+    let discountApplied = 0;
+    let pointsUsed = 0;
+
+    // Step 2️⃣ Apply points discount only for domestic service
+    if (body.shipmentType === "domestic" && body.usePoints === true) {
+      const userPoints = user.points || 0;
+
+      if (userPoints > 0) {
+        // each point = 1% discount, capped at 100%
+        const discountPercent = Math.min(userPoints, 100);
+        discountApplied = (amount * discountPercent) / 100;
+        amount = amount - discountApplied;
+
+        // Deduct only points used (1 point per 1% discount)
+        pointsUsed = discountPercent;
+
+        await users.updateOne(
+          { email: session?.user?.email },
+          { $inc: { points: -pointsUsed } }
+        );
+      }
+    }
 
     const newParcel = {
       ...body,
       payment: "not_paid",
       amount,
+      discountApplied,
+      pointsUsed,
       currency: "bdt",
       status: "not_picked",
       parcelId: generateParcelId(), // unique parcel ID
@@ -76,6 +99,9 @@ export async function POST(request) {
         message: "Parcel saved successfully",
         id: result.insertedId,
         parcelId: newParcel.parcelId, // return generated ID
+        amount,
+        discountApplied,
+        pointsUsed,
       },
       { status: 201 }
     );

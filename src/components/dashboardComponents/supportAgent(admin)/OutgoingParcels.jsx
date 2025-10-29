@@ -13,6 +13,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { showErrorAlert, showSuccessAlert } from "@/utility/alerts";
 
 export default function OutgoingParcels({ admin }) {
   const [parcels, setParcels] = useState([]);
@@ -67,14 +68,17 @@ export default function OutgoingParcels({ admin }) {
       });
       if (res.ok) {
         await fetchParcels();
+        showSuccessAlert("Parcel dispatched", data.message || "Parcel successfully dispatched for the destinaton wirehouse");
+
       }
     } catch (err) {
       console.error("Error dispatching parcel:", err);
+      showErrorAlert("Dispatched failed" || "Failed to dispatch the parcel to the destination wirehouse")
     }
   }
 
   return (
-    <div className="pt-8 space-y-4">
+    <div className="pt-8 space-y-4 p-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <h2 className="text-xl font-semibold">🚚 Outgoing Parcels</h2>
         <div className="flex gap-2">

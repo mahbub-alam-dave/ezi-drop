@@ -18,7 +18,8 @@ export async function handlePostPaymentFunctionality(parcelId) {
     const otpHash = hashOtp(otp);
     const otpExpiry = new Date(Date.now() + 24 * 3600 * 1000);
 
-    let warehouse = null;
+    let pickupWarehouse = null;
+    let deliverWarehouse = null;
     let assignedRider = null;
 
     if (parcel.pickupDistrictId === parcel.deliveryDistrictId) {
@@ -27,7 +28,9 @@ export async function handlePostPaymentFunctionality(parcelId) {
     } else {
       // cross-district
       assignedRider = await assignRiderToWarehouse(parcel);
-      warehouse = await dbConnect("wirehouses").findOne({ wirehouseId: parcel.pickupDistrictId });
+      // warehouse = await dbConnect("wirehouses").findOne({ wirehouseId: parcel.pickupDistrictId });
+      pickupWarehouse = await dbConnect("wirehouses").findOne({ wirehouseId: parcel.pickupDistrictId });
+      deliverWarehouse = await dbConnect("wirehouses").findOne({ wirehouseId: parcel.deliveryDistrictId });
     }
 
     if (!assignedRider) {
@@ -41,7 +44,9 @@ export async function handlePostPaymentFunctionality(parcelId) {
         $set: {
           secretCodeHash: otpHash,
           secretCodeExpiresAt: otpExpiry,
-          wirehouseAddress: warehouse?.address || "",
+          // wirehouseAddress: warehouse?.address || "",
+          pickupDistrictWarehouse: {location: pickupWarehouse?.address || "", lon: pickupWarehouse?.coords[0] || "", lat: pickupWarehouse?.coords[1] || ""},
+          deliveryDistrictWarehouse: {location: deliverWarehouse?.address || "", lon: deliverWarehouse?.coords[0] || "", lat: deliverWarehouse?.coords[1] || ""},
           updatedAt: new Date(),
         },
         $push: {

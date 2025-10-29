@@ -24,7 +24,7 @@ export default function ManageProfile({ userData, allDistricts }) {
 
   const role = userData.role;
   // const allDistricts = [];
-
+console.log(userDetails)
  /*  useEffect(() => {
     async function fetchDistricts() {
       setIsLoading(true);
@@ -709,7 +709,7 @@ export default function ManageProfile({ userData, allDistricts }) {
   };
 
   return (
-    <div className="min-h-screen background-color text-color p-2 md:p-4">
+    <div className="min-h-screen background-color text-color p-6">
       <div className="w-full pt-8">  {/* max-w-7xl mx-auto */}
         {/* Header Section */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">

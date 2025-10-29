@@ -109,127 +109,131 @@ export default function Faq() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 py-16 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-7xl mx-auto">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
-        >
-          <div className="inline-flex items-center justify-center p-2 bg-blue-100 rounded-full mb-4">
-            <span className="text-blue-600 text-sm font-semibold uppercase tracking-wide px-2">
-              FAQs
-            </span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            Frequently Asked Questions
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Everything you need to know about Ezi Courier services. Can't find what you're looking for? 
-            Contact our friendly team.
-          </p>
-        </motion.div>
+  
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Lottie Animation Section */}
-          <div className="flex items-center justify-center">
-            {modifiedAnimation ? (
-              <Lottie 
-                animationData={modifiedAnimation} 
-                loop={true}
-                autoplay={true}
-                lottieRef={lottieRef}
-                className="w-full max-w-md"
-              />
-            ) : (
-              <div className="w-full h-64 flex items-center justify-center">
-                <div className="animate-pulse bg-gray-200 rounded-lg w-full h-full"></div>
-              </div>
-            )}
-          </div>
-
-          {/* FAQ Items */}
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                className={`bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all cursor-pointer border border-gray-100 dark:border-slate-700 ${
-                  openIndex === index ? 'ring-2 ring-blue-500 shadow-lg' : ''
-                }`}
-                onClick={() => handleToggle(index)}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start space-x-4">
-                    <div className="text-2xl mt-1">{faq.icon}</div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white pr-4">
-                      {faq.question}
-                    </h3>
-                  </div>
-                  <motion.div
-                    animate={{ rotate: openIndex === index ? 180 : 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-blue-100 text-blue-600"
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </motion.div>
-                </div>
-                <AnimatePresence>
-                  {openIndex === index && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ 
-                        height: "auto", 
-                        opacity: 1,
-                        transition: {
-                          height: {
-                            duration: 0.3
-                          },
-                          opacity: {
-                            duration: 0.4,
-                            delay: 0.1
-                          }
-                        }
-                      }}
-                      exit={{ 
-                        height: 0, 
-                        opacity: 0,
-                        transition: {
-                          height: {
-                            duration: 0.2
-                          },
-                          opacity: {
-                            duration: 0.2
-                          }
-                        }
-                      }}
-                      className="overflow-hidden"
-                    >
-                      <p className="text-gray-600 dark:text-gray-300 mt-4 pl-10">
-                        {faq.answer}
-                      </p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* Support Section */}
-        <motion.div 
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.5, delay: 0.5 }}
-  className="mt-16"
+<div>
+  <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden"
+     style={{
+       background: "linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(14,165,233,0.08) 100%)"
+     }}
 >
-</motion.div>
+  <div className="w-full max-w-7xl mx-auto">
+    {/* Heading */}
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="text-center mb-16"
+    >
+      <div className="inline-flex items-center justify-center p-2 bg-gradient-to-r from-indigo-100 via-purple-100 to-cyan-100 rounded-full mb-4">
+        <span className="text-indigo-600 font-semibold text-sm uppercase tracking-wide px-2">
+          FAQs
+        </span>
+      </div>
+      <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
+        Frequently Asked Questions
+      </h1>
+      <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+        Everything you need to know about Ezi Courier services. Can't find what you're looking for? 
+        Contact our friendly team.
+      </p>
+    </motion.div>
+
+    {/* Grid */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Lottie Animation */}
+      <div className="flex items-center justify-center">
+        {modifiedAnimation ? (
+          <Lottie 
+            animationData={modifiedAnimation} 
+            loop={true}
+            autoplay={true}
+            lottieRef={lottieRef}
+            className="w-full max-w-md"
+          />
+        ) : (
+          <div className="w-full h-64 flex items-center justify-center">
+            <div className="animate-pulse bg-gray-200 rounded-lg w-full h-full"></div>
+          </div>
+        )}
+      </div>
+
+      {/* FAQ Items */}
+      <div className="space-y-4">
+        {faqs.map((faq, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.1 }}
+            onClick={() => handleToggle(index)}
+            className={`
+              bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all cursor-pointer border border-gray-100 dark:border-slate-700
+              ${openIndex === index ? 'ring-2 ring-indigo-500 shadow-xl' : ''}
+            `}
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-start space-x-4">
+                <div className="text-2xl mt-1 text-indigo-500">{faq.icon}</div>
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white pr-4">
+                  {faq.question}
+                </h3>
+              </div>
+              <motion.div
+                animate={{ rotate: openIndex === index ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
+                className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-200 via-purple-200 to-cyan-200 text-indigo-600"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </motion.div>
+            </div>
+
+            <AnimatePresence>
+              {openIndex === index && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ 
+                    height: "auto", 
+                    opacity: 1,
+                    transition: {
+                      height: { duration: 0.3 },
+                      opacity: { duration: 0.4, delay: 0.1 }
+                    }
+                  }}
+                  exit={{ 
+                    height: 0, 
+                    opacity: 0,
+                    transition: {
+                      height: { duration: 0.2 },
+                      opacity: { duration: 0.2 }
+                    }
+                  }}
+                  className="overflow-hidden"
+                >
+                  <p className="text-slate-600 dark:text-slate-300 mt-4 pl-10">
+                    {faq.answer}
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        ))}
       </div>
     </div>
+
+    {/* Optional Support Section Placeholder */}
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.5 }}
+      className="mt-16"
+    >
+    </motion.div>
+  </div>
+</div>
+</div>
+
   );
 }
