@@ -5,6 +5,7 @@ import { handlePostPaymentFunctionality } from "@/lib/postPaymentHandler";
 import { generateTrackingNumber } from "@/utility/trackingId";
 import { createNotification } from "@/utility/notificationUtils";
 import { getServerSession } from "next-auth";
+import { calculateEarnings } from "@/lib/earningCalculation";
 
 export async function POST(request) {
   let parcelId = ""; // Initialize outside try block for wider scope
@@ -36,6 +37,7 @@ export async function POST(request) {
 
     // 4. Update Parcel Status in Database
     // Replace this with your actual database update logic (e.g., Prisma, Mongoose, SQL)
+    const earnings = await calculateEarnings(parcelId);
     await dbConnect("parcels").updateOne(
       { parcelId },
       {
@@ -43,6 +45,7 @@ export async function POST(request) {
           payment: "done",
           transactionId: tran_id,
           trackingId,
+          earnings,
           paymentDate: new Date(),
         },
       }
