@@ -156,7 +156,7 @@ export default function RiderOverviewPage() {
 import { useState, useEffect } from "react";
 import { Package, CheckCircle, Clock, DollarSign, TrendingUp, Star, MapPin } from "lucide-react";
 
-export default function ImprovedRiderOverview() {
+export default function RiderOverview() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
