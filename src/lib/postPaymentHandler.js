@@ -18,7 +18,8 @@ export async function handlePostPaymentFunctionality(parcelId) {
     const otpHash = hashOtp(otp);
     const otpExpiry = new Date(Date.now() + 24 * 3600 * 1000);
 
-    let warehouse = null;
+    let pickupWarehouse = null;
+    let deliverWarehouse = null;
     let assignedRider = null;
 
     if (parcel.pickupDistrictId === parcel.deliveryDistrictId) {

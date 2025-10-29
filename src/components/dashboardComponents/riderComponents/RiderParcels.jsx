@@ -16,13 +16,12 @@ export default function RiderParcels() {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
   // modal
-   const [isOpen, setIsOpen] = useState(false);
-   const [secretCode, setSecretCode] = useState("");
-   const [parcelId, setParcelId] = useState(null);
-   const [error, setError] = useState("")
-   const [success, setSuccess] = useState("");
-
-   const [selectedParcel, setSelectedParcel] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [secretCode, setSecretCode] = useState("");
+  const [parcelId, setParcelId] = useState(null);
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("");
+  const [selectedParcel, setSelectedParcel] = useState(null);
 
 
   // const riderId = "currentRiderId"; // replace with logged-in rider _id
@@ -35,7 +34,7 @@ export default function RiderParcels() {
   async function fetchData() {
     try {
       setLoading(true);
-      const res = await fetch(`/api/riders/${riderId}/parcels?status=${filter}`);
+      const res = await fetch(`/api/riders/my-parcels?status=${filter}`);
       const data = await res.json();
       setNewOrders(data.newOrders || []);
       setParcels(data.parcels || []);
@@ -162,7 +161,7 @@ async function handleReject(parcelId) {
                   <Button onClick={() => handleReject(parcel._id)} className="border-color w-full">
                     Reject
                   </Button>
-                  <Button onClick={() => setSelectedParcel(parcel)}>Get AI Route</Button>
+                  
                 </div>
               </div>
             ))}
@@ -222,10 +221,10 @@ async function handleReject(parcelId) {
                   <td className="p-3">{parcel.amount} BDT</td>
                   <td className="p-3">
                     {parcel.riderApprovalStatus === "accepted" && parcel.status !== "completed" || parcel.status !== "at_local_warehouse" ? (
+                      <div className="flex gap-2 items-center">
                       <Button
                         size="sm"
                         className="background-color-primary text-gray-100"
-                        // onClick={() => handleComplete(parcel._id)}
                         onClick={() => {
                           setIsOpen(true)
                           setParcelId(parcel._id)
@@ -233,6 +232,8 @@ async function handleReject(parcelId) {
                       >
                         Complete Order
                       </Button>
+                      <Button size="sm" onClick={() => setSelectedParcel(parcel)}>Get AI Route</Button>
+                      </div>
                     ) : (
                       <span className="text-[var(--color-primary)] font-semibold">Completed</span>
                     )}

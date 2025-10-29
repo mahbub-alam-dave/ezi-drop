@@ -1,10 +1,13 @@
 "use client";
 import { useState } from "react";
-import { MapContainer, TileLayer, Polyline, Marker, Popup } from "react-leaflet";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import "leaflet/dist/leaflet.css";
-import polyline from "@mapbox/polyline";
+
+
+import dynamic from "next/dynamic";
+
+const RouteMap = dynamic(() => import("./RouteMap"), { ssr: false });
 
 export default function RouteSuggestionModal({ parcel, open, onClose }) {
   const [routeData, setRouteData] = useState(null);
@@ -34,6 +37,7 @@ export default function RouteSuggestionModal({ parcel, open, onClose }) {
     }
   }
 
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl">
@@ -50,7 +54,7 @@ export default function RouteSuggestionModal({ parcel, open, onClose }) {
         ) : (
           <div className="space-y-4">
             <div className="h-[400px] w-full rounded-xl overflow-hidden shadow-md">
-              <MapContainer
+             {/*  <MapContainer
                 center={[routeData.bestRoute.start.lat, routeData.bestRoute.start.lon]}
                 zoom={10}
                 className="h-full w-full"
@@ -69,7 +73,16 @@ export default function RouteSuggestionModal({ parcel, open, onClose }) {
                 <Marker position={[routeData.bestRoute.end.lat, routeData.bestRoute.end.lon]}>
                   <Popup>Destination</Popup>
                 </Marker>
-              </MapContainer>
+
+                <Polyline positions={path} pathOptions={{ color: "blue", weight: 5 }} />
+<HeatmapLayer
+  points={path.map(([lat, lon]) => ({ lat, lon, intensity: 0.7 }))}
+  longitudeExtractor={(m) => m.lon}
+  latitudeExtractor={(m) => m.lat}
+  intensityExtractor={(m) => m.intensity}
+/>
+              </MapContainer> */}
+              <RouteMap routeData={routeData} />
             </div>
 
             <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
