@@ -2,6 +2,7 @@ import Stripe from "stripe";
 import { dbConnect } from "@/lib/dbConnect";
 import { generateTrackingNumber } from "@/utility/trackingId";
 import { handlePostPaymentFunctionality } from "@/lib/postPaymentHandler";
+import { calculateEarnings } from "@/lib/earningCalculation";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2024-06-20",
@@ -41,6 +42,7 @@ export async function POST(req) {
       const transactionId = session.metadata?.transactionId;
 
       console.log("✅ Webhook received for parcel:", parcelId);
+      const earnings = await calculateEarnings(parcelId)
 
       const db = dbConnect("parcels");
       await db.updateOne(
