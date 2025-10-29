@@ -3,6 +3,7 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
 import React, { useState } from "react";
+import { WiDaySunny } from "react-icons/wi"; // import new icon
 import {
   FaUserCog,
   FaComments,
@@ -160,6 +161,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaUser className="inline-block mr-2" />
           Profile
         </Link>
+       
         <Link
           href="/dashboard/rider/riderChat"
           className={linkClass("/dashboard/rider/riderChat")}
@@ -167,6 +169,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaComments className="inline-block mr-2" />
           Chat
         </Link>
+        <Link
+      href="/dashboard/rider/status"
+      className={linkClass("/dashboard/rider/status")}
+    >
+      <WiDaySunny className="inline-block mr-2 text-yellow-400 text-xl" />
+      Weather Status
+    </Link>
       </>
     ),
     userLinks: (

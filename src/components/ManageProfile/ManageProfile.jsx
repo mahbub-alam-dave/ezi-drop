@@ -729,7 +729,7 @@ export default function ManageProfile({ userData, allDistricts }) {
           </div>
 
           <div className="flex items-center gap-3">
-            <div
+            {/* <div
               className={`px-4 py-2 rounded-full text-sm font-medium ${
                 data.status === "Active" || data.status === "On Duty"
                   ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
@@ -737,7 +737,7 @@ export default function ManageProfile({ userData, allDistricts }) {
               }`}
             >
               {data.status}
-            </div>
+            </div> */}
             <button
               onClick={openEditModal}
               className="background-color-primary text-white py-2 px-6 rounded-lg font-medium hover:opacity-90 transition-opacity"
