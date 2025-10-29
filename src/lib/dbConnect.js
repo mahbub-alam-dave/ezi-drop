@@ -8,6 +8,7 @@ export  const collectionNames = {
   riderReview: "riderReview",
   riderApplications: "rider-applications",
   performance: "performance",
+  notifications: "notifications",
 };
 
 export const dbConnect = (collectionName) => {

@@ -1,4 +1,3 @@
-// src/components/NotificationPanel.jsx
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";

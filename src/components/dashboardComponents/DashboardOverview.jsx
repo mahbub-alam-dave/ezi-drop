@@ -14,6 +14,7 @@ import RecentActivities from "./adminOverview/RecentActivities";
 import ServiceAreas from "./adminOverview/ServiceAreas";
 import TopCouriers from "./adminOverview/TopCouriers";
 import SupportsTicket from "./supportAgent(admin)/SupportsTicket";
+import TopPerformers from "./adminOverview/TopPerformers";
 
 
 function DashboardContent() {
@@ -48,7 +49,8 @@ function DashboardContent() {
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
         <RecentActivities />
-        <TopCouriers />
+        {/* <TopCouriers /> */}
+        <TopPerformers />
       </div>
       
       <ActionToolbar />

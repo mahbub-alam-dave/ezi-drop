@@ -1,3 +1,4 @@
+npx shadcn@latest add dialog
 
 admin
 {"_id":{"$oid":"68d657a7526dafde9f618cde"},"name":"Ezi Drop Admin","email":"ezidropadmin@gmail.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"admin","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1760018788607"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null}
@@ -27,6 +28,14 @@ supportAgent:
 
 {"name":"Anowar Hossain","email":"agentrangpur@ezidrop.com","password":"$2b$10$XW/QHHFe7TbqKA5cCT0c5e5OfFJiVVRW6xVsNT8F3Dhtdc29M5oy2","role":"district_admin","districtId":"ezi-drop-rangpur-01","district":"Rangpur","createdAt":{"$date":{"$numberLong":"1758632734086"}},"updatedAt":{"$date":{"$numberLong":"1759288919539"}},"providers":[{"provider":"credentials"}],"emailVerified":true,"failedLoginAttempts":{"$numberInt":"0"},"lockUntil":null}
 ]
+
+
+rider: 
+email: abulbashar.dhaka@ezidrop.com
+password: aaaaaa
+district_agent:
+email:agentkhulna@ezidrop.com
+password: aaaaaa
 
 
 rider:
@@ -161,3 +170,15 @@ completed
 in_transit_to_warehouse
 at_local_warehouse
 awaiting_pickup_from_warehouse
+
+
+collectionName: bookingHistory
+sample data: 
+{
+  bookingId: parcel._id,
+  userId: session.user.userId,
+  userEmail: session.user.email,
+  amount: parcel.amount,
+  paymentDate: parcel.updatedAt,
+  ...etc
+}

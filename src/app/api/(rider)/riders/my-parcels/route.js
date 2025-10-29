@@ -2,9 +2,13 @@
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { dbConnect } from "@/lib/dbConnect";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
 
 export async function GET(req, { params }) {
-  const { riderId } = params;
+  // const { riderId } = params;
+  const session = await getServerSession(authOptions)
+  const riderId = session?.user?.userId
   const { searchParams } = new URL(req.url);
   const status = searchParams.get("status"); // 'pending' or 'completed'
 

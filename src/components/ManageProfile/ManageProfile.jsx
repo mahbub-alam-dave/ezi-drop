@@ -24,7 +24,7 @@ export default function ManageProfile({ userData, allDistricts }) {
 
   const role = userData.role;
   // const allDistricts = [];
-
+console.log(userDetails)
  /*  useEffect(() => {
     async function fetchDistricts() {
       setIsLoading(true);
