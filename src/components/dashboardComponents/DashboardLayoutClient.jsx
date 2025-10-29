@@ -18,7 +18,7 @@ import {
   FaUserPlus,
   FaTachometerAlt,
   FaSearch,
-   FaCalendarAlt
+  FaCalendarAlt
 } from "react-icons/fa";
 import { FaChartLine } from "react-icons/fa";
 import { VscCommentUnresolved } from "react-icons/vsc";
@@ -49,10 +49,10 @@ const DashboardLayoutClient = ({ userData, children }) => {
     try {
       await signOut({ redirect: false });
       setShowLogoutModal(false);
-      
+
       // Show custom success modal
       setShowSuccessModal(true);
-      
+
       // Auto close success modal after 1.5 seconds
       setTimeout(() => {
         setShowSuccessModal(false);
@@ -86,7 +86,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaUsers className="inline-block mr-2" />
           Manage Users
         </Link>
-{/*         <Link href="/dashboard/admin/assign-riders" className={linkClass("/dashboard/admin/assign-riders")}>
+        {/*         <Link href="/dashboard/admin/assign-riders" className={linkClass("/dashboard/admin/assign-riders")}>
           <FaMotorcycle className="inline-block mr-2" />
           Assign Riders
         </Link> */}
@@ -105,6 +105,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
           Profile
         </Link>
         <Link
+          href="/dashboard/admin/AdminReviews"
+          className={linkClass("/dashboard/admin/AdminReviews")}
+        >
+          <FaUser className="inline-block mr-2" />
+          Admin Reviews
+        </Link>
+        <Link
           href="/dashboard/admin/manage-order"
           className={linkClass("/dashboard/admin/manage-order")}
         >
@@ -115,7 +122,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaComment className="inline-block mr-2" />
           Chat
         </Link>
-        
+
       </>
     ),
     riderLinks: (
@@ -135,18 +142,18 @@ const DashboardLayoutClient = ({ userData, children }) => {
           My Parcels
         </Link>
         <Link
-            href="/dashboard/rider/performance"
-            className={linkClass("/dashboard/rider/performance")}
-          >
-            <FaChartLine className="inline-block mr-2" />
-            Performance
-          </Link>
+          href="/dashboard/rider/performance"
+          className={linkClass("/dashboard/rider/performance")}
+        >
+          <FaChartLine className="inline-block mr-2" />
+          Performance
+        </Link>
 
-{/*         <Link href="/dashboard/order" className={linkClass("/dashboard/order")}>
+        {/*         <Link href="/dashboard/order" className={linkClass("/dashboard/order")}>
           <FaTruck className="inline-block mr-2" />
           Order
         </Link> */}
-{/*         <Link
+        {/*         <Link
           href="/dashboard/rider/delivery-history"
           className={linkClass("/dashboard/rider/delivery-history")}
         >
@@ -178,20 +185,20 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaTachometerAlt className="inline-block mr-2" />
           Overview
         </Link>
-{/*         <Link
+        {/*         <Link
           href="/dashboard/user/send-parcel"
           className={linkClass("/dashboard/user/send-parcel")}
         >
           <FaBox className="inline-block mr-2" />
           Send Parcel
         </Link> */}
-                <Link
-  href="/dashboard/user/my-bookings"
-  className={linkClass("/dashboard/user/my-bookings")}
->
-  <FaCalendarAlt className="inline-block mr-2" />
-  My Bookings
-</Link>
+        <Link
+          href="/dashboard/user/my-bookings"
+          className={linkClass("/dashboard/user/my-bookings")}
+        >
+          <FaCalendarAlt className="inline-block mr-2" />
+          My Bookings
+        </Link>
         {/* Track Parcel */}
         <Link
           href="/dashboard/user/track-parcel"
@@ -200,7 +207,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaSearch className="inline-block mr-2" />
           Track Parcel
         </Link>
-{/*         <Link
+        {/*         <Link
           href="/dashboard/user/orders-history"
           className={linkClass("/dashboard/user/orders-history")}
         >
@@ -221,26 +228,33 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaComments className="inline-block mr-2" />
           Chat
         </Link>
-                <Link
+        <Link
           href="/dashboard/user/resulation-center"
           className={linkClass("/dashboard/user/resulation-center")}
         >
           <VscCommentUnresolved className="inline-block mr-2" />
           Resulation Center
         </Link>
-                <Link
+        <Link
           href="/dashboard/user/profile"
           className={linkClass("/dashboard/user/profile")}
         >
           <FaUser className="inline-block mr-2" />
           Profile
         </Link>
-                <Link
+        <Link
           href="/dashboard/user/referral"
           className={linkClass("/dashboard/user/referral")}
         >
           <MdPersonAddAlt1 className="inline-block mr-2" />
           referral
+        </Link>
+        <Link
+          href="/dashboard/user/reviews"
+          className={linkClass("/dashboard/user/reviews")}
+        >
+          <MdPersonAddAlt1 className="inline-block mr-2" />
+          reviews
         </Link>
       </>
     ),
@@ -299,11 +313,11 @@ const DashboardLayoutClient = ({ userData, children }) => {
       {/* ---- Topbar / Mobile Nav ---- */}
       <header className=" lg:hidden fixed top-0 w-full z-50 bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] shadow-md">
         <div className="flex justify-between items-center p-4 h-[100px] ">
-                    <Link href={"/"}>
-                      <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 cursor-pointer">
-                        Ezi Drop
-                      </h1>
-                    </Link>
+          <Link href={"/"}>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 cursor-pointer">
+              Ezi Drop
+            </h1>
+          </Link>
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="text-2xl text-color focus:outline-none"
@@ -318,26 +332,26 @@ const DashboardLayoutClient = ({ userData, children }) => {
             {renderLinks}
             {/* Mobile Logout Button */}
             {status === "authenticated" && (
-                <button
-                  onClick={handleLogout}
-                  className="hidden mt-4 sm:flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-red-600 dark:text-red-400 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-950/30 dark:to-pink-950/30 hover:from-red-100 hover:to-pink-100 dark:hover:from-red-900/40 dark:hover:to-pink-900/40 border border-red-200 dark:border-red-800 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95 group"
+              <button
+                onClick={handleLogout}
+                className="hidden mt-4 sm:flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-red-600 dark:text-red-400 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-950/30 dark:to-pink-950/30 hover:from-red-100 hover:to-pink-100 dark:hover:from-red-900/40 dark:hover:to-pink-900/40 border border-red-200 dark:border-red-800 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95 group"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 group-hover:rotate-12 transition-transform duration-300"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 group-hover:rotate-12 transition-transform duration-300"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                    />
-                  </svg>
-                  Logout
-                </button>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  />
+                </svg>
+                Logout
+              </button>
             )}
           </nav>
         )}
@@ -349,35 +363,35 @@ const DashboardLayoutClient = ({ userData, children }) => {
                           bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]
                           p-6 lg:p-8 h-screen shadow-md"
       >
-                  <Link href={"/"}>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 cursor-pointer">
-              Ezi Drop
-            </h1>
-          </Link>
+        <Link href={"/"}>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 cursor-pointer">
+            Ezi Drop
+          </h1>
+        </Link>
         <nav className="space-y-3 flex flex-col mt-6">{renderLinks}</nav>
 
-        
+
         {status === "authenticated" && (
-                <button
-                  onClick={handleLogout}
-                  className="hidden w-full mt-4 sm:flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-red-600 dark:text-red-400 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-950/30 dark:to-pink-950/30 hover:from-red-100 hover:to-pink-100 dark:hover:from-red-900/40 dark:hover:to-pink-900/40 border border-red-200 dark:border-red-800 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95 group"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 group-hover:rotate-12 transition-transform duration-300"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                    />
-                  </svg>
-                  Logout
-                </button>
+          <button
+            onClick={handleLogout}
+            className="hidden w-full mt-4 sm:flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-red-600 dark:text-red-400 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-950/30 dark:to-pink-950/30 hover:from-red-100 hover:to-pink-100 dark:hover:from-red-900/40 dark:hover:to-pink-900/40 border border-red-200 dark:border-red-800 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95 group"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4 group-hover:rotate-12 transition-transform duration-300"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+              />
+            </svg>
+            Logout
+          </button>
         )}
         <div className="px-6 mt-4 flex flex-col gap-4 items-start">
           <ThemeToggle />
