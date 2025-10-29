@@ -126,10 +126,10 @@ export default function Footer() {
                     className="p-2 bg-[#3b5998] text-white rounded-full hover:bg-[#2d4373] transition-colors">
                     <FaFacebookF size={14} />
                   </a>
-                  <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
+                  {/* <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
                     className="p-2 bg-[#1da1f2] text-white rounded-full hover:bg-[#0d95e8] transition-colors">
                     <FaTwitter size={14} />
-                  </a>
+                  </a> */}
                   <a href="https://youtube.com" target="_blank" rel="noopener noreferrer"
                     className="p-2 bg-[#b50000] text-white rounded-full hover:bg-[#8a0000] transition-colors">
                     <FaYoutube size={14} />

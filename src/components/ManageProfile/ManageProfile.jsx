@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CiCamera } from "react-icons/ci";
+import RiderStatusInfo from "../RiderStatus/RiderStatus";
 
 export default function ManageProfile({ userData, allDistricts }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -24,7 +25,7 @@ export default function ManageProfile({ userData, allDistricts }) {
 
   const role = userData.role;
   // const allDistricts = [];
-
+console.log(userDetails)
  /*  useEffect(() => {
     async function fetchDistricts() {
       setIsLoading(true);
@@ -711,6 +712,7 @@ export default function ManageProfile({ userData, allDistricts }) {
   return (
     <div className="min-h-screen background-color text-color p-6">
       <div className="w-full pt-8">  {/* max-w-7xl mx-auto */}
+      
         {/* Header Section */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
           <div>
@@ -729,7 +731,7 @@ export default function ManageProfile({ userData, allDistricts }) {
           </div>
 
           <div className="flex items-center gap-3">
-            <div
+            {/* <div
               className={`px-4 py-2 rounded-full text-sm font-medium ${
                 data.status === "Active" || data.status === "On Duty"
                   ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
@@ -737,13 +739,14 @@ export default function ManageProfile({ userData, allDistricts }) {
               }`}
             >
               {data.status}
-            </div>
+            </div> */}
             <button
               onClick={openEditModal}
               className="background-color-primary text-white py-2 px-6 rounded-lg font-medium hover:opacity-90 transition-opacity"
             >
               Edit Profile
             </button>
+            <RiderStatusInfo  />
           </div>
         </div>
 

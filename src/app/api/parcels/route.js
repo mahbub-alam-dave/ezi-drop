@@ -84,6 +84,7 @@ export async function POST(request) {
     const newParcel = {
       ...body,
       payment: "not_paid",
+      baseAmount: amount,
       amount,
       discountApplied,
       pointsUsed,
