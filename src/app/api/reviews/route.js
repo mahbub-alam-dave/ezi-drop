@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { dbConnect, collectionNames } from "@/lib/dbConnect";
+import { ObjectId } from "mongodb";
 
 // POST: user adds review
 export async function POST(request) {
   try {
     const { userId, name, photo, rating, comment, type } = await request.json();
+
     if (!userId || !rating || !comment) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
@@ -19,7 +21,7 @@ export async function POST(request) {
       comment,
       date: new Date(),
       type,
-      status: "pending", // admin will approve
+      status: "pending",
     });
 
     return NextResponse.json({ success: true, message: "Review submitted" });
@@ -29,27 +31,22 @@ export async function POST(request) {
   }
 }
 
-// GET: admin fetch all reviews (optionally filter by status)
+// GET: fetch all reviews
 export async function GET(request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const status = searchParams.get("status"); // pending/accepted/rejected
-
     const reviewsCollection = dbConnect(collectionNames.reviews);
-    const filter = status ? { status } : {};
-    const reviews = await reviewsCollection.find(filter).toArray();
-
-    return NextResponse.json(reviews, { status: 200 });
+    const reviews = await reviewsCollection.find({}).toArray();
+    return NextResponse.json(reviews);
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Failed to fetch reviews" }, { status: 500 });
   }
 }
 
-// PATCH: admin update review status
+// PATCH: update review status
 export async function PATCH(request) {
   try {
-    const { id, action } = await request.json(); // action: accept / reject / delete
+    const { id, action } = await request.json();
     const reviewsCollection = dbConnect(collectionNames.reviews);
 
     if (action === "delete") {

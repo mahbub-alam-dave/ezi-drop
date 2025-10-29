@@ -13,19 +13,20 @@ export default function ReviewsPage() {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
 
-  // Fetch all reviews from API
+  const fetchReviews = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/reviews");
+      const data = await res.json();
+      setReviews(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const res = await fetch("/api/reviews");
-        const data = await res.json();
-        setReviews(data);
-      } catch (err) {
-        console.error("Failed to load reviews", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchReviews();
   }, []);
 
@@ -36,18 +37,18 @@ export default function ReviewsPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!session?.user) {
       Swal.fire("Login Required", "Please login to add a review", "warning");
       return;
     }
 
     const newReview = {
-      userId: session.user.id,
+      userId: session.user.email,
       name: session.user.name,
       photo: session.user.image,
       rating,
       comment,
-      date: new Date(),
       type: "project",
     };
 
@@ -66,7 +67,7 @@ export default function ReviewsPage() {
         setComment("");
         setRating(0);
       } else {
-        Swal.fire("Notice", data.message || "Failed to add review", "info");
+        Swal.fire("Error", data.error || "Failed to add review", "error");
       }
     } catch (err) {
       console.error(err);
@@ -82,10 +83,8 @@ export default function ReviewsPage() {
     );
 
   return (
-    <div className="max-w-3xl mx-auto py-10 px-4 space-y-10 bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]">
-      <h2 className="text-3xl font-bold text-center text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
-        Project Reviews
-      </h2>
+    <div className="max-w-3xl mx-auto py-10 px-4 space-y-10 bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
+      <h2 className="text-3xl font-bold text-center">Project Reviews</h2>
 
       {/* Average Rating */}
       <div className="text-center border border-[var(--color-border)] p-6 rounded-2xl bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]">
@@ -97,20 +96,22 @@ export default function ReviewsPage() {
             <Star
               key={i}
               className={`w-5 h-5 ${
-                i < Math.round(avgRating) ? "text-yellow-400" : "text-gray-600"
+                i < Math.round(avgRating) ? "text-yellow-400" : "text-gray-400"
               }`}
               fill={i < Math.round(avgRating) ? "currentColor" : "none"}
             />
           ))}
         </div>
-        <p className="font-semibold text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
-          {avgRating} / 5 ({reviews.length} Reviews)
-        </p>
+        <p className="font-semibold">{avgRating} / 5 ({reviews.length} Reviews)</p>
       </div>
 
       {/* All Reviews */}
-      <div className="space-y-4">
-        {reviews.length > 0 ? (
+      {/* <div className="space-y-4">
+        {reviews.length === 0 ? (
+          <p className="text-center text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)]">
+            No reviews yet.
+          </p>
+        ) : (
           reviews.map((rev, i) => (
             <div
               key={i}
@@ -123,9 +124,7 @@ export default function ReviewsPage() {
                   className="w-10 h-10 rounded-full"
                 />
                 <div>
-                  <h4 className="font-semibold text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
-                    {rev.name}
-                  </h4>
+                  <p className="font-semibold text-[var(--color-text)] dark:text-[var(--color-text-dark)]">{rev.name}</p>
                   <p className="text-xs text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)]">
                     {new Date(rev.date).toLocaleDateString()}
                   </p>
@@ -135,9 +134,7 @@ export default function ReviewsPage() {
                 {[...Array(5)].map((_, j) => (
                   <Star
                     key={j}
-                    className={`w-4 h-4 ${
-                      j < rev.rating ? "text-yellow-400" : "text-gray-600"
-                    }`}
+                    className={`w-4 h-4 ${j < rev.rating ? "text-yellow-400" : "text-gray-400"}`}
                     fill={j < rev.rating ? "currentColor" : "none"}
                   />
                 ))}
@@ -147,12 +144,8 @@ export default function ReviewsPage() {
               </p>
             </div>
           ))
-        ) : (
-          <p className="text-center text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)]">
-            No reviews yet.
-          </p>
         )}
-      </div>
+      </div> */}
 
       {/* Add Review Form */}
       <div className="p-6 border border-[var(--color-border)] rounded-2xl bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] space-y-4">
@@ -164,9 +157,7 @@ export default function ReviewsPage() {
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
-                className={`w-6 h-6 cursor-pointer ${
-                  i < rating ? "text-yellow-400" : "text-gray-400"
-                }`}
+                className={`w-6 h-6 cursor-pointer ${i < rating ? "text-yellow-400" : "text-gray-400"}`}
                 fill={i < rating ? "currentColor" : "none"}
                 onClick={() => setRating(i + 1)}
               />

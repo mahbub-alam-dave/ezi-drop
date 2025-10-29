@@ -25,6 +25,7 @@ import { FaChartLine } from "react-icons/fa";
 import { VscCommentUnresolved } from "react-icons/vsc";
 import ThemeToggle from "../sharedComponents/navbar/Toggle";
 import { MdPersonAddAlt1 } from "react-icons/md";
+import { MessageSquare, ShieldCheck } from "lucide-react";
 
 const DashboardLayoutClient = ({ userData, children }) => {
   const pathname = usePathname();
@@ -109,7 +110,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
           href="/dashboard/admin/AdminReviews"
           className={linkClass("/dashboard/admin/AdminReviews")}
         >
-          <FaUser className="inline-block mr-2" />
+          <ShieldCheck className="inline-block mr-2" />
           Admin Reviews
         </Link>
         <Link
@@ -262,7 +263,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
           href="/dashboard/user/reviews"
           className={linkClass("/dashboard/user/reviews")}
         >
-          <MdPersonAddAlt1 className="inline-block mr-2" />
+          <MessageSquare className="inline-block mr-2" />
           reviews
         </Link>
       </>
