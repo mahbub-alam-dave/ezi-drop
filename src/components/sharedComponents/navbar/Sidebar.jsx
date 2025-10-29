@@ -67,7 +67,7 @@ const Sidebar = ({ setOpenMenu, toggleTheme, setUnseenNotifCount }) => {
                 onClick={handleLogout}
                 className="btn bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] rounded-sm text-white border-none"
               >
-                Log
+                Logout
               </button>
             ) : (
               <Link href={"/login"}>
