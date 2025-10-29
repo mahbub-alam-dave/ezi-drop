@@ -298,6 +298,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
           Profile
         </Link>
         <Link
+          href="/dashboard/district-admin/riders"
+          className={linkClass("/dashboard/district-admin/riders")}
+        >
+          <FaUser className="inline-block mr-2" />
+          Riders
+        </Link>
+        <Link
           href="/dashboard/district-admin/resulation-center"
           className={linkClass("/dashboard/district-admin/resulation-center")}
         >
