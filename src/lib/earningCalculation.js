@@ -26,8 +26,8 @@ if (sameDistrict) {
     companyShare: { percent: 25, amount: total * 0.25 },
     taxAndOthers: { percent: 5, amount: total * 0.05 },
     riders: [
-      { role: "pickup_rider", riderId: null, percent: 30, amount: total * 0.30, earned: false },
-      { role: "final_rider", riderId: null, percent: 30, amount: total * 0.30, earned: false },
+      { role: "pickup_rider", riderId: null, percent: 30, amount: total * 0.35, earned: false },
+      { role: "final_rider", riderId: null, percent: 30, amount: total * 0.35, earned: false },
     ],
     type: "cross_district",
     computedAt: new Date(),

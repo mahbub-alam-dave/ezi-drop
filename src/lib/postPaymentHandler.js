@@ -78,7 +78,7 @@ export async function handlePostPaymentFunctionality(parcelId) {
       });
     } 
     
-    if (parcel.pickupDistrictId !== parcel.deliveryDistrictId && warehouse?.contactEmail) {
+    if (parcel.pickupDistrictId !== parcel.deliveryDistrictId && deliverWarehouse?.contactEmail) {
       await sendEmail({
         to: "dakterkhujun@gmail.com",
         subject: `Incoming parcel OTP for ${parcel.trackingId}`,

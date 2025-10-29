@@ -16,7 +16,7 @@ export async function GET(request) {
     const Parcel = dbConnect("parcels");
     const User = dbConnect("users");
     
-    const riderId = session.user.userId; // or session.user.id depending on your auth setup
+    const riderId = session.user.userId;
     const riderObjectId = new ObjectId(riderId);
     
     // Date ranges
@@ -34,7 +34,8 @@ export async function GET(request) {
       todayEarnings,
       pendingOrders,
       recentDeliveries,
-      overallStats
+      overallStats,
+      totalEarnings
     ] = await Promise.all([
       // Rider profile
       User.findOne({ _id: riderObjectId }),
@@ -46,7 +47,8 @@ export async function GET(request) {
           $in: [
             'in_transit_to_warehouse', 
             'at_local_warehouse', 
-            'awaiting_pickup_from_warehouse'
+            'awaiting_pickup_from_warehouse',
+            'out_for_delivery'
           ] 
         }
       })
@@ -61,7 +63,7 @@ export async function GET(request) {
         updatedAt: { $gte: today, $lt: tomorrow }
       }),
       
-      // Today's earnings (sum of amounts for delivered parcels today)
+      // Today's earnings (rider's share from delivered parcels)
       Parcel.aggregate([
         {
           $match: {
@@ -71,9 +73,31 @@ export async function GET(request) {
           }
         },
         {
+          $project: {
+            riderEarning: {
+              $reduce: {
+                input: '$earnings.riders',
+                initialValue: 0,
+                in: {
+                  $cond: [
+                    { 
+                      $and: [
+                        { $eq: ['$$this.riderId', riderObjectId] },
+                        { $eq: ['$$this.earned', true] }
+                      ]
+                    },
+                    { $add: ['$$value', '$$this.amount'] },
+                    '$$value'
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
           $group: {
             _id: null,
-            total: { $sum: '$amount' }
+            total: { $sum: '$riderEarning' }
           }
         }
       ]).toArray(),
@@ -111,37 +135,76 @@ export async function GET(request) {
             successfulDeliveries: {
               $sum: { $cond: [{ $eq: ['$status', 'delivered'] }, 1, 0] }
             },
-            totalEarnings: {
+            cancelledDeliveries: {
               $sum: { 
                 $cond: [
-                  { $eq: ['$status', 'delivered'] }, 
-                  '$amount', 
+                  { $in: ['$status', ['cancelled', 'returned']] }, 
+                  1, 
                   0
                 ] 
               }
             }
           }
         }
+      ]).toArray(),
+      
+      // Total lifetime earnings (all delivered parcels)
+      Parcel.aggregate([
+        {
+          $match: {
+            assignedRiderId: riderObjectId,
+            status: 'delivered'
+          }
+        },
+        {
+          $project: {
+            riderEarning: {
+              $reduce: {
+                input: '$earnings.riders',
+                initialValue: 0,
+                in: {
+                  $cond: [
+                    { 
+                      $and: [
+                        { $eq: ['$$this.riderId', riderObjectId] },
+                        { $eq: ['$$this.earned', true] }
+                      ]
+                    },
+                    { $add: ['$$value', '$$this.amount'] },
+                    '$$value'
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: '$riderEarning' }
+          }
+        }
       ]).toArray()
     ]);
 
-    // Calculate success rate and average rating
+    // Calculate stats
     const stats = overallStats[0] || { 
       totalDeliveries: 0, 
-      successfulDeliveries: 0, 
-      totalEarnings: 0 
+      successfulDeliveries: 0,
+      cancelledDeliveries: 0
     };
 
     const successRate = stats.totalDeliveries > 0 
       ? ((stats.successfulDeliveries / stats.totalDeliveries) * 100).toFixed(1)
       : 0;
 
-    // Calculate rating based on success rate (mock formula)
-    const averageRating = stats.totalDeliveries > 0
-      ? Math.min(5, 3 + (parseFloat(successRate) / 25)).toFixed(1)
-      : 0;
+    // Calculate rating from profile or use success rate
+    const averageRating = riderProfile?.rating?.average || 
+      (stats.totalDeliveries > 0
+        ? Math.min(5, 3 + (parseFloat(successRate) / 25)).toFixed(1)
+        : 0);
 
-    // Calculate points (e.g., 10 points per delivery)
+    // Calculate points (e.g., 10 points per successful delivery)
     const totalPoints = stats.successfulDeliveries * 10;
 
     // Response data
@@ -151,7 +214,8 @@ export async function GET(request) {
         email: riderProfile?.email,
         phone: riderProfile?.phone,
         district: riderProfile?.district,
-        workingStatus: riderProfile?.working_status || 'off_duty'
+        workingStatus: riderProfile?.working_status || 'off_duty',
+        profileImage: riderProfile?.profileImage
       },
       
       // Real-time stats for TODAY
@@ -166,8 +230,9 @@ export async function GET(request) {
       overallStats: {
         totalDeliveries: stats.totalDeliveries,
         successfulDeliveries: stats.successfulDeliveries,
-        totalEarnings: stats.totalEarnings,
-        successRate: `${successRate}%`,
+        cancelledDeliveries: stats.cancelledDeliveries,
+        totalEarnings: totalEarnings[0]?.total || 0,
+        successRate: parseFloat(successRate),
         averageRating: parseFloat(averageRating),
         totalPoints: totalPoints
       },
@@ -182,9 +247,15 @@ export async function GET(request) {
         receiverName: parcel.receiverName,
         deliveryAddress: parcel.deliveryAddress,
         deliveryDistrict: parcel.deliveryDistrict,
-        amount: parcel.amount,
         pickupAddress: parcel.pickupAddress,
-        createdAt: parcel.createdAt
+        amount: parcel.amount,
+        deliveryType: parcel.deliveryType,
+        shipmentType: parcel.shipmentType,
+        createdAt: parcel.createdAt,
+        // Calculate rider's potential earning
+        riderEarning: parcel.earnings?.riders?.find(r => 
+          r.riderId?.toString() === riderId
+        )?.amount || 0
       })),
       
       // Recent deliveries list
@@ -195,7 +266,10 @@ export async function GET(request) {
         status: parcel.status,
         receiverName: parcel.receiverName,
         amount: parcel.amount,
-        date: parcel.updatedAt || parcel.createdAt
+        date: parcel.updatedAt || parcel.createdAt,
+        riderEarning: parcel.earnings?.riders?.find(r => 
+          r.riderId?.toString() === riderId
+        )?.amount || 0
       }))
     };
 
@@ -207,7 +281,7 @@ export async function GET(request) {
   } catch (error) {
     console.error('Rider overview API error:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch overview data' },
+      { success: false, error: 'Failed to fetch overview data', details: error.message },
       { status: 500 }
     );
   }
