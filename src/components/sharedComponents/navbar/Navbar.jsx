@@ -235,7 +235,7 @@ export default function Navbar() {
                 />
               </button>
                             {/* Notification Panel */}
-              <div className="  2xl:hidden ">
+              <div className="2xl:hidden ">
                 {status === "authenticated" && currentUserId && (
                   <NotificationPanel
                     userId={currentUserId}

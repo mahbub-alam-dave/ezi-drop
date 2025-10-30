@@ -1,3 +1,4 @@
+import { authOptions } from "@/lib/authOptions";
 import { dbConnect } from "@/lib/dbConnect";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
@@ -47,7 +48,7 @@ export async function POST(request) {
   try {
     const body = await request.json(); // form data
     const collection = dbConnect("parcels");
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
 
     const users = dbConnect("users");
 
@@ -83,6 +84,7 @@ export async function POST(request) {
 
     const newParcel = {
       ...body,
+      userId: session?.user?.userId,
       payment: "not_paid",
       baseAmount: amount,
       amount,
