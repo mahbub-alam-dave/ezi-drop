@@ -9,7 +9,7 @@ const slides = [
     subtitle: "Nationwide Delivery",
     desc: "Send parcels anywhere in Bangladesh quickly and safely. Affordable, reliable delivery for every district and city.",
     button: "View All Services ↗",
-    btnlink: "/",
+    btnlink: "/our-services",
     phone: "+880 1711 000000",
     image: "https://i.ibb.co/YF3t0Nhk/delivery2-generated-removebg-preview.png",
   },
@@ -20,7 +20,8 @@ const slides = [
     button: "Track Now ↗",
     btnlink: "/dashboard/user/my-bookings",
     phone: "+880 1711 000001",
-    image: "https://i.ibb.co/v4xSRby3/Screenshot-2025-09-16-192322-removebg-preview.png",
+    image:
+      "https://i.ibb.co/v4xSRby3/Screenshot-2025-09-16-192322-removebg-preview.png",
   },
   {
     title: "Complete Coverage Across the Country",
@@ -29,7 +30,8 @@ const slides = [
     button: "Parcel Booking ↗",
     btnlink: "/send-parcel",
     phone: "+880 1711 000002",
-    image: "https://i.ibb.co.com/yBPK7hz4/bangladesh-map-all-divisions-3d-600nw-2271167587-removebg-preview.png",
+    image:
+      "https://i.ibb.co.com/yBPK7hz4/bangladesh-map-all-divisions-3d-600nw-2271167587-removebg-preview.png",
   },
 ];
 
@@ -57,7 +59,6 @@ export default function BannerSection() {
       {/* Main Container */}
       <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
         <div className="flex flex-col-reverse md:flex-row h-full items-center gap-4 sm:gap-6 lg:gap-8 xl:gap-12">
-
           {/* Text Content - Left side on md and above */}
           <div className="flex flex-col justify-center space-y-3 sm:space-y-4 lg:space-y-6 z-10 md:w-1/2">
             <AnimatePresence mode="wait">
@@ -110,18 +111,26 @@ export default function BannerSection() {
                   <Link href={slide.btnlink} className="w-full sm:w-auto">
                     <button className="group bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform flex items-center justify-center gap-2 border-2 border-transparent hover:border-blue-300 w-full">
                       {slide.button}
-                      <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+                      <span className="group-hover:translate-x-1 transition-transform duration-300">
+                        →
+                      </span>
                     </button>
                   </Link>
 
                   {/* Phone Section */}
                   <div className="flex items-center gap-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-3 rounded-lg shadow-lg border border-white/20 w-full sm:w-auto justify-center sm:justify-start">
                     <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full">
-                      <span className="text-blue-600 dark:text-blue-400 text-lg">📞</span>
+                      <span className="text-blue-600 dark:text-blue-400 text-lg">
+                        📞
+                      </span>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Call Us Now</p>
-                      <p className="text-base font-bold text-gray-800 dark:text-white">{slide.phone}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Call Us Now
+                      </p>
+                      <p className="text-base font-bold text-gray-800 dark:text-white">
+                        {slide.phone}
+                      </p>
                     </div>
                   </div>
                 </motion.div>
@@ -139,10 +148,11 @@ export default function BannerSection() {
                 <button
                   key={i}
                   onClick={() => setIndex(i)}
-                  className={`flex-1 max-w-4 sm:max-w-5 md:max-w-6 h-1 sm:h-1.5 lg:h-2 rounded-full transition-all duration-500 ${i === index
-                      ? 'bg-blue-600 dark:bg-blue-400'
-                      : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
-                    }`}
+                  className={`flex-1 max-w-4 sm:max-w-5 md:max-w-6 h-1 sm:h-1.5 lg:h-2 rounded-full transition-all duration-500 ${
+                    i === index
+                      ? "bg-blue-600 dark:bg-blue-400"
+                      : "bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
+                  }`}
                 />
               ))}
             </motion.div>
@@ -180,6 +190,5 @@ export default function BannerSection() {
       {/* Bottom Gradient */}
       <div className="absolute bottom-0 left-0 w-full h-16 sm:h-20 md:h-24 lg:h-28 bg-gradient-to-t from-white/50 to-transparent dark:from-gray-900/50 pointer-events-none"></div>
     </section>
-
   );
 }

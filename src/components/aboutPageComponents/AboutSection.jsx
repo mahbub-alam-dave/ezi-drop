@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { FaPlayCircle } from "react-icons/fa";
 
 export default function AboutSection({ children }) {
@@ -54,7 +55,9 @@ export default function AboutSection({ children }) {
               className="flex font-semibold items-center gap-2 px-5 py-2 rounded-lg background-color-secondary text-white hover:opacity-90"
             >
               <FaPlayCircle className="w-5 h-5" />
-              <span>Watch Video</span>
+              <Link href="https://www.youtube.com/">
+                <span>Watch Video</span>
+              </Link>
             </button>
           </div>
         </div>

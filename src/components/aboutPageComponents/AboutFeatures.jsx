@@ -21,7 +21,7 @@ export default function AboutFeatures() {
       bullets: ["Reliable Partner", "Fast Turnaround"],
       buttons: [
         { label: "Contact Us", href: "/contact" },
-        { label: "Learn More", href: "/about" },
+        { label: "Learn More", href: "/our-services" },
       ],
     },
     {
@@ -32,7 +32,7 @@ export default function AboutFeatures() {
       bullets: ["Global Coverage", "24/7 Support"],
       buttons: [
         { label: "Agent Zone", href: "#" },
-        { label: "Join Us", href: "#" },
+        { label: "Join Us", href: "/contact" },
       ],
     },
   ];
