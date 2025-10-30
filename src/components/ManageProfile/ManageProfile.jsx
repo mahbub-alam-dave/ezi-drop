@@ -24,37 +24,63 @@ export default function ManageProfile({ userData, allDistricts }) {
   const router = useRouter();
 
   const role = userData.role;
-  // const allDistricts = [];
-console.log(userDetails)
- /*  useEffect(() => {
-    async function fetchDistricts() {
-      setIsLoading(true);
-      setError(null);
 
-      try {
-        const res = await fetch("/api/service-areas"); // calls your API
-        if (!res.ok) {
-          const errData = await res.json();
-          throw new Error(errData.error || "Failed to fetch");
-        }
-        const data = await res.json();
-        setDistricts(data.districts);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
+  // Helper function to get role-based status
+  const getRoleStatus = (user) => {
+    if (!user?.role) return "Active";
+    
+    switch(user.role) {
+      case "user":
+        return user.status || "Active User";
+      case "admin":
+        return user.status || "System Admin";
+      case "district_admin":
+        return user.status || "Support Agent";
+      case "rider":
+        return user.working_status || "Available";
+      default:
+        return "Active";
+    }
+  };
+
+  // Helper function to get role-based status configuration
+  const getRoleStatusConfig = (role) => {
+    const configs = {
+      user: {
+        color: "bg-blue-100 dark:bg-blue-900",
+        dotColor: "bg-blue-600",
+        textColor: "text-blue-800 dark:text-blue-200",
+        borderColor: "border-blue-200 dark:border-blue-700",
+        icon: "👤"
+      },
+      admin: {
+        color: "bg-purple-100 dark:bg-purple-900",
+        dotColor: "bg-purple-600",
+        textColor: "text-purple-800 dark:text-purple-200",
+        borderColor: "border-purple-200 dark:border-purple-700",
+        icon: "⚙️"
+      },
+      district_admin: {
+        color: "bg-green-100 dark:bg-green-900",
+        dotColor: "bg-green-600",
+        textColor: "text-green-800 dark:text-green-200",
+        borderColor: "border-green-200 dark:border-green-700",
+        icon: "👨‍💼"
+      },
+      rider: {
+        color: "bg-orange-100 dark:bg-orange-900",
+        dotColor: "bg-orange-600",
+        textColor: "text-orange-800 dark:text-orange-200",
+        borderColor: "border-orange-200 dark:border-orange-700",
+        icon: "🚴"
       }
-    }
+    };
+    
+    return configs[role] || configs.user;
+  };
 
-    if (status === "authenticated") {
-      fetchDistricts();
-    }
-  }, [status]); */
+console.log(userDetails)
 
-  // if (status === "loading") return <p>Checking login...</p>;
-/*   if (status === "unauthenticated") {
-    router.push("/login");
-  } */
  useEffect(() => {
   if (status === "unauthenticated") router.push("/login");
 }, [status]);
@@ -731,22 +757,28 @@ console.log(userDetails)
           </div>
 
           <div className="flex items-center gap-3">
-            {/* <div
-              className={`px-4 py-2 rounded-full text-sm font-medium ${
-                data.status === "Active" || data.status === "On Duty"
-                  ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                  : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
-              }`}
-            >
-              {data.status}
-            </div> */}
             <button
               onClick={openEditModal}
               className="background-color-primary text-white py-2 px-6 rounded-lg font-medium hover:opacity-90 transition-opacity"
             >
               Edit Profile
             </button>
-            <RiderStatusInfo  />
+            
+            {/* Dynamic Role-Based Status Display */}
+            {userDetails?.role === "rider" ? (
+              <RiderStatusInfo />
+            ) : (
+              <div className={`flex items-center py-2 px-4 rounded-lg font-medium border ${
+                getRoleStatusConfig(userDetails?.role).color
+              } ${getRoleStatusConfig(userDetails?.role).borderColor} ${getRoleStatusConfig(userDetails?.role).textColor}`}>
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${getRoleStatusConfig(userDetails?.role).dotColor}`}></div>
+                  <span className="text-sm font-medium">Status:</span>
+                  <span className="font-semibold">{getRoleStatus(userDetails)}</span>
+                  <span className="text-sm">{getRoleStatusConfig(userDetails?.role).icon}</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
