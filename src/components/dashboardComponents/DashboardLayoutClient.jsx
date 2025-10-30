@@ -19,13 +19,13 @@ import {
   FaUserPlus,
   FaTachometerAlt,
   FaSearch,
-  FaCalendarAlt,
-  FaTrophy
+  FaCalendarAlt
 } from "react-icons/fa";
 import { FaChartLine } from "react-icons/fa";
 import { VscCommentUnresolved } from "react-icons/vsc";
 import ThemeToggle from "../sharedComponents/navbar/Toggle";
 import { MdPersonAddAlt1 } from "react-icons/md";
+import { MessageSquare, ShieldCheck } from "lucide-react";
 
 const DashboardLayoutClient = ({ userData, children }) => {
   const pathname = usePathname();
@@ -107,6 +107,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
           Profile
         </Link>
         <Link
+          href="/dashboard/admin/AdminReviews"
+          className={linkClass("/dashboard/admin/AdminReviews")}
+        >
+          <ShieldCheck className="inline-block mr-2" />
+          Admin Reviews
+        </Link>
+        <Link
           href="/dashboard/admin/manage-order"
           className={linkClass("/dashboard/admin/manage-order")}
         >
@@ -142,13 +149,6 @@ const DashboardLayoutClient = ({ userData, children }) => {
         >
           <FaChartLine className="inline-block mr-2" />
           Performance
-        </Link>
-        <Link
-          href="/dashboard/rider/leaderboard"
-          className={linkClass("/dashboard/rider/leaderboard")}
-        >
-          <FaTrophy className="inline-block mr-2" />
-          Leaderboard
         </Link>
         {/*         <Link href="/dashboard/order" className={linkClass("/dashboard/order")}>
           <FaTruck className="inline-block mr-2" />
@@ -208,21 +208,15 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaCalendarAlt className="inline-block mr-2" />
           My Bookings
         </Link>
-        <Link
-          href="/dashboard/user/payment-history"
-          className={linkClass("/dashboard/user/payment-history")}
-        >
-          <FaCalendarAlt className="inline-block mr-2" />
-          payment history
-        </Link>
-        {/* Track Parcel
+        {/* Track Parcel */}
         <Link
           href="/dashboard/user/track-parcel"
           className={linkClass("/dashboard/user/track-parcel")}
         >
           <FaSearch className="inline-block mr-2" />
           Track Parcel
-        </Link> */}
+        </Link> 
+        
         {/*         <Link
           href="/dashboard/user/orders-history"
           className={linkClass("/dashboard/user/orders-history")}
@@ -264,6 +258,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
         >
           <MdPersonAddAlt1 className="inline-block mr-2" />
           referral
+        </Link>
+        <Link
+          href="/dashboard/user/reviews"
+          className={linkClass("/dashboard/user/reviews")}
+        >
+          <MessageSquare className="inline-block mr-2" />
+          reviews
         </Link>
       </>
     ),

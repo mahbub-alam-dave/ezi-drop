@@ -6,7 +6,7 @@ const API_KEY = "b9a29f7084a133e40fc16d06a5f22d6e";
 const BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
 
 // --- City List ---
-const CITY_NAMES = [
+/* const CITY_NAMES = [
   "Dhaka", "Faridpur", "Gazipur", "Gopalganj", "Kishoreganj", "Madaripur", "Manikganj", "Munshiganj",
   "Narayanganj", "Narsingdi", "Rajbari", "Shariatpur", "Tangail", "Comilla", "Cox's Bazar",
   "Brahmanbaria", "Chandpur", "Feni", "Khagrachhari", "Lakshmipur", "Noakhali", "Rangamati",
@@ -16,6 +16,12 @@ const CITY_NAMES = [
   "Panchagarh", "Thakurgaon", "Sylhet", "Habiganj", "Moulvibazar", "Sunamganj", "Barisal",
   "Barguna", "Bhola", "Jhalokati", "Patuakhali", "Pirojpur", "Mymensingh", "Jamalpur",
   "Netrokona", "Sherpur"
+]; */
+
+const CITY_NAMES = [
+  "Dhaka", "Chittagong",
+   "Khulna", "Rangpur", "Barisal",
+ "Mymensingh", "Rajshahi", "Sylhet"
 ];
 
 // --- Weather Fetching Function ---
@@ -136,17 +142,17 @@ export default function WeatherApp() {
   }
 
   return (
-    <div className="min-h-screen bg-base-100 text-base-content p-4 transition-colors duration-500">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-base-100 text-base-content p-6 py-8 transition-colors duration-500">
+      <div className="w-full">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
+          <div className="flex items-center justify-center gap-3 mb-8">
             <span className="text-4xl">🇧🇩</span>
             <h1 className="text-4xl font-bold">Live Weather Report for Rider</h1>
             {/* Theme Toggle */}
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="ml-4 btn btn-sm btn-outline"
+              className="ml-4 btn btn-sm border border-color rounded-sm"
             >
               {theme === 'dark' ? '🌞 Light Mode' : '🌙 Night Mode'}
             </button>
@@ -156,8 +162,8 @@ export default function WeatherApp() {
           <div className="bg-base-200 rounded-2xl shadow-lg p-6 mb-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-primary">{CITY_NAMES.length}</div>
-                <div className="text-base-content/70">Total Locations</div>
+                <div className="text-2xl font-bold">{CITY_NAMES.length}</div>
+                <div className="text-base-content/70">Total Cities</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-success">{successfulRequests}</div>

@@ -524,9 +524,9 @@ const SendParcel = ({ districts }) => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                onClick={() => router.push("/dashboard/user/my-bookings")}
+                onClick={() => router.push(`/dashboard/user/my-bookings`)}
                 className="flex-1 rounded-lg bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)]
-                 text-white font-medium py-3 transition-colors"
+                 text-white font-medium py-3 transition-colors cursor-pointer"
               >
                 My Bookings
               </button>
@@ -538,7 +538,7 @@ const SendParcel = ({ districts }) => {
                  dark:border-[var(--border-color-two)]
                  text-[var(--color-text)] dark:text-[var(--color-text-dark)]
                  hover:bg-[var(--color-primary)] hover:text-white
-                 transition-colors py-3 font-medium"
+                 transition-colors py-3 font-medium cursor-pointer"
               >
                 Checkout
               </button>
@@ -932,7 +932,7 @@ const SendParcel = ({ districts }) => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`w-full mt-4 rounded-lg border border-[var(--border-color)]
+                className={`w-full mt-4 cursor-pointer rounded-lg border border-[var(--border-color)]
                  dark:border-[var(--border-color-two)]
                  bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)]
                  text-white font-medium py-3 transition-colors text-lg

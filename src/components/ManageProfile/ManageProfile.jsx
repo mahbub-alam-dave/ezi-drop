@@ -1,4 +1,4 @@
-// src/components/ManageProfile/ManageProfile.jsx
+
 "use client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -14,7 +14,6 @@ export default function ManageProfile({ userData, allDistricts }) {
   const [userDistrictId, setUserDistrictId] = useState("")
   const [districts, setDistricts] = useState(allDistricts || [])
   const [selectedDistrict, setSelectedDistrict] = useState({})
-  // const [districts, setDistricts] = useState([]);
   const [preview, setPreview] = useState(
     userData?.image || "https://i.ibb.co.com/twbgmXWg/user-4.png"
   );
@@ -24,63 +23,37 @@ export default function ManageProfile({ userData, allDistricts }) {
   const router = useRouter();
 
   const role = userData.role;
-
-  // Helper function to get role-based status
-  const getRoleStatus = (user) => {
-    if (!user?.role) return "Active";
-    
-    switch(user.role) {
-      case "user":
-        return user.status || "Active User";
-      case "admin":
-        return user.status || "System Admin";
-      case "district_admin":
-        return user.status || "Support Agent";
-      case "rider":
-        return user.working_status || "Available";
-      default:
-        return "Active";
-    }
-  };
-
-  // Helper function to get role-based status configuration
-  const getRoleStatusConfig = (role) => {
-    const configs = {
-      user: {
-        color: "bg-blue-100 dark:bg-blue-900",
-        dotColor: "bg-blue-600",
-        textColor: "text-blue-800 dark:text-blue-200",
-        borderColor: "border-blue-200 dark:border-blue-700",
-        icon: "👤"
-      },
-      admin: {
-        color: "bg-purple-100 dark:bg-purple-900",
-        dotColor: "bg-purple-600",
-        textColor: "text-purple-800 dark:text-purple-200",
-        borderColor: "border-purple-200 dark:border-purple-700",
-        icon: "⚙️"
-      },
-      district_admin: {
-        color: "bg-green-100 dark:bg-green-900",
-        dotColor: "bg-green-600",
-        textColor: "text-green-800 dark:text-green-200",
-        borderColor: "border-green-200 dark:border-green-700",
-        icon: "👨‍💼"
-      },
-      rider: {
-        color: "bg-orange-100 dark:bg-orange-900",
-        dotColor: "bg-orange-600",
-        textColor: "text-orange-800 dark:text-orange-200",
-        borderColor: "border-orange-200 dark:border-orange-700",
-        icon: "🚴"
-      }
-    };
-    
-    return configs[role] || configs.user;
-  };
-
+  // const allDistricts = [];
 console.log(userDetails)
+ /*  useEffect(() => {
+    async function fetchDistricts() {
+      setIsLoading(true);
+      setError(null);
 
+      try {
+        const res = await fetch("/api/service-areas"); // calls your API
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.error || "Failed to fetch");
+        }
+        const data = await res.json();
+        setDistricts(data.districts);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    if (status === "authenticated") {
+      fetchDistricts();
+    }
+  }, [status]); */
+
+  // if (status === "loading") return <p>Checking login...</p>;
+/*   if (status === "unauthenticated") {
+    router.push("/login");
+  } */
  useEffect(() => {
   if (status === "unauthenticated") router.push("/login");
 }, [status]);

@@ -13,3 +13,30 @@ export async function GET() {
 }
 
 
+// POST Data
+export async function POST(req) {
+  try {
+    const body = await req.json(); //  data  from form
+    const collection = dbConnect("rider-applications"); // riders collection used
+
+    // default workstatus add 
+    const riderData = {
+      ...body,
+      workstatus: "active", // default value
+    };
+
+    const result = await collection.insertOne(riderData);
+
+    return new Response(JSON.stringify({ success: true, data: result }), {
+      status: 201,
+    });
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ success: false, error: error.message }),
+      {
+        status: 500,
+      }
+    );
+  }
+}
+

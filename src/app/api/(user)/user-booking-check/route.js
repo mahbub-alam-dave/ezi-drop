@@ -20,7 +20,7 @@ export async function GET() {
     const hasParcel = await dbConnect("parcels").findOne({ senderEmail: email });
 
     if (hasParcel) {
-      return NextResponse.json.json({
+      return NextResponse.json({
         success: true,
         eligible: false,
         message: "You’ve already booked a parcel before.",
