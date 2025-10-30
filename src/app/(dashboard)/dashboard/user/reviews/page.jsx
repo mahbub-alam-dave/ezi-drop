@@ -12,6 +12,8 @@ export default function ReviewsPage() {
   const [loading, setLoading] = useState(true);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const reviewsPerPage = 10;
 
   const fetchReviews = async () => {
     setLoading(true);
@@ -50,6 +52,7 @@ export default function ReviewsPage() {
       rating,
       comment,
       type: "project",
+      date: new Date(),
     };
 
     try {
@@ -62,10 +65,22 @@ export default function ReviewsPage() {
       const data = await res.json();
 
       if (data.success) {
+        // ✅ Add review notification
+        await fetch("/api/notifications/add", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: newReview.userId, // reviewer’s id/email
+            message: `${newReview.name} added a new project review.`,
+            type: "review",
+          }),
+        });
+
         Swal.fire("Success", "Your review has been added!", "success");
         setReviews((prev) => [newReview, ...prev]);
         setComment("");
         setRating(0);
+        setCurrentPage(1);
       } else {
         Swal.fire("Error", data.error || "Failed to add review", "error");
       }
@@ -82,12 +97,16 @@ export default function ReviewsPage() {
       </div>
     );
 
+  const totalPages = Math.ceil(reviews.length / reviewsPerPage);
+  const startIndex = (currentPage - 1) * reviewsPerPage;
+  const currentReviews = reviews.slice(startIndex, startIndex + reviewsPerPage);
+
   return (
     <div className="max-w-3xl mx-auto py-10 px-4 space-y-10 bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
       <h2 className="text-3xl font-bold text-center">Project Reviews</h2>
 
       {/* Average Rating */}
-      <div className="text-center border border-[var(--color-border)] p-6 rounded-2xl bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]">
+      <div className="text-center border border-[var(--color-border)] p-6 rounded-2xl">
         <p className="text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)]">
           Average Rating
         </p>
@@ -95,27 +114,28 @@ export default function ReviewsPage() {
           {[...Array(5)].map((_, i) => (
             <Star
               key={i}
-              className={`w-5 h-5 ${
-                i < Math.round(avgRating) ? "text-yellow-400" : "text-gray-400"
-              }`}
+              className={`w-5 h-5 ${i < Math.round(avgRating) ? "text-yellow-400" : "text-gray-400"
+                }`}
               fill={i < Math.round(avgRating) ? "currentColor" : "none"}
             />
           ))}
         </div>
-        <p className="font-semibold">{avgRating} / 5 ({reviews.length} Reviews)</p>
+        <p className="font-semibold">
+          {avgRating} / 5 ({reviews.length} Reviews)
+        </p>
       </div>
 
       {/* All Reviews */}
-      {/* <div className="space-y-4">
-        {reviews.length === 0 ? (
+      <div className="space-y-4">
+        {currentReviews.length === 0 ? (
           <p className="text-center text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)]">
             No reviews yet.
           </p>
         ) : (
-          reviews.map((rev, i) => (
+          currentReviews.map((rev, i) => (
             <div
               key={i}
-              className="p-5 border border-[var(--color-border)] rounded-2xl bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]"
+              className="p-5 border border-[var(--color-border)] rounded-2xl"
             >
               <div className="flex items-center gap-3 mb-2">
                 <img
@@ -124,8 +144,8 @@ export default function ReviewsPage() {
                   className="w-10 h-10 rounded-full"
                 />
                 <div>
-                  <p className="font-semibold text-[var(--color-text)] dark:text-[var(--color-text-dark)]">{rev.name}</p>
-                  <p className="text-xs text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)]">
+                  <p className="font-semibold">{rev.name}</p>
+                  <p className="text-xs text-gray-500">
                     {new Date(rev.date).toLocaleDateString()}
                   </p>
                 </div>
@@ -139,19 +159,38 @@ export default function ReviewsPage() {
                   />
                 ))}
               </div>
-              <p className="text-sm text-[var(--color-text-soft)] dark:text-[var(--color-text-soft-dark)]">
-                {rev.comment}
-              </p>
+              <p className="text-sm text-gray-600">{rev.comment}</p>
             </div>
           ))
         )}
-      </div> */}
+      </div>
+
+      {/* Pagination */}
+      {reviews.length > reviewsPerPage && (
+        <div className="flex justify-center items-center gap-4 mt-6">
+          <Button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => p - 1)}
+            className="bg-[var(--color-primary)] dark:bg-[var(--color-primary-dark)] text-white disabled:opacity-50"
+          >
+            Previous
+          </Button>
+          <span className="text-sm">
+            Page {currentPage} of {totalPages}
+          </span>
+          <Button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((p) => p + 1)}
+            className="bg-[var(--color-primary)] dark:bg-[var(--color-primary-dark)] text-white disabled:opacity-50"
+          >
+            Next
+          </Button>
+        </div>
+      )}
 
       {/* Add Review Form */}
-      <div className="p-6 border border-[var(--color-border)] rounded-2xl bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] space-y-4">
-        <h3 className="text-xl font-semibold text-center text-[var(--color-text)] dark:text-[var(--color-text-dark)]">
-          Add Your Project Review
-        </h3>
+      <div className="p-6 border border-[var(--color-border)] rounded-2xl space-y-4">
+        <h3 className="text-xl font-semibold text-center">Add Your Project Review</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex justify-center gap-2">
             {[...Array(5)].map((_, i) => (
@@ -169,7 +208,7 @@ export default function ReviewsPage() {
             placeholder="Write your review..."
             required
             rows="4"
-            className="w-full px-3 py-2 border border-[var(--color-border)] rounded-xl bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] text-[var(--color-text)] dark:text-[var(--color-text-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] dark:focus:ring-[var(--color-primary-dark)]"
+            className="w-full px-3 py-2 border border-[var(--color-border)] rounded-xl bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]"
           ></textarea>
           <Button
             type="submit"
