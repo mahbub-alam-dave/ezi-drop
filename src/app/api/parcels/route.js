@@ -98,8 +98,8 @@ export async function POST(request) {
     };
 
     const result = await collection.insertOne(newParcel);
-
-const message = `Congratulations! for booking with us <a href="${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard/user/my-bookings" target="_blank" style="color: #2563eb; text-decoration: underline;">View details </a>`;
+// [go to live tracking](https://ezi-drop.vercel.app/tracking/${parcelId})
+const message = `Congratulations! for booking with us [view bookings](${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard/user/my-bookings)`;
 const userId = session?.user?.userId;
 await addNotification({userId, message });
 
