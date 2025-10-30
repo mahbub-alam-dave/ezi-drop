@@ -26,7 +26,7 @@ export async function GET(req) {
     };
 
     if (status) {
-      query.status = status; // apply filter only if provided
+      query.working_status = status; // apply filter only if provided
     }
 
     const result = await users.find(query).toArray();
