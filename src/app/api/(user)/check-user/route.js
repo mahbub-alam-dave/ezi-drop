@@ -1,3 +1,4 @@
+import { authOptions } from "@/lib/authOptions";
 import { collectionNames, dbConnect } from "@/lib/dbConnect";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
@@ -22,7 +23,7 @@ export async function POST(req) {
 
 export async function GET() {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
 
     const db = dbConnect(collectionNames.users);
 

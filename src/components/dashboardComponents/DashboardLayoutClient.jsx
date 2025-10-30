@@ -209,13 +209,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
           My Bookings
         </Link>
         {/* Track Parcel */}
-        <Link
+{/*         <Link
           href="/dashboard/user/track-parcel"
           className={linkClass("/dashboard/user/track-parcel")}
         >
           <FaSearch className="inline-block mr-2" />
           Track Parcel
-        </Link> 
+        </Link>  */}
         
         {/*         <Link
           href="/dashboard/user/orders-history"
@@ -290,6 +290,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
         >
           <FaClipboardList className="inline-block mr-2" />
           Incoming Parcels
+        </Link>
+        <Link
+          href="/dashboard/district-admin/assign-rider"
+          className={linkClass("/dashboard/district-admin/assign-rider")}
+        >
+          <FaClipboardList className="inline-block mr-2" />
+          Assign Parcels
         </Link>
         <Link
           href="/dashboard/district-admin/profile"

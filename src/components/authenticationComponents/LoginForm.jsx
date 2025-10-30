@@ -64,18 +64,6 @@ const LoginForm = () => {
 
       if (response?.ok) {
         await update(); // refresh session
-
-        // ✅ Add login notification
-        await fetch("/api/notifications/add", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId: data._id || data.userId, // API থেকে userId
-            message: "Login Successful!",
-            type: "login",
-          }),
-        });
-
         Swal.fire({
           position: "center",
           icon: "success",

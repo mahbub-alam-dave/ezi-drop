@@ -76,7 +76,7 @@ useEffect(() => {
       </button>
 
       <button
-        onClick={() => router.push("/user-dashboard/my-bookings")}
+        onClick={() => router.push("/dashboard/user/my-bookings")}
         className="mt-4 px-6 py-2 bg-blue-500 text-white rounded"
       >
         Go to My Bookings

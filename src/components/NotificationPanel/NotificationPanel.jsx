@@ -32,10 +32,10 @@ export default function NotificationPanel({ userId, onUnseenChange }) {
 
   // Fetching Notifications
   const fetchNotifications = useCallback(async () => {
-    if (!userId) return;
+    // if (!userId) return;
 
     try {
-      const res = await fetch(`/api/notifications?userId=${userId}`);
+      const res = await fetch(`/api/notifications`);
       if (!res.ok) throw new Error("Failed to fetch notifications");
 
       const data = await res.json();
@@ -74,7 +74,9 @@ export default function NotificationPanel({ userId, onUnseenChange }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [panelRef]);
 
-  if (!userId) return null;
+  // if (!userId) return null;
+
+  console.log(notifications)
 
   return (
     <div className="" ref={panelRef}>

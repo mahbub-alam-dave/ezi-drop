@@ -2,10 +2,14 @@
 import { ObjectId } from "mongodb";
 import { dbConnect, collectionNames } from "@/lib/dbConnect";
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
 
-export async function GET(req) {
-  const { searchParams } = new URL(req.url);
-  const userId = searchParams.get("userId");
+export async function GET() {
+  // const { searchParams } = new URL(req.url);
+  // const userId = searchParams.get("userId");
+  const session = await getServerSession(authOptions)
+  const userId = session?.user?.userId;
 
   if (!userId) return NextResponse.json({ message: "userId required" }, { status: 400 });
 
