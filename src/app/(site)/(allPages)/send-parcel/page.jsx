@@ -4,7 +4,10 @@ import { districtsData } from '../../../../lib/getDistrictData';
 import { getCurrentUser } from '@/lib/api';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/authOptions';
-
+export const metadata = {
+  title: 'Ezi Drop | Parcel',
+  description: 'Learn more about Ezi Drop - Our mission, values, and delivery services',
+}
 const SendParcelPage = async () => {
 
   const session = await getServerSession(authOptions)
@@ -26,6 +29,7 @@ const SendParcelPage = async () => {
     // console.log(userData)
   }
   // console.log(session?.user)
+  
   return (
     <div>
       <SendParcel districts={districts} userData={userData}/>

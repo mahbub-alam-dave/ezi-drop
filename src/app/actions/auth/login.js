@@ -1,5 +1,6 @@
 "use server"
 import { dbConnect } from "@/lib/dbConnect";
+import { addNotification } from "@/lib/notificationHandler";
 import bcrypt from "bcrypt";
 
 
@@ -41,6 +42,10 @@ export const loginUser = async ({email, password}) => {
     { _id: user._id },
     { $set: { failedLoginAttempts: 0, lockUntil: null } }
   );
+
+const userId = user._id;
+const message = "you have successfully logged in"
+  await addNotification({userId, message})
 
   // 4. Return user object to NextAuth
   return {

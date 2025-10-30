@@ -133,7 +133,7 @@ export default function Navbar() {
 
           <div className="flex items-center gap-8">
             {/* Desktop Navigation with hover effects */}
-            <nav>
+            <nav className="hidden lg:block">
               {/* <ul className="hidden lg:flex gap-6 items-center">{navLinks}</ul> */}
               {links.map(({ href, label }) => {
         const isActive = pathname === href;
@@ -235,7 +235,7 @@ export default function Navbar() {
                 />
               </button>
                             {/* Notification Panel */}
-              <div className="hidden md:flex  2xl:hidden ">
+              <div className="2xl:hidden ">
                 {status === "authenticated" && currentUserId && (
                   <NotificationPanel
                     userId={currentUserId}
