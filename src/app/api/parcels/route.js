@@ -1,6 +1,8 @@
 import { authOptions } from "@/lib/authOptions";
 import { dbConnect } from "@/lib/dbConnect";
+import { addNotification } from "@/lib/notificationHandler";
 import { getServerSession } from "next-auth";
+import Link from "next/link";
 import { NextResponse } from "next/server";
 
 // helper function to generate unique parcelId
@@ -97,6 +99,12 @@ export async function POST(request) {
     };
 
     const result = await collection.insertOne(newParcel);
+
+    const message = `Congratulations! for booking with us ${<Link href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard/user/my-bookings`}>view details</Link>}`
+    const userId = session?.user?.userId;
+    
+    await addNotification({userId, message})
+
     return NextResponse.json(
       {
         message: "Parcel saved successfully",

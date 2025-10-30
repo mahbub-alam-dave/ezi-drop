@@ -1,9 +1,14 @@
 import { ObjectId } from "mongodb";
 import { dbConnect } from "@/lib/dbConnect";
 
-export async function addNotification({ userId, message, type = "general"}) {
+export async function addNotification({ userId = null, message, type = "general"}) {
     console.log(userId, message)
-  if (!userId || !message) throw new Error("userId & message required");
+    const session = await getServerSession();
+
+  const finalUserId = userId || session?.user?.id;
+  if (!finalUserId || !message) throw new Error("userId & message required");
+
+  if (!finalUserId || !message) throw new Error("userId & message required");
 
   const notifications = dbConnect("notifications");
   const userObjId = new ObjectId(userId);

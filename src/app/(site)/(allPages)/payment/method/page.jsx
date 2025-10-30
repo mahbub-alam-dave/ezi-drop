@@ -18,8 +18,6 @@ export default function PaymentPage() {
 
   const [parcel, setParcel] = useState(null);
 
-  console.log(parcelId)
-  console.log(parcel)
 
   useEffect(() => {
     if (parcelId) {
@@ -40,9 +38,6 @@ export default function PaymentPage() {
     }
   }, [parcelId]);
 
-/*   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  }; */
 
 const handlePayment = async (e) => {
   e.preventDefault();
@@ -112,7 +107,7 @@ const handlePayment = async (e) => {
 
         <button
           type="submit"
-          className="background-color-primary text-white px-6 py-2 rounded w-full"
+          className="background-color-primary text-white px-6 py-2 rounded w-full cursor-pointer"
           disabled={loading}
         >
           {loading

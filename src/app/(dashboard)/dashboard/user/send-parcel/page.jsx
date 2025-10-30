@@ -7,7 +7,7 @@ import SendParcel from '@/components/sendparcelPageComponents/SendParcel';
 
 export const dynamic = "force-dynamic";
 
-const Page = async () => {
+const Page = async() => {
 
   const session = await getServerSession(authOptions)
 
@@ -23,12 +23,8 @@ const Page = async () => {
       name: userInfo.name, 
       email: userInfo.email, 
       points: userInfo?.points || 0,
-      // district: userInfo?.district || null, 
-      // districtId: userInfo?.districtId || null,
-    }) 
-    console.log(userData)
+    })
   }
-  console.log(userInfo)
   return (
     <div>
       <SendParcel districts={districts}/>
