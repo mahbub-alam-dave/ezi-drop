@@ -1,4 +1,4 @@
-// src/components/ManageProfile/ManageProfile.jsx
+
 "use client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -14,7 +14,6 @@ export default function ManageProfile({ userData, allDistricts }) {
   const [userDistrictId, setUserDistrictId] = useState("")
   const [districts, setDistricts] = useState(allDistricts || [])
   const [selectedDistrict, setSelectedDistrict] = useState({})
-  // const [districts, setDistricts] = useState([]);
   const [preview, setPreview] = useState(
     userData?.image || "https://i.ibb.co.com/twbgmXWg/user-4.png"
   );
@@ -23,38 +22,9 @@ export default function ManageProfile({ userData, allDistricts }) {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const role = userData.role;
-  // const allDistricts = [];
+const role = userData.role;
 console.log(userDetails)
- /*  useEffect(() => {
-    async function fetchDistricts() {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const res = await fetch("/api/service-areas"); // calls your API
-        if (!res.ok) {
-          const errData = await res.json();
-          throw new Error(errData.error || "Failed to fetch");
-        }
-        const data = await res.json();
-        setDistricts(data.districts);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    if (status === "authenticated") {
-      fetchDistricts();
-    }
-  }, [status]); */
-
-  // if (status === "loading") return <p>Checking login...</p>;
-/*   if (status === "unauthenticated") {
-    router.push("/login");
-  } */
+ 
  useEffect(() => {
   if (status === "unauthenticated") router.push("/login");
 }, [status]);
