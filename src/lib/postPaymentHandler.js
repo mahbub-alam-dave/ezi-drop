@@ -3,6 +3,9 @@ import { dbConnect } from "@/lib/dbConnect";
 import { generateOtp, hashOtp } from "./otp";
 import { assignRiderForDelivery, assignRiderToWarehouse } from "./assignRider";
 import { sendEmail } from "./email";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./authOptions";
+import { addNotification } from "./notificationHandler";
 
 export async function handlePostPaymentFunctionality(parcelId) {
   try {
@@ -68,6 +71,11 @@ export async function handlePostPaymentFunctionality(parcelId) {
         },
       }
     );
+
+          const message = `Your payment has been successful for parcel ${parcelId}`;
+          const userId = parcel.userId;
+          await addNotification({userId, message});
+
 
     // Send email
     if (parcel.pickupDistrictId === parcel.deliveryDistrictId && parcel.receiverEmail) {

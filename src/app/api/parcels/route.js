@@ -51,7 +51,6 @@ export async function POST(request) {
     const body = await request.json(); // form data
     const collection = dbConnect("parcels");
     const session = await getServerSession(authOptions)
-
     const users = dbConnect("users");
 
     const user = await users.findOne({ email: session?.user?.email });
@@ -100,10 +99,9 @@ export async function POST(request) {
 
     const result = await collection.insertOne(newParcel);
 
-    const message = `Congratulations! for booking with us ${<Link href={`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard/user/my-bookings`}>view details</Link>}`
-    const userId = session?.user?.userId;
-    
-    await addNotification({userId, message})
+const message = `Congratulations! for booking with us <a href="${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard/user/my-bookings" target="_blank" style="color: #2563eb; text-decoration: underline;">View details </a>`;
+const userId = session?.user?.userId;
+await addNotification({userId, message });
 
     return NextResponse.json(
       {

@@ -209,13 +209,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
           My Bookings
         </Link>
         {/* Track Parcel */}
-        <Link
+{/*         <Link
           href="/dashboard/user/track-parcel"
           className={linkClass("/dashboard/user/track-parcel")}
         >
           <FaSearch className="inline-block mr-2" />
           Track Parcel
-        </Link> 
+        </Link>  */}
         
         {/*         <Link
           href="/dashboard/user/orders-history"
