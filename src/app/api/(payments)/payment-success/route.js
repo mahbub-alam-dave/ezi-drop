@@ -6,6 +6,7 @@ import { generateTrackingNumber } from "@/utility/trackingId";
 import { createNotification } from "@/utility/notificationUtils";
 import { getServerSession } from "next-auth";
 import { calculateEarnings } from "@/lib/earningCalculation";
+import { addNotification } from "@/lib/notificationHandler";
 
 export async function POST(request) {
   let parcelId = ""; // Initialize outside try block for wider scope
@@ -50,6 +51,9 @@ export async function POST(request) {
         },
       }
     );
+
+    const message = `Your payment via SSL Commerz has been successful for parcel ${parcelId}`
+          await addNotification({message})
     await handlePostPaymentFunctionality(parcelId);
 
     // Create Notification--Here...

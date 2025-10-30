@@ -292,6 +292,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
           Incoming Parcels
         </Link>
         <Link
+          href="/dashboard/district-admin/assign-rider"
+          className={linkClass("/dashboard/district-admin/assign-rider")}
+        >
+          <FaClipboardList className="inline-block mr-2" />
+          Assign Parcels
+        </Link>
+        <Link
           href="/dashboard/district-admin/profile"
           className={linkClass("/dashboard/district-admin/profile")}
         >

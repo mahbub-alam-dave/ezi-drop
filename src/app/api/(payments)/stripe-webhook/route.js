@@ -52,7 +52,7 @@ export async function POST(req) {
         { $set: { payment: "done", transactionId, trackingId, paymentDate: new Date() } }
       );
 
-      const message = `Your payment has been successful for parcel ${parcelId}`
+      const message = `Your  payment via Stripe has been successful for parcel ${parcelId}`
       await addNotification({message})
       await handlePostPaymentFunctionality(parcelId)
 
