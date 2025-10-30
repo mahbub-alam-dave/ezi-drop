@@ -32,8 +32,12 @@ export async function handlePostPaymentFunctionality(parcelId) {
       // cross-district
       assignedRider = await assignRiderToWarehouse(parcel);
       // warehouse = await dbConnect("wirehouses").findOne({ wirehouseId: parcel.pickupDistrictId });
-      pickupWarehouse = await dbConnect("wirehouses").findOne({ wirehouseId: parcel.pickupDistrictId });
-      deliverWarehouse = await dbConnect("wirehouses").findOne({ wirehouseId: parcel.deliveryDistrictId });
+      pickupWarehouse = await dbConnect("wirehouses").findOne({
+        wirehouseId: parcel.pickupDistrictId,
+      });
+      deliverWarehouse = await dbConnect("wirehouses").findOne({
+        wirehouseId: parcel.deliveryDistrictId,
+      });
     }
 
     if (!assignedRider) {
@@ -48,8 +52,16 @@ export async function handlePostPaymentFunctionality(parcelId) {
           secretCodeHash: otpHash,
           secretCodeExpiresAt: otpExpiry,
           // wirehouseAddress: warehouse?.address || "",
-          pickupDistrictWarehouse: {location: pickupWarehouse?.address || "", lon: pickupWarehouse?.coords[0] || "", lat: pickupWarehouse?.coords[1] || ""},
-          deliveryDistrictWarehouse: {location: deliverWarehouse?.address || "", lon: deliverWarehouse?.coords[0] || "", lat: deliverWarehouse?.coords[1] || ""},
+          pickupDistrictWarehouse: {
+            location: pickupWarehouse?.address || "",
+            lon: pickupWarehouse?.coords[0] || "",
+            lat: pickupWarehouse?.coords[1] || "",
+          },
+          deliveryDistrictWarehouse: {
+            location: deliverWarehouse?.address || "",
+            lon: deliverWarehouse?.coords[0] || "",
+            lat: deliverWarehouse?.coords[1] || "",
+          },
           updatedAt: new Date(),
         },
         $push: {
@@ -72,21 +84,26 @@ export async function handlePostPaymentFunctionality(parcelId) {
       }
     );
 
-          const message = `Your payment has been successful for parcel ${parcelId}`;
-          const userId = parcel.userId;
-          await addNotification({userId, message});
-
+    const message = `Your payment has been successful for parcel ${parcelId}`;
+    const userId = parcel.userId;
+    await addNotification({ userId, message });
 
     // Send email
-    if (parcel.pickupDistrictId === parcel.deliveryDistrictId && parcel.receiverEmail) {
+    if (
+      parcel.pickupDistrictId === parcel.deliveryDistrictId &&
+      parcel.receiverEmail
+    ) {
       await sendEmail({
         to: parcel.receiverEmail,
         subject: "Your Delivery Code",
         text: `Your delivery code: ${otp}. Track your parcel with trackingId: ${parcel.trackingId}`,
       });
-    } 
-    
-    if (parcel.pickupDistrictId !== parcel.deliveryDistrictId && deliverWarehouse?.contactEmail) {
+    }
+
+    if (
+      parcel.pickupDistrictId !== parcel.deliveryDistrictId &&
+      deliverWarehouse?.contactEmail
+    ) {
       await sendEmail({
         to: "dakterkhujun@gmail.com",
         subject: `Incoming parcel OTP for ${parcel.trackingId}`,
