@@ -1,9 +1,10 @@
+import DistrictRiders from '@/components/dashboardComponents/DistrictRiders';
 import React from 'react';
 
 const CheckWireHouse = () => {
     return (
         <div>
-            This is district wire house page
+            <DistrictRiders />
         </div>
     );
 };
