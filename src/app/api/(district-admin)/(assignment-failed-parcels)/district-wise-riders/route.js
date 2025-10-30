@@ -31,7 +31,7 @@ export async function POST(req) {
     const activeRiders = await users
       .find({
         role: "rider",
-        status: "duty",
+        working_status: "duty",
         districtId: targetDistrictId,
       })
       .toArray();

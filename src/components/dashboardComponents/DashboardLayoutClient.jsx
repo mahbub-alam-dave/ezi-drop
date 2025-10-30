@@ -299,18 +299,18 @@ const DashboardLayoutClient = ({ userData, children }) => {
           Assign Parcels
         </Link>
         <Link
+          href="/dashboard/district-admin/view-all-riders"
+          className={linkClass("/dashboard/district-admin/view-all-riders")}
+        >
+          <FaUser className="inline-block mr-2" />
+          All Riders 
+        </Link>
+        <Link
           href="/dashboard/district-admin/profile"
           className={linkClass("/dashboard/district-admin/profile")}
         >
           <FaUser className="inline-block mr-2" />
           Profile
-        </Link>
-        <Link
-          href="/dashboard/district-admin/riders"
-          className={linkClass("/dashboard/district-admin/riders")}
-        >
-          <FaUser className="inline-block mr-2" />
-          Riders
         </Link>
         <Link
           href="/dashboard/district-admin/resulation-center"

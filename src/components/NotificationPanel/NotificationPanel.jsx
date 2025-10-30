@@ -2,6 +2,29 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 
+// Helper: detect links and make them clickable
+  function formatMessage(text) {
+    if (!text || typeof text !== "string") return null; // prevent crash
+    const urlRegex = /(https?:\/\/[^\s]+|\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+    return parts.map((part, i) => {
+      if (part.match(urlRegex)) {
+        return (
+          <a
+            key={i}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 underline break break-all"
+          >
+            {part}
+          </a>
+        );
+      }
+      return part;
+    });
+  }
+
 export default function NotificationPanel({ userId, onUnseenChange }) {
   const [notifications, setNotifications] = useState([]);
   const [unseenCount, setUnseenCount] = useState(0);
@@ -130,7 +153,7 @@ export default function NotificationPanel({ userId, onUnseenChange }) {
                 <a
                   key={n._id}
                   href={n.link}
-                  onClick={() => setIsOpen(false)}
+                  // onClick={() => setIsOpen(false)}
                   className={`flex items-start p-4 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition ${
                     !n.seen ? "bg-blue-50 dark:bg-gray-700/50" : ""
                   }`}
@@ -143,7 +166,7 @@ export default function NotificationPanel({ userId, onUnseenChange }) {
                           : "text-gray-600 dark:text-gray-400"
                       }`}
                     >
-                      {n.message}
+                      {formatMessage(n.message)}
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                       {new Date(n.createdAt).toLocaleString()}

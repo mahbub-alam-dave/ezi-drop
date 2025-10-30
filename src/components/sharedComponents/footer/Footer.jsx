@@ -51,7 +51,7 @@ export default function Footer() {
   ];
 
   const needHelpLinks = [
-    { href: "/dashboard/user/my-bookings", label: "Delivery Information" },
+    { href: "/dashboard/user/overview", label: "Delivery Information" },
     { href: "/refund-page", label: "Return & Refund Policy" },
     { href: "/dashboard/user/my-bookings", label: "Track your Order" },
     { href: "/contact", label: "Contact Us" },
