@@ -28,7 +28,7 @@ const RecentActivities = ({ districtId = 'all' }) => {
         params.append('districtId', districtId);
       }
       
-      const res = await fetch(`/api/dashboard/activities?${params}`);
+      const res = await fetch(`/api/dashboard/recent-activities?${params}`);
       const result = await res.json();
       
       if (result.success) {
@@ -60,7 +60,7 @@ const RecentActivities = ({ districtId = 'all' }) => {
         params.append('districtId', districtId);
       }
       
-      const res = await fetch(`/api/dashboard/activities?${params}`);
+      const res = await fetch(`/api/dashboard/recent-activities?${params}`);
       const result = await res.json();
       
       if (result.success) {

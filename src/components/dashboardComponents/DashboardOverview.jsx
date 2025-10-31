@@ -18,7 +18,7 @@ import TopPerformers from "./adminOverview/TopPerformers";
 
 
 function DashboardContent() {
-  const { loading, error } = useDashboard();
+  const { loading, error, selectedDistrict } = useDashboard();
   
 /*   if (loading) {
     return (
@@ -48,7 +48,7 @@ function DashboardContent() {
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
-        <RecentActivities />
+        <RecentActivities districtId={selectedDistrict} />
         {/* <TopCouriers /> */}
         <TopPerformers />
       </div>
