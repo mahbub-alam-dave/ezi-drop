@@ -113,13 +113,13 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <ShieldCheck className="inline-block mr-2" />
           Admin Reviews
         </Link>
-        <Link
+        {/* <Link
           href="/dashboard/admin/manage-order"
           className={linkClass("/dashboard/admin/manage-order")}
         >
           <FaClipboardList className="inline-block mr-2" />
           Manage Order
-        </Link>
+        </Link> */}
 {/*         <Link href="/dashboard/admin/chat" className={linkClass("/dashboard/admin/chat")}>
           <FaComment className="inline-block mr-2" />
           Chat

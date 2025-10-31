@@ -78,6 +78,8 @@ const SupportsTicket = ({ displayArea }) => {
     }
   }
 
+  console.log(districts)
+
   useEffect(() => {
     fetchTickets();
   }, [displayArea, selectedDistrict, selectedStatus, selectedPriority, showMentioned]);
@@ -157,10 +159,54 @@ const SupportsTicket = ({ displayArea }) => {
     }
   };
 
-  if (loading) {
+    const LoadingSkeleton = () => (
+    <div className="space-y-3">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <div key={i} className="animate-pulse">
+          <div className="grid grid-cols-6 gap-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+            {[1, 2, 3, 4, 5, 6].map((j) => (
+              <div key={j} className="h-5 bg-gray-300 dark:bg-gray-700 rounded"></div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  if (loading && displayArea) {
     return (
-      <div className={`${displayArea ? "bg-white dark:bg-gray-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm" : "pt-8"}`}>
-        <p className="text-gray-500 dark:text-gray-400">Loading tickets...</p>
+      <LoadingSkeleton />
+    );
+  }
+    if (loading) {
+    return (
+      <div className="w-full p-6 min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="w-full">
+          {/* Header skeleton */}
+          <div className="mb-8 space-y-3">
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 animate-pulse"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3 animate-pulse"></div>
+          </div>
+
+          {/* Active ticket skeleton */}
+          <div className="mb-6 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 animate-pulse">
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-3"></div>
+            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+          </div>
+
+          {/* Tickets list skeleton */}
+          <div className="space-y-4">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 animate-pulse">
+                <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-3"></div>
+                <div className="flex justify-between">
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+                  <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

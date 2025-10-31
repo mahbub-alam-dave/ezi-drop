@@ -31,10 +31,24 @@ supportAgent:
 
 
 rider: 
-email: abulbashar.dhaka@ezidrop.com
+email: mizanur.chattogram@ezidrop.com
 password: aaaaaa
-district_agent:
-email:agentkhulna@ezidrop.com
+email: tania.mymensingh@ezidrop.com
+password: aaaaaa
+
+user:
+email: ezidropuser@gmail.com
+password: aaaaaa
+
+email: ezidropuser2@gmail.com
+password: aaaaaa
+
+district_admin:
+email:agentmymensingh@ezidrop.com
+password: aaaaaa
+
+admin (main)
+email: ezidropadmin@gmail.com
 password: aaaaaa
 
 

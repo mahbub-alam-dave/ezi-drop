@@ -32,6 +32,7 @@ export async function GET() {
 
     const userData = {
       name: user.name,
+      userId: user._id,
       email: user.email,
       district: user.district || null,
       districtId: user.districtId || null,
