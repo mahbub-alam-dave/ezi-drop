@@ -5,11 +5,14 @@ import { handlePostPaymentFunctionality } from "@/lib/postPaymentHandler";
 import { generateTrackingNumber } from "@/utility/trackingId";
 import { createNotification } from "@/utility/notificationUtils";
 import { getServerSession } from "next-auth";
+import { calculateEarnings } from "@/lib/earningCalculation";
+import { addNotification } from "@/lib/notificationHandler";
+import { authOptions } from "@/lib/authOptions";
 
 export async function POST(request) {
   let parcelId = ""; // Initialize outside try block for wider scope
-  const { data: session } = getServerSession();
-  const currentUserId = session?.user?.userId
+  const session = getServerSession(authOptions);
+  const userId = session?.user?.userId;
   // console.log(currentUserId)
   // trackingId
   const trackingId = generateTrackingNumber();
@@ -36,6 +39,7 @@ export async function POST(request) {
 
     // 4. Update Parcel Status in Database
     // Replace this with your actual database update logic (e.g., Prisma, Mongoose, SQL)
+    const earnings = await calculateEarnings(parcelId);
     await dbConnect("parcels").updateOne(
       { parcelId },
       {
@@ -43,22 +47,15 @@ export async function POST(request) {
           payment: "done",
           transactionId: tran_id,
           trackingId,
+          earnings,
           paymentDate: new Date(),
         },
       }
     );
+
     await handlePostPaymentFunctionality(parcelId);
-
-    // Create Notification--Here...
-    await createNotification(
-      currentUserId,
-      "user",
-      `Your Payment Successfully. ProductId:${parcelId}`,
-      "/dashboard/user-overview"
-    );
-
-    // Log success
-    // console.log(`Successfully updated parcel ${parcelId} to PAID with Tran ID: ${tran_id}`);
+/*     const message = `Your payment via SSL Commerz has been successful for parcel ${parcelId}`
+    await addNotification({userId, message}) */
 
     // Redirect to success page
     return NextResponse.redirect(

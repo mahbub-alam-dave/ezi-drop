@@ -62,11 +62,12 @@ export async function POST(req) {
       referrerEmail: session.user.email,
       referredName: name,
       referredEmail: email,
-      status: "Pending",
+      referralStatus: "Pending",
       referDate: now,
       expireDate,
       dateLeft: 30,
       dateOver: 0,
+      isJoined: false
     };
 
     await refCollection.insertOne(referralDoc);

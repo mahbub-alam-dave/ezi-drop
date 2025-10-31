@@ -17,14 +17,13 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
-// Custom icons for sender and receiver (Fixed btoa issue)
+// Custom icons for sender and receiver
 const createCustomIcon = (type) => {
   const colors = {
     sender: "#3B82F6", // Blue for sender
     receiver: "#10B981" // Green for receiver
   };
   
-  // Use SVG paths instead of emojis
   const svgPaths = {
     sender: `<path d="M16 4L12 8H14V16H18V8H20L16 4Z" fill="white"/>
              <path d="M8 8H10V12H22V14H10V18H8V8Z" fill="white"/>`,
@@ -39,7 +38,6 @@ const createCustomIcon = (type) => {
     </svg>
   `;
 
-  // Use encodeURIComponent instead of btoa for Unicode characters
   const encodedSvg = encodeURIComponent(svgString);
 
   return new L.Icon({
@@ -70,7 +68,6 @@ export default function ParcelMapPage() {
         setError("");
         setRouteStatus("Calculating route...");
         
-        // সব parcels fetch করুন
         const res = await fetch("/api/parcels");
         if (!res.ok) throw new Error("Failed to fetch parcels");
         
@@ -80,7 +77,6 @@ export default function ParcelMapPage() {
         console.log("All parcels:", allParcels);
         console.log("Looking for parcel ID:", id);
 
-        // Specific ID দিয়ে parcel খুঁজুন
         const foundParcel = allParcels.find(p => p._id === id || p.parcelId === id);
         
         if (!foundParcel) {
@@ -90,7 +86,6 @@ export default function ParcelMapPage() {
         setParcel(foundParcel);
         console.log("Found parcel:", foundParcel);
 
-        // Real Road Route calculation
         if (foundParcel?.pickupLocation && foundParcel?.deliveryLocation) {
           await calculateRealRoadRoute(
             foundParcel.pickupLocation,
@@ -124,20 +119,17 @@ export default function ParcelMapPage() {
       console.log("Calculating road route from:", [startLon, startLat], "to:", [endLon, endLat]);
       setRouteStatus("Calculating optimal road route...");
 
-      // Try OpenRouteService first
       await calculateOpenRouteServiceRoute(startLon, startLat, endLon, endLat);
       
     } catch (error) {
       console.warn("OpenRouteService failed:", error);
       
-      // Fallback: Use OSRM (Open Source Routing Machine)
       try {
         setRouteStatus("Trying alternative routing service...");
         await calculateOSRMRoute(startLon, startLat, endLon, endLat);
       } catch (osrmError) {
         console.warn("OSRM also failed:", osrmError);
         
-        // Final fallback: Create realistic route with waypoints
         setRouteStatus("Using estimated route");
         createRealisticRoute(startLon, startLat, endLon, endLat);
       }
@@ -146,7 +138,6 @@ export default function ParcelMapPage() {
 
   // OpenRouteService Route Calculation
   const calculateOpenRouteServiceRoute = async (startLon, startLat, endLon, endLat) => {
-    // Replace with your actual OpenRouteService API key
     const apiKey = process.env.NEXT_PUBLIC_OPENROUTE_API_KEY || 'YOUR_API_KEY';
     
     const response = await fetch(
@@ -173,7 +164,6 @@ export default function ParcelMapPage() {
       console.log("OpenRouteService Response:", data);
 
       if (data.features && data.features[0]?.geometry?.coordinates) {
-        // Convert coordinates from [lon, lat] to [lat, lon] for Leaflet
         const roadCoordinates = data.features[0].geometry.coordinates.map(([lon, lat]) => [lat, lon]);
         setRouteCoords(roadCoordinates);
         setRouteStatus("Real road route calculated ✓");
@@ -207,16 +197,15 @@ export default function ParcelMapPage() {
     }
   };
 
-  // Create realistic route with waypoints (simulating road paths)
+  // Create realistic route with waypoints
   const createRealisticRoute = (startLon, startLat, endLon, endLat) => {
-    // Add intermediate waypoints to simulate road routes
     const waypoints = [
-      [startLat, startLon], // Start point
-      [startLat + (endLat - startLat) * 0.2, startLon + (endLon - startLon) * 0.1], // Waypoint 1
-      [startLat + (endLat - startLat) * 0.4, startLon + (endLon - startLon) * 0.3], // Waypoint 2
-      [startLat + (endLat - startLat) * 0.6, startLon + (endLon - startLon) * 0.5], // Waypoint 3
-      [startLat + (endLat - startLat) * 0.8, startLon + (endLon - startLon) * 0.7], // Waypoint 4
-      [endLat, endLon] // End point
+      [startLat, startLon],
+      [startLat + (endLat - startLat) * 0.2, startLon + (endLon - startLon) * 0.1],
+      [startLat + (endLat - startLat) * 0.4, startLon + (endLon - startLon) * 0.3],
+      [startLat + (endLat - startLat) * 0.6, startLon + (endLon - startLon) * 0.5],
+      [startLat + (endLat - startLat) * 0.8, startLon + (endLon - startLon) * 0.7],
+      [endLat, endLon]
     ];
     
     setRouteCoords(waypoints);
@@ -249,10 +238,10 @@ export default function ParcelMapPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center h-screen items-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex justify-center items-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-600">Loading parcel details...</p>
+          <p className="text-gray-600 dark:text-gray-400">Loading parcel Tracking...</p>
         </div>
       </div>
     );
@@ -260,14 +249,14 @@ export default function ParcelMapPage() {
 
   if (error || !parcel) {
     return (
-      <div className="flex justify-center h-screen items-center">
-        <div className="text-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex justify-center items-center p-6">
+        <div className="text-center max-w-md">
           <div className="text-red-500 text-6xl mb-4">❌</div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Parcel Not Found</h2>
-          <p className="text-gray-600">{error || "The requested parcel could not be found."}</p>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Parcel Not Found</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">{error || "The requested parcel could not be found."}</p>
           <button 
             onClick={() => window.history.back()}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200 font-medium"
           >
             Go Back
           </button>
@@ -278,40 +267,51 @@ export default function ParcelMapPage() {
 
   if (!parcel.pickupLocation || !parcel.deliveryLocation) {
     return (
-      <div className="p-6">
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <h2 className="text-lg font-semibold text-yellow-800">Location Data Missing</h2>
-          <p className="text-yellow-700">Unable to display map. Parcel location information is incomplete.</p>
-        </div>
-        
-        {/* Parcel Info Card */}
-        <div className="mt-6 bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold mb-4">Parcel Information</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p><strong>Parcel ID:</strong> {parcel.parcelId}</p>
-              <p><strong>Sender:</strong> {parcel.senderName}</p>
-              <p><strong>Receiver:</strong> {parcel.receiverName}</p>
-              <p><strong>Status:</strong> 
-                <span className={`ml-2 px-2 py-1 rounded text-xs ${
-                  parcel.status === "delivered" ? "bg-green-100 text-green-800" :
-                  parcel.status === "in_transit" ? "bg-blue-100 text-blue-800" :
-                  "bg-yellow-100 text-yellow-800"
-                }`}>
-                  {parcel.status}
-                </span>
-              </p>
-            </div>
-            <div>
-              <p><strong>Pickup:</strong> {parcel.pickupDistrict}</p>
-              <p><strong>Delivery:</strong> {parcel.deliveryDistrict}</p>
-              <p><strong>Payment:</strong> 
-                <span className={`ml-2 px-2 py-1 rounded text-xs ${
-                  parcel.payment === "done" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                }`}>
-                  {parcel.payment}
-                </span>
-              </p>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6">
+            <h2 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200">Location Data Missing</h2>
+            <p className="text-yellow-700 dark:text-yellow-300 mt-2">Unable to display map. Parcel location information is incomplete.</p>
+          </div>
+          
+          {/* Parcel Info Card */}
+          <div className="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Parcel Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <div>
+                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Parcel ID</label>
+                  <p className="text-gray-900 dark:text-white font-semibold">{parcel.parcelId}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Sender</label>
+                  <p className="text-gray-900 dark:text-white">{parcel.senderName}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Receiver</label>
+                  <p className="text-gray-900 dark:text-white">{parcel.receiverName}</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Pickup</label>
+                  <p className="text-gray-900 dark:text-white">{parcel.pickupDistrict}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Delivery</label>
+                  <p className="text-gray-900 dark:text-white">{parcel.deliveryDistrict}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Status</label>
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                    parcel.status === "delivered" ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" :
+                    parcel.status === "in_transit" ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200" :
+                    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                  }`}>
+                    {parcel.status?.replace('_', ' ').toUpperCase()}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -328,198 +328,228 @@ export default function ParcelMapPage() {
   const centerLon = (pickupLon + deliveryLon) / 2;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            📦 Tracking Parcel: {parcel.parcelId}
-          </h1>
-          <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-            <div className="flex items-center">
-              <strong className="mr-2">Sender:</strong>
-              {parcel.senderName}
-            </div>
-            <div className="flex items-center">
-              <strong className="mr-2">Receiver:</strong>
-              {parcel.receiverName}
-            </div>
-            <div className="flex items-center">
-              <strong className="mr-2">Status:</strong>
-              <span className={`px-2 py-1 rounded text-xs ${
-                parcel.status === "delivered" ? "bg-green-100 text-green-800" :
-                parcel.status === "in_transit" ? "bg-blue-100 text-blue-800" :
-                "bg-yellow-100 text-yellow-800"
-              }`}>
-                {parcel.status?.replace('_', ' ').toUpperCase()}
-              </span>
-            </div>
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 mb-6 lg:mb-8 border border-gray-100 dark:border-gray-700">
+  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+    <div className="flex-1">
+      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        📦 Tracking Parcel: <span className="text-blue-600 dark:text-blue-400">{parcel.parcelId}</span>
+      </h1>
+      
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-700 dark:to-blue-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-800">
+        {/* Sender Info */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+            <strong className="text-gray-700 dark:text-gray-300">Sender:</strong>
+            <span className="font-semibold text-gray-900 dark:text-white">{parcel.senderName}</span>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Receiver Info */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+            <strong className="text-gray-700 dark:text-gray-300">Receiver:</strong>
+            <span className="font-semibold text-gray-900 dark:text-white">{parcel.receiverName}</span>
+          </div>
+        </div>
+
+        {/* Status - HIGHLIGHTED VERSION */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-purple-500 rounded-full animate-ping"></div>
+            <strong className="text-gray-700 dark:text-gray-300">Status:</strong>
+            <span className={`px-4 py-2.5 rounded-xl text-sm font-bold tracking-wide transform transition-all duration-300 hover:scale-105 ${
+              parcel.status === "delivered" ? 
+                "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/40 border border-green-300" :
+              parcel.status === "in_transit" ? 
+                "bg-gradient-to-r from-blue-500 to-cyan-600 text-white shadow-lg shadow-blue-500/40 border border-blue-300 animate-pulse" :
+                "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/40 border border-amber-300"
+            }`}>
+              <span className="mr-2">
+                {parcel.status === "delivered" ? "✅" : parcel.status === "in_transit" ? "🚚" : "⏳"}
+              </span>
+              {parcel.status?.replace('_', ' ').toUpperCase()}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <button 
+      onClick={() => window.history.back()}
+      className="px-6 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-all duration-200 font-medium whitespace-nowrap hover:shadow-lg border border-gray-200 dark:border-gray-600"
+    >
+      ← Back to List
+    </button>
+  </div>
+</div>
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
           {/* Map Section */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow overflow-hidden">
-              <div className="p-4 border-b">
-                <h2 className="text-xl font-semibold">🚚 Delivery Route Map</h2>
-                <p className="text-sm text-gray-600 mt-1">
+          <div className="xl:col-span-2">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+              <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">🚚 Delivery Route Map</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                   Real-time road route from sender to receiver
                 </p>
               </div>
-              <MapContainer
-                center={[centerLat, centerLon]}
-                zoom={10}
-                style={{ height: "500px", width: "100%" }}
-                className="z-0"
-              >
-                <TileLayer 
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                />
-
-                {/* Sender Marker (Pickup) */}
-                <Marker position={[pickupLat, pickupLon]} icon={senderIcon}>
-                  <Popup>
-                    <div className="text-sm min-w-[200px]">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                        <strong className="text-blue-600">Sender Location</strong>
-                      </div>
-                      <p><strong>Name:</strong> {parcel.senderName}</p>
-                      <p><strong>Phone:</strong> {parcel.senderPhone}</p>
-                      <p><strong>Address:</strong> {parcel.pickupLocation.display_name}</p>
-                      <p><strong>District:</strong> {parcel.pickupDistrict}</p>
-                    </div>
-                  </Popup>
-                </Marker>
-
-                {/* Receiver Marker (Delivery) */}
-                <Marker position={[deliveryLat, deliveryLon]} icon={receiverIcon}>
-                  <Popup>
-                    <div className="text-sm min-w-[200px]">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                        <strong className="text-green-600">Receiver Location</strong>
-                      </div>
-                      <p><strong>Name:</strong> {parcel.receiverName}</p>
-                      <p><strong>Phone:</strong> {parcel.receiverPhone}</p>
-                      <p><strong>Address:</strong> {parcel.deliveryLocation.display_name}</p>
-                      <p><strong>District:</strong> {parcel.deliveryDistrict}</p>
-                    </div>
-                  </Popup>
-                </Marker>
-
-                {/* Real Road Route Polyline */}
-                {routeCoords.length > 0 ? (
-                  <Polyline 
-                    positions={routeCoords} 
-                    color="#DC2626" 
-                    weight={5}
-                    opacity={0.8}
+              <div className="relative">
+                <MapContainer
+                  center={[centerLat, centerLon]}
+                  zoom={10}
+                  style={{ height: "500px", width: "100%" }}
+                  className="z-0"
+                >
+                  <TileLayer 
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                   />
-                ) : (
-                  // Fallback straight line
-                  <Polyline
-                    positions={[
-                      [pickupLat, pickupLon],
-                      [deliveryLat, deliveryLon]
-                    ]}
-                    color="#6B7280"
-                    weight={3}
-                    opacity={0.5}
-                    dashArray="5, 5"
-                  />
-                )}
-              </MapContainer>
-              
-              {/* Route Status */}
-              <div className="p-4 border-t bg-gray-50">
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-3 h-3 rounded-full ${
-                      routeStatus.includes('✓') ? 'bg-green-500' : 
-                      routeStatus.includes('Failed') ? 'bg-red-500' : 'bg-yellow-500'
-                    }`}></div>
-                    <span className="text-gray-700">
-                      {routeStatus}
-                    </span>
-                  </div>
-                  {routeCoords.length > 0 && (
-                    <span className="text-green-600 font-medium">
-                      {routeCoords.length} route points
-                    </span>
+
+                  {/* Sender Marker (Pickup) */}
+                  <Marker position={[pickupLat, pickupLon]} icon={senderIcon}>
+                    <Popup>
+                      <div className="text-sm min-w-[200px]">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                          <strong className="text-blue-600">Sender Location</strong>
+                        </div>
+                        <p><strong>Name:</strong> {parcel.senderName}</p>
+                        <p><strong>Phone:</strong> {parcel.senderPhone}</p>
+                        <p><strong>Address:</strong> {parcel.pickupLocation.display_name}</p>
+                        <p><strong>District:</strong> {parcel.pickupDistrict}</p>
+                      </div>
+                    </Popup>
+                  </Marker>
+
+                  {/* Receiver Marker (Delivery) */}
+                  <Marker position={[deliveryLat, deliveryLon]} icon={receiverIcon}>
+                    <Popup>
+                      <div className="text-sm min-w-[200px]">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                          <strong className="text-green-600">Receiver Location</strong>
+                        </div>
+                        <p><strong>Name:</strong> {parcel.receiverName}</p>
+                        <p><strong>Phone:</strong> {parcel.receiverPhone}</p>
+                        <p><strong>Address:</strong> {parcel.deliveryLocation.display_name}</p>
+                        <p><strong>District:</strong> {parcel.deliveryDistrict}</p>
+                      </div>
+                    </Popup>
+                  </Marker>
+
+                  {/* Real Road Route Polyline */}
+                  {routeCoords.length > 0 ? (
+                    <Polyline 
+                      positions={routeCoords} 
+                      color="#DC2626" 
+                      weight={5}
+                      opacity={0.8}
+                    />
+                  ) : (
+                    <Polyline
+                      positions={[
+                        [pickupLat, pickupLon],
+                        [deliveryLat, deliveryLon]
+                      ]}
+                      color="#6B7280"
+                      weight={3}
+                      opacity={0.5}
+                      dashArray="5, 5"
+                    />
                   )}
+                </MapContainer>
+                
+                {/* Route Status */}
+                <div className="absolute bottom-4 left-4 right-4">
+                  <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl p-4 shadow-lg">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-3 h-3 rounded-full ${
+                          routeStatus.includes('✓') ? 'bg-green-500' : 
+                          routeStatus.includes('Failed') ? 'bg-red-500' : 'bg-yellow-500'
+                        }`}></div>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          {routeStatus}
+                        </span>
+                      </div>
+                      {routeCoords.length > 0 && (
+                        <span className="text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-2 py-1 rounded-full font-medium">
+                          {routeCoords.length} points
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Progress & Info Section */}
-          <div className="space-y-6">
+          {/* Sidebar Section */}
+          <div className="space-y-6 lg:space-y-8">
             {/* Progress Bar */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold mb-4">Delivery Progress</h3>
-              <div className="w-full bg-gray-200 rounded-full h-4 mb-2">
-                <div
-                  className="h-4 bg-gradient-to-r from-blue-500 to-green-500 rounded-full transition-all duration-500"
-                  style={{ width: `${progress}%` }}
-                />
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Delivery Progress</h3>
+              <div className="space-y-4">
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4">
+                  <div
+                    className="h-4 bg-gradient-to-r from-blue-500 via-yellow-500 to-green-500 rounded-full transition-all duration-1000 ease-out"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    Sender
+                  </span>
+                  <span className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                    In Transit
+                  </span>
+                  <span className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    Receiver
+                  </span>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{progress}%</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Delivery Completed</p>
+                </div>
               </div>
-              <div className="flex justify-between text-sm text-gray-600 mb-1">
-                <span className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  Sender
-                </span>
-                <span className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                  In Transit
-                </span>
-                <span className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  Receiver
-                </span>
-              </div>
-              <p className="mt-2 text-center font-medium text-lg">
-                {progress}% completed
-              </p>
             </div>
 
             {/* Route Information */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold mb-4">Route Information</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Route Information</h3>
               <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-blue-600 text-sm">📤</span>
+                <div className="flex items-start gap-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                  <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-sm">📤</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-blue-600">From Sender</p>
-                    <p className="text-sm text-gray-600 truncate">{parcel.pickupDistrict}</p>
-                    <p 
-                      className="text-xs text-gray-500 break-words line-clamp-2"
-                      title={parcel.pickupLocation.display_name}
-                    >
+                    <p className="font-semibold text-blue-700 dark:text-blue-300">Pickup Location</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 font-medium mt-1">{parcel.pickupDistrict}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
                       {parcel.pickupLocation.display_name}
                     </p>
                   </div>
                 </div>
                 
                 <div className="flex justify-center">
-                  <div className="w-0.5 h-8 bg-gray-300"></div>
+                  <div className="w-0.5 h-6 bg-gray-300 dark:bg-gray-600"></div>
                 </div>
 
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-green-600 text-sm">📥</span>
+                <div className="flex items-start gap-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                  <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-sm">📥</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-green-600">To Receiver</p>
-                    <p className="text-sm text-gray-600 truncate">{parcel.deliveryDistrict}</p>
-                    <p 
-                      className="text-xs text-gray-500 break-words line-clamp-2"
-                      title={parcel.deliveryLocation.display_name}
-                    >
+                    <p className="font-semibold text-green-700 dark:text-green-300">Delivery Location</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 font-medium mt-1">{parcel.deliveryDistrict}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
                       {parcel.deliveryLocation.display_name}
                     </p>
                   </div>
@@ -528,28 +558,32 @@ export default function ParcelMapPage() {
             </div>
 
             {/* Parcel Details */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold mb-4">Parcel Details</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Parcel Type:</span>
-                  <span className="font-medium">{parcel.parcelType}</span>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Parcel Details</h3>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Parcel Type</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{parcel.parcelType}</p>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Weight</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{parcel.weight} kg</p>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Weight:</span>
-                  <span className="font-medium">{parcel.weight} kg</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Amount:</span>
-                  <span className="font-medium">{parcel.amount} ৳</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Payment:</span>
-                  <span className={`font-medium ${
-                    parcel.payment === "done" ? "text-green-600" : "text-red-600"
-                  }`}>
-                    {parcel.payment === "done" ? "Paid" : "Pending"}
-                  </span>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Amount</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{parcel.amount} ৳</p>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Payment</p>
+                    <p className={`text-sm font-medium ${
+                      parcel.payment === "done" ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
+                    }`}>
+                      {parcel.payment === "done" ? "Paid" : "Pending"}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

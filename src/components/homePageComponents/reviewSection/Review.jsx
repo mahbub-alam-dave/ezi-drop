@@ -140,89 +140,92 @@ export default function Review() {
   }
 
   return (
-    <section className="w-full py-16 px-4 sm:px-6 md:px-8 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-      {/* 🎯 Inject marquee styles */}
-      <style jsx>{`
-        @keyframes marqueeScroll {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .marquee-track {
-          animation: marqueeScroll 35s linear infinite;
-        }
-        .marquee-reverse {
-          animation-direction: reverse;
-        }
-        .marquee-track:hover {
-          animation-play-state: paused;
-        }
-      `}</style>
+  
+    <section className="w-full py-16 px-4 sm:px-6 md:px-8 relative overflow-hidden">
+  {/* Gradient Background */}
+  <div className="absolute inset-0 bg-gradient-to-b from-indigo-50 via-blue-50 to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-700 -z-10"></div>
 
-      {/* 📌 Header Section */}
-      <div className="max-w-5xl mx-auto text-center mb-12">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
-          Customer Love ❤️
-        </h2>
-        <p className="text-gray-600 dark:text-gray-400 mt-3 max-w-2xl mx-auto text-sm sm:text-base">
-          Real stories from people who’ve experienced our service firsthand.
-        </p>
+  {/* 🎯 Inject marquee styles */}
+  <style jsx>{`
+    @keyframes marqueeScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .marquee-track {
+      animation: marqueeScroll 35s linear infinite;
+    }
+    .marquee-reverse {
+      animation-direction: reverse;
+    }
+    .marquee-track:hover {
+      animation-play-state: paused;
+    }
+  `}</style>
 
-        {/* 🌟 Rating Summary */}
-        <div className="mt-6 inline-flex items-center gap-2 bg-white/60 dark:bg-gray-800/60 px-4 py-2 rounded-full backdrop-blur-sm border border-gray-200 dark:border-gray-700">
-          <span className="text-lg font-bold text-yellow-500">⭐ {avgRating}</span>
-          <span className="text-gray-600 dark:text-gray-400">from {reviews.length} reviews</span>
-        </div>
+  {/* 📌 Header Section */}
+  <div className="max-w-5xl mx-auto text-center mb-12 relative z-10">
+    <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 bg-clip-text text-transparent">
+      Customer Love ❤️
+    </h2>
+    <p className="text-gray-600 dark:text-gray-300 mt-3 max-w-2xl mx-auto text-sm sm:text-base">
+      Real stories from people who’ve experienced our service firsthand.
+    </p>
 
-        {/* 🎚️ Filter Buttons */}
-        <div className="flex flex-wrap justify-center gap-2 mt-8">
-          {["all", 5, 4, 3, 2, 1].map((f) => (
-            <FilterButton
-              key={f}
-              label={f === "all" ? "All Reviews" : `${f} Stars`}
-              isActive={filter === f}
-              onClick={() => setFilter(f)}
-            />
+    {/* 🌟 Rating Summary */}
+    <div className="mt-6 inline-flex items-center gap-2 bg-white/70 dark:bg-slate-800/70 px-4 py-2 rounded-full backdrop-blur-sm border border-gray-200 dark:border-slate-700">
+      <span className="text-lg font-bold text-yellow-500">⭐ {avgRating}</span>
+      <span className="text-gray-600 dark:text-gray-300">from {reviews.length} reviews</span>
+    </div>
+
+    {/* 🎚️ Filter Buttons */}
+    <div className="flex flex-wrap justify-center gap-2 mt-8">
+      {["all", 5, 4, 3, 2, 1].map((f) => (
+        <FilterButton
+          key={f}
+          label={f === "all" ? "All Reviews" : `${f} Stars`}
+          isActive={filter === f}
+          onClick={() => setFilter(f)}
+        />
+      ))}
+    </div>
+  </div>
+
+  {/* ❗ Empty State */}
+  {filteredReviews.length === 0 && !loading && <EmptyState />}
+
+  {/* 🌀 Marquee Rows */}
+  {filteredReviews.length > 0 && (
+    <>
+      {/* Row 1 */}
+      <div className="relative w-full max-w-7xl mx-auto overflow-hidden mb-8 group">
+        <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-indigo-50 to-transparent dark:from-slate-900 pointer-events-none z-10"></div>
+        <div
+          ref={el => marqueeRefs.current[0] = el}
+          className="marquee-track flex gap-4 min-w-[200%] py-4 px-4"
+        >
+          {[...filteredReviews, ...filteredReviews].map((review, index) => (
+            <ReviewCard key={`row1-${index}`} review={review} />
           ))}
         </div>
+        <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-indigo-50 to-transparent dark:from-slate-900 pointer-events-none z-10"></div>
       </div>
 
-      {/* ❗ Empty State */}
-      {filteredReviews.length === 0 && !loading && <EmptyState />}
+      {/* Row 2 (Reverse) */}
+      <div className="relative w-full max-w-7xl mx-auto overflow-hidden">
+        <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-indigo-50 to-transparent dark:from-slate-900 pointer-events-none z-10"></div>
+        <div
+          ref={el => marqueeRefs.current[1] = el}
+          className="marquee-track marquee-reverse flex gap-4 min-w-[200%] py-4 px-4"
+        >
+          {[...filteredReviews, ...filteredReviews].map((review, index) => (
+            <ReviewCard key={`row2-${index}`} review={review} />
+          ))}
+        </div>
+        <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-indigo-50 to-transparent dark:from-slate-900 pointer-events-none z-10"></div>
+      </div>
+    </>
+  )}
+</section>
 
-      {/* 🌀 Marquee Rows (Only if we have reviews) */}
-      {filteredReviews.length > 0 && (
-        <>
-          {/* Row 1 */}
-          <div className="relative w-full max-w-7xl mx-auto overflow-hidden mb-8 group">
-            <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-gray-50 to-transparent dark:from-gray-900 pointer-events-none z-10"></div>
-            <div
-              ref={el => marqueeRefs.current[0] = el}
-              className="marquee-track flex gap-4 min-w-[200%] py-4 px-4"
-            >
-              {[...filteredReviews, ...filteredReviews].map((review, index) => (
-                <ReviewCard key={`row1-${index}`} review={review} />
-              ))}
-            </div>
-            <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-gray-50 to-transparent dark:from-gray-900 pointer-events-none z-10"></div>
-          </div>
-
-          {/* Row 2 (Reverse) */}
-          <div className="relative w-full max-w-7xl mx-auto overflow-hidden">
-            <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-gray-50 to-transparent dark:from-gray-900 pointer-events-none z-10"></div>
-            <div
-              ref={el => marqueeRefs.current[1] = el}
-              className="marquee-track marquee-reverse flex gap-4 min-w-[200%] py-4 px-4"
-            >
-              {[...filteredReviews, ...filteredReviews].map((review, index) => (
-                <ReviewCard key={`row2-${index}`} review={review} />
-              ))}
-            </div>
-            <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-gray-50 to-transparent dark:from-gray-900 pointer-events-none z-10"></div>
-          </div>
-        </>
-      )}
-
-      {/* 🧭 CTA Footer (Optional) */}
-    </section>
   );
 }

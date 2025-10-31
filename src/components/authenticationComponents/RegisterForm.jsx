@@ -22,7 +22,7 @@ const RegisterForm = () => {
     try {
       const res = await registerUser(registerData);
 
-      if (res.insertedId) {
+/*       if (res.insertedId) {
         //  Step 1: referral check before OTP generation
         try {
           const referralRes = await fetch("/api/referralCheck", {
@@ -72,8 +72,40 @@ const RegisterForm = () => {
           title: "Oops...",
           text: "Registration failed!",
         });
-      }
-    } catch (error) {
+      } */
+    console.log(res)
+        if (res.insertedId) {
+      await Swal.fire({
+        position: "center",
+        icon: "success",
+        title: res.message || "Registration successful!",
+        showConfirmButton: true,
+      });
+
+      // Now proceed to OTP or login
+      // await sendOtp(registerData.email); or router.push("/login");
+      // /  Step 2: generate OTP as before
+        await fetch("/api/auth/generate-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: registerData.email }),
+        });
+
+        setOtpModalData({
+          email: registerData.email,
+          password: registerData.password,
+        });
+
+        setShowOtpModal(true); // open modal
+    } else {
+      await Swal.fire({
+        icon: "error",
+        title: "Registration failed",
+        text: data.message || "Something went wrong. Please try again.",
+      });
+    }
+    
+      } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);

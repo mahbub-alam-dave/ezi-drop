@@ -3,6 +3,9 @@ import { dbConnect } from "@/lib/dbConnect";
 import { generateOtp, hashOtp } from "./otp";
 import { assignRiderForDelivery, assignRiderToWarehouse } from "./assignRider";
 import { sendEmail } from "./email";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./authOptions";
+import { addNotification } from "./notificationHandler";
 
 export async function handlePostPaymentFunctionality(parcelId) {
   try {
@@ -18,7 +21,8 @@ export async function handlePostPaymentFunctionality(parcelId) {
     const otpHash = hashOtp(otp);
     const otpExpiry = new Date(Date.now() + 24 * 3600 * 1000);
 
-    let warehouse = null;
+    let pickupWarehouse = null;
+    let deliverWarehouse = null;
     let assignedRider = null;
 
     if (parcel.pickupDistrictId === parcel.deliveryDistrictId) {
@@ -27,7 +31,13 @@ export async function handlePostPaymentFunctionality(parcelId) {
     } else {
       // cross-district
       assignedRider = await assignRiderToWarehouse(parcel);
-      warehouse = await dbConnect("wirehouses").findOne({ wirehouseId: parcel.pickupDistrictId });
+      // warehouse = await dbConnect("wirehouses").findOne({ wirehouseId: parcel.pickupDistrictId });
+      pickupWarehouse = await dbConnect("wirehouses").findOne({
+        wirehouseId: parcel.pickupDistrictId,
+      });
+      deliverWarehouse = await dbConnect("wirehouses").findOne({
+        wirehouseId: parcel.deliveryDistrictId,
+      });
     }
 
     if (!assignedRider) {
@@ -41,7 +51,17 @@ export async function handlePostPaymentFunctionality(parcelId) {
         $set: {
           secretCodeHash: otpHash,
           secretCodeExpiresAt: otpExpiry,
-          wirehouseAddress: warehouse?.address || "",
+          // wirehouseAddress: warehouse?.address || "",
+          pickupDistrictWarehouse: {
+            location: pickupWarehouse?.address || "",
+            lon: pickupWarehouse?.coords[0] || "",
+            lat: pickupWarehouse?.coords[1] || "",
+          },
+          deliveryDistrictWarehouse: {
+            location: deliverWarehouse?.address || "",
+            lon: deliverWarehouse?.coords[0] || "",
+            lat: deliverWarehouse?.coords[1] || "",
+          },
           updatedAt: new Date(),
         },
         $push: {
@@ -64,16 +84,26 @@ export async function handlePostPaymentFunctionality(parcelId) {
       }
     );
 
+    const message = `Your payment has been successful for parcel ${parcelId}`;
+    const userId = parcel.userId;
+    await addNotification({ userId, message });
+
     // Send email
-    if (parcel.pickupDistrictId === parcel.deliveryDistrictId && parcel.receiverEmail) {
+    if (
+      parcel.pickupDistrictId === parcel.deliveryDistrictId &&
+      parcel.receiverEmail
+    ) {
       await sendEmail({
         to: parcel.receiverEmail,
         subject: "Your Delivery Code",
         text: `Your delivery code: ${otp}. Track your parcel with trackingId: ${parcel.trackingId}`,
       });
-    } 
-    
-    if (parcel.pickupDistrictId !== parcel.deliveryDistrictId && warehouse?.contactEmail) {
+    }
+
+    if (
+      parcel.pickupDistrictId !== parcel.deliveryDistrictId &&
+      deliverWarehouse?.contactEmail
+    ) {
       await sendEmail({
         to: "dakterkhujun@gmail.com",
         subject: `Incoming parcel OTP for ${parcel.trackingId}`,

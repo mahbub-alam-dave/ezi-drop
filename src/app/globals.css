@@ -167,3 +167,108 @@
   }
 
 }
+
+/* Banner Section Specific Styles */
+.banner-slide-enter {
+  opacity: 0;
+  transform: translateX(-50px);
+}
+
+.banner-slide-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.banner-slide-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.banner-slide-exit-active {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* Ensure images are responsive */
+.banner-image {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .banner-section {
+    height: auto;
+    min-height: 70vh;
+    padding: 2rem 0;
+  }
+  
+  .banner-content {
+    text-align: center;
+  }
+}
+/* Custom max-width utility */
+.max-w-1440px {
+  max-width: 1440px;
+}
+
+/* Floating animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Custom responsive design */
+@media (max-width: 1024px) {
+  .banner-section {
+    min-height: auto;
+    padding: 3rem 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .banner-section {
+    padding: 2rem 0;
+    text-align: center;
+  }
+  
+  .banner-content {
+    padding: 0 1rem;
+  }
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced focus states */
+button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Dark mode transitions */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Image loading states */
+img {
+  transition: opacity 0.3s ease;
+}
+
+img:not([src]) {
+  opacity: 0;
+}

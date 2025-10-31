@@ -7,6 +7,8 @@ export  const collectionNames = {
   messages: "messages", // ✅ added
   riderReview: "riderReview",
   riderApplications: "rider-applications",
+  performance: "performance",
+  notifications: "notifications",
 };
 
 export const dbConnect = (collectionName) => {

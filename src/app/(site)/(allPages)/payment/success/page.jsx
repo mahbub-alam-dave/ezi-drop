@@ -7,7 +7,27 @@ export default function SuccessPage() {
   const router = useRouter();
   const parcelId = searchParams.get("parcelId");
   const [isDownloading, setIsDownloading] = useState(false);
-
+   const gateway = searchParams.get("gateway"); // "sslcommerz" বা "stripe"
+  const session_id = searchParams.get("session_id"); // Stripe session
+  
+useEffect(() => {
+    const savePayment = async () => {
+      if (gateway === "stripe") {
+        await fetch("/api/payment/stripe-save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ session_id }),
+        });
+      } else if (gateway === "sslcommerz") {
+        await fetch("/api/payment/sslcommerz-save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(Object.fromEntries(new URLSearchParams(window.location.search))),
+        });
+      }
+    };
+    savePayment();
+  }, [gateway, session_id, parcelId]);
 
   useEffect(() => {
     if (parcelId) {
@@ -56,7 +76,7 @@ export default function SuccessPage() {
       </button>
 
       <button
-        onClick={() => router.push("/user-dashboard/my-bookings")}
+        onClick={() => router.push("/dashboard/user/my-bookings")}
         className="mt-4 px-6 py-2 bg-blue-500 text-white rounded"
       >
         Go to My Bookings

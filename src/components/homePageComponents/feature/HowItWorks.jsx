@@ -31,6 +31,7 @@ const steps = [
 
 export default function HowItWorks() {
   return (
+   
     <section className="py-16 md:py-24 
       bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)] 
       text-[var(--color-text)] dark:text-[var(--color-text-dark)] px-6 md:px-8">
@@ -85,5 +86,8 @@ export default function HowItWorks() {
       </div>
       </div>
     </section>
+   
+
+
   );
 }

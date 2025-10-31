@@ -1,9 +1,10 @@
-// src/components/ManageProfile/ManageProfile.jsx
+
 "use client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CiCamera } from "react-icons/ci";
+import RiderStatusInfo from "../RiderStatus/RiderStatus";
 
 export default function ManageProfile({ userData, allDistricts }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -13,7 +14,6 @@ export default function ManageProfile({ userData, allDistricts }) {
   const [userDistrictId, setUserDistrictId] = useState("")
   const [districts, setDistricts] = useState(allDistricts || [])
   const [selectedDistrict, setSelectedDistrict] = useState({})
-  // const [districts, setDistricts] = useState([]);
   const [preview, setPreview] = useState(
     userData?.image || "https://i.ibb.co.com/twbgmXWg/user-4.png"
   );
@@ -23,37 +23,63 @@ export default function ManageProfile({ userData, allDistricts }) {
   const router = useRouter();
 
   const role = userData.role;
-  // const allDistricts = [];
 
- /*  useEffect(() => {
-    async function fetchDistricts() {
-      setIsLoading(true);
-      setError(null);
+  // Helper function to get role-based status
+  const getRoleStatus = (user) => {
+    if (!user?.role) return "Active";
+    
+    switch(user.role) {
+      case "user":
+        return user.status || "Active User";
+      case "admin":
+        return user.status || "System Admin";
+      case "district_admin":
+        return user.status || "Support Agent";
+      case "rider":
+        return user.working_status || "Available";
+      default:
+        return "Active";
+    }
+  };
 
-      try {
-        const res = await fetch("/api/service-areas"); // calls your API
-        if (!res.ok) {
-          const errData = await res.json();
-          throw new Error(errData.error || "Failed to fetch");
-        }
-        const data = await res.json();
-        setDistricts(data.districts);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
+  // Helper function to get role-based status configuration
+  const getRoleStatusConfig = (role) => {
+    const configs = {
+      user: {
+        color: "bg-blue-100 dark:bg-blue-900",
+        dotColor: "bg-blue-600",
+        textColor: "text-blue-800 dark:text-blue-200",
+        borderColor: "border-blue-200 dark:border-blue-700",
+        icon: "👤"
+      },
+      admin: {
+        color: "bg-purple-100 dark:bg-purple-900",
+        dotColor: "bg-purple-600",
+        textColor: "text-purple-800 dark:text-purple-200",
+        borderColor: "border-purple-200 dark:border-purple-700",
+        icon: "⚙️"
+      },
+      district_admin: {
+        color: "bg-green-100 dark:bg-green-900",
+        dotColor: "bg-green-600",
+        textColor: "text-green-800 dark:text-green-200",
+        borderColor: "border-green-200 dark:border-green-700",
+        icon: "👨‍💼"
+      },
+      rider: {
+        color: "bg-orange-100 dark:bg-orange-900",
+        dotColor: "bg-orange-600",
+        textColor: "text-orange-800 dark:text-orange-200",
+        borderColor: "border-orange-200 dark:border-orange-700",
+        icon: "🚴"
       }
-    }
+    };
+    
+    return configs[role] || configs.user;
+  };
 
-    if (status === "authenticated") {
-      fetchDistricts();
-    }
-  }, [status]); */
+console.log(userDetails)
 
-  // if (status === "loading") return <p>Checking login...</p>;
-/*   if (status === "unauthenticated") {
-    router.push("/login");
-  } */
  useEffect(() => {
   if (status === "unauthenticated") router.push("/login");
 }, [status]);
@@ -616,13 +642,13 @@ export default function ManageProfile({ userData, allDistricts }) {
             onChange={handleInputChange}
             className="input-style"
           >
-            {/* <option value="">Select {field.label}</option>
-            {field.options.map((option) => (
+            <option value="">Select {field.label}</option>
+            {/* {field.options.map((option) => (
               <option key={option.districtId} value={option.districtId}>
                 {option.district}
               </option>
-            ))} */}
-            <option value="">Select {field.label}</option>
+            ))}
+            <option value="">Select {field.label}</option> */}
 
       {/* ✅ Handle both object-based and string-based options */}
       {field.options.map((option, index) => {
@@ -709,8 +735,9 @@ export default function ManageProfile({ userData, allDistricts }) {
   };
 
   return (
-    <div className="min-h-screen background-color text-color p-2 md:p-4">
+    <div className="min-h-screen background-color text-color p-6">
       <div className="w-full pt-8">  {/* max-w-7xl mx-auto */}
+      
         {/* Header Section */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
           <div>
@@ -729,21 +756,28 @@ export default function ManageProfile({ userData, allDistricts }) {
           </div>
 
           <div className="flex items-center gap-3">
-            <div
-              className={`px-4 py-2 rounded-full text-sm font-medium ${
-                data.status === "Active" || data.status === "On Duty"
-                  ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                  : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
-              }`}
-            >
-              {data.status}
-            </div>
             <button
               onClick={openEditModal}
               className="background-color-primary text-white py-2 px-6 rounded-lg font-medium hover:opacity-90 transition-opacity"
             >
               Edit Profile
             </button>
+            
+            {/* Dynamic Role-Based Status Display */}
+            {userDetails?.role === "rider" ? (
+              <RiderStatusInfo />
+            ) : (
+              <div className={`flex items-center py-2 px-4 rounded-lg font-medium border ${
+                getRoleStatusConfig(userDetails?.role).color
+              } ${getRoleStatusConfig(userDetails?.role).borderColor} ${getRoleStatusConfig(userDetails?.role).textColor}`}>
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${getRoleStatusConfig(userDetails?.role).dotColor}`}></div>
+                  <span className="text-sm font-medium">Status:</span>
+                  <span className="font-semibold">{getRoleStatus(userDetails)}</span>
+                  <span className="text-sm">{getRoleStatusConfig(userDetails?.role).icon}</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -757,24 +791,24 @@ export default function ManageProfile({ userData, allDistricts }) {
                   {
                     userDetails?.image ?
                     <img src={userDetails?.image} alt="" className="w-full h-full rounded-full" />
-                    : <span>{userDetails.name.charAt(0)}</span>
+                    : <span>{userDetails?.name.charAt(0)}</span>
                   }
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-color">{userDetails.name}</h2>
-                  <p className="text-color-soft">{userDetails.role}</p>
-                  <p className="text-color-soft text-sm mt-1">{userDetails.company || ""}</p>
+                  <h2 className="text-xl font-bold text-color">{userDetails?.name}</h2>
+                  <p className="text-color-soft">{userDetails?.role}</p>
+                  <p className="text-color-soft text-sm mt-1">{userDetails?.company || ""}</p>
                 </div>
               </div>
 
               <div className="space-y-3">
                 <div className="flex justify-between items-start gap-1 py-2 border-b border-color-border dark:border-gray-700">
                   <span className="text-color-soft">Email:</span>
-                  <span className="text-color font-medium break-all"> {userDetails.email}</span>
+                  <span className="text-color font-medium break-all"> {userDetails?.email}</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-color-border dark:border-gray-700">
                   <span className="text-color-soft">Phone:</span>
-                  <span className="text-color font-medium">{userDetails.phone}</span>
+                  <span className="text-color font-medium">{userDetails?.phone}</span>
                 </div>
                 <div className="flex justify-between items-center py-2">
                   <span className="text-color-soft">Join Date:</span>

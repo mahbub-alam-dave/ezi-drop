@@ -1,4 +1,8 @@
+import { authOptions } from "@/lib/authOptions";
 import { dbConnect } from "@/lib/dbConnect";
+import { addNotification } from "@/lib/notificationHandler";
+import { getServerSession } from "next-auth";
+import Link from "next/link";
 import { NextResponse } from "next/server";
 
 // helper function to generate unique parcelId
@@ -27,12 +31,6 @@ function calculateCost(parcelData) {
   return baseCost;
 }
 
-/* async function getDistrictId(districtName) {
-  const district = await dbConnect("districts").findOne({
-    district: { $regex: `^${districtName}$`, $options: "i" }, // "i" = ignore case
-  });
-  return district ? district.districtId : null;
-} */
 
 // Get Data
 export async function GET() {
@@ -52,18 +50,47 @@ export async function POST(request) {
   try {
     const body = await request.json(); // form data
     const collection = dbConnect("parcels");
+    const session = await getServerSession(authOptions)
+    const users = dbConnect("users");
 
-/*     const [senderDistrictId, receiverDistrictId] = await Promise.all([
-      getDistrictId(body.pickupDistrict),
-      getDistrictId(body.deliveryDistrict),
-    ]); */
+    const user = await users.findOne({ email: session?.user?.email });
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
 
-    const amount = calculateCost(body);
+
+    let amount = calculateCost(body);
+    let discountApplied = 0;
+    let pointsUsed = 0;
+
+    // Step 2️⃣ Apply points discount only for domestic service
+    if (body.shipmentType === "domestic" && body.usePoints === true) {
+      const userPoints = user.points || 0;
+
+      if (userPoints > 0) {
+        // each point = 1% discount, capped at 100%
+        const discountPercent = Math.min(userPoints, 100);
+        discountApplied = (amount * discountPercent) / 100;
+        amount = amount - discountApplied;
+
+        // Deduct only points used (1 point per 1% discount)
+        pointsUsed = discountPercent;
+
+        await users.updateOne(
+          { email: session?.user?.email },
+          { $inc: { points: -pointsUsed } }
+        );
+      }
+    }
 
     const newParcel = {
       ...body,
+      userId: session?.user?.userId,
       payment: "not_paid",
+      baseAmount: amount,
       amount,
+      discountApplied,
+      pointsUsed,
       currency: "bdt",
       status: "not_picked",
       parcelId: generateParcelId(), // unique parcel ID
@@ -71,11 +98,19 @@ export async function POST(request) {
     };
 
     const result = await collection.insertOne(newParcel);
+// [go to live tracking](https://ezi-drop.vercel.app/tracking/${parcelId})
+const message = `Congratulations! for booking with us [view bookings](${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard/user/my-bookings)`;
+const userId = session?.user?.userId;
+await addNotification({userId, message });
+
     return NextResponse.json(
       {
         message: "Parcel saved successfully",
         id: result.insertedId,
         parcelId: newParcel.parcelId, // return generated ID
+        amount,
+        discountApplied,
+        pointsUsed,
       },
       { status: 201 }
     );
