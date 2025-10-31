@@ -125,6 +125,14 @@ const DashboardLayoutClient = ({ userData, children }) => {
           Chat
         </Link>
 
+        <Link
+          href="/dashboard/admin/resulation-center"
+          className={linkClass("/dashboard/admin/resulation-center")}
+        >
+          <VscCommentUnresolved className="inline-block mr-2" />
+          Resulation Center
+        </Link>
+
       </>
     ),
     riderLinks: (
@@ -180,7 +188,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
       href="/dashboard/rider/status"
       className={linkClass("/dashboard/rider/status")}
     >
-      <WiDaySunny className="inline-block mr-2 text-yellow-400 text-xl" />
+      <WiDaySunny className="inline-block mr-2" />
       Weather Status
     </Link>
       </>

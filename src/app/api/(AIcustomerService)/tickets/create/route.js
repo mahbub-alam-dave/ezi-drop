@@ -61,6 +61,7 @@ export async function POST(req) {
       userId: user._id,
       status: "open",
       district: agent.district,
+      districtId: agent.districtId,
       assignedAgentEmail: agent.email,
       assignedAgentId: agent._id,
       createdAt: new Date(),
