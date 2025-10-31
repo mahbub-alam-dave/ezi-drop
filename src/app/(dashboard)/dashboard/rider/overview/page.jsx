@@ -373,7 +373,7 @@ export default function RiderOverview() {
                   className="border-b border-gray-100 dark:border-gray-700 last:border-none hover:bg-gray-50 dark:hover:bg-gray-700/30"
                 >
                   <td className="py-3 px-4 text-sm font-medium text-gray-800 dark:text-white">
-                    {delivery.trackingNumber}
+                    {delivery.trackingId}
                   </td>
                   <td className="py-3 px-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${

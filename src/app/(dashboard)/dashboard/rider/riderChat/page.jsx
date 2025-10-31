@@ -66,9 +66,13 @@ export default function RiderChat({ onClose }) {
     setActiveTab('chats');
   };
 
-  const handleGoHome = () => {
-    router.push('/');
-  };
+const handleGoHome = () => {
+  if (window.history.length > 1) {
+    router.back();
+  } else {
+    router.push('/'); // fallback to home if no history
+  }
+};
 
   const currentChatParticipant = selectedConversation?.participants?.find(p => p.email !== userEmail);
   const isConversationSelected = !!selectedConversation;
