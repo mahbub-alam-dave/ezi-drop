@@ -2,7 +2,7 @@ export default function DashboardSkeleton() {
   return (
     <div className="h-screen w-full flex bg-gray-50 dark:bg-gray-900 animate-pulse">
       {/* Sidebar (hidden on small screens) */}
-      <div className="hidden lg:flex flex-col w-64 bg-gray-200/60 dark:bg-gray-800/60 border-r border-gray-300/30 dark:border-gray-700/30 p-4 space-y-4">
+{/*       <div className="hidden lg:flex flex-col w-64 bg-gray-200/60 dark:bg-gray-800/60 border-r border-gray-300/30 dark:border-gray-700/30 p-4 space-y-4">
         <div className="h-10 bg-gray-300 dark:bg-gray-700 rounded-md"></div>
         <div className="space-y-3">
           {[...Array(6)].map((_, i) => (
@@ -12,7 +12,7 @@ export default function DashboardSkeleton() {
             ></div>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">

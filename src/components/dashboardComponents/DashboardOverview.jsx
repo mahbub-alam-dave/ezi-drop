@@ -53,7 +53,7 @@ function DashboardContent() {
         <TopPerformers />
       </div>
       
-      <ActionToolbar />
+      {/* <ActionToolbar /> */}
     </div>
   );
 }

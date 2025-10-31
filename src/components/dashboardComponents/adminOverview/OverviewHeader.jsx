@@ -30,19 +30,6 @@ const OverviewHeader = () => {
           >
             <span>🔄</span> Refresh Data
           </button>
-          <div className="border-l border-slate-300 dark:border-slate-600 h-6 mx-2"></div>
-          <button
-            onClick={() => exportData('csv')}
-            className="bg-white dark:bg-gray-800 text-slate-700 dark:text-slate-200 px-4 py-2.5 rounded-xl text-sm font-medium border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
-          >
-            <span>📥</span> Export CSV
-          </button>
-          <button
-            onClick={() => exportData('pdf')}
-            className="bg-white dark:bg-gray-800 text-slate-700 dark:text-slate-200 px-4 py-2.5 rounded-xl text-sm font-medium border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
-          >
-            <span>📄</span> Export PDF
-          </button>
         </div>
       </div>
     );
