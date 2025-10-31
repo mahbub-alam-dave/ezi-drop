@@ -183,9 +183,13 @@ export default function UserChat() {
     fetchMessages(conversation._id);
   };
 
-  const handleGoHome = () => {
-    router.push('/');
-  };
+const handleGoHome = () => {
+  if (window.history.length > 1) {
+    router.back();
+  } else {
+    router.push('/'); // fallback to home if no history
+  }
+};
 
   // Initial data fetch
   useEffect(() => {

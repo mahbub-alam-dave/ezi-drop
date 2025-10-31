@@ -53,7 +53,7 @@ export async function POST(req) {
 
     const ticketId = await getNextTicketId();
 
-    const agent = await dbConnect("users").findOne({role: "district_admin", district: user.district})
+    const agent = await dbConnect("users").findOne({role: "district_admin", districtId: user.districtId})
 
 
     const newTicket = await db.insertOne({
@@ -61,6 +61,7 @@ export async function POST(req) {
       userId: user._id,
       status: "open",
       district: agent.district,
+      districtId: agent.districtId,
       assignedAgentEmail: agent.email,
       assignedAgentId: agent._id,
       createdAt: new Date(),

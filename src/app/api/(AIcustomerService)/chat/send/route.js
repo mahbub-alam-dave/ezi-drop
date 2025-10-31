@@ -19,25 +19,64 @@ const agentKeywords = ["complaint", "damaged", "refund", "cancel", "lose", "lost
 
 // Detect parcel query like "check my parcel ezi-drop-001"
 function extractParcelId(message) {
-  const regex = /(ezi-drop-\d+)/i;
+  // Allow underscore or dash, letters and numbers after it
+  const regex = /@ezi[-_]drop-[A-Z0-9]+/i;
   const match = message.match(regex);
-  return match ? match[1] : null;
+  return match ? match[0] : null;
 }
 
 const districts = [
-  "Bagerhat","Bandarban","Barguna","Barisal","Bhola","Bogra","Brahmanbaria","Chandpur","Chapai Nawabganj",
-  "Chattogram","Chuadanga","Cox's Bazar","Cumilla","Dhaka","Dinajpur","Faridpur","Feni","Gaibandha",
-  "Gazipur","Gopalganj","Habiganj","Jamalpur","Jashore","Jhalokati","Jhenaidah","Joypurhat","Khagrachhari",
-  "Khulna","Kishoreganj","Kurigram","Kushtia","Lakshmipur","Lalmonirhat","Madaripur","Magura","Manikganj",
-  "Meherpur","Moulvibazar","Munshiganj","Mymensingh","Naogaon","Narail","Narayanganj","Narsingdi",
-  "Natore","Netrokona","Nilphamari","Noakhali","Pabna","Panchagarh","Patuakhali","Pirojpur","Rajbari",
-  "Rajshahi","Rangamati","Rangpur","Satkhira","Shariatpur","Sherpur","Sirajganj","Sunamganj","Sylhet",
-  "Tangail","Thakurgaon"
+{district: "Dhaka", districtId: "ezi-drop-dhaka-01"},
+{district: "Khulna", districtId: "ezi-drop-khulna-01"},
+{district: "Rajshahi", districtId: "ezi-drop-rajshahi-01"},
+{district: "Rangpur", districtId: "ezi-drop-rangpur-01"},
+{district: "Barishal", districtId: "ezi-drop-barisal-01"},
+{district: "Sylhet", districtId: "ezi-drop-sylhet-01"},
+{district: "Chattogram", districtId: "ezi-drop-chattogram-01"},
+{district: "Mymensingh", districtId: "ezi-drop-mymensingh-01"}
 ];
 
+function levenshtein(a, b) {
+  const matrix = Array.from({ length: a.length + 1 }, () => []);
+  for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
+  for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1,       // deletion
+        matrix[i][j - 1] + 1,       // insertion
+        matrix[i - 1][j - 1] + cost // substitution
+      );
+    }
+  }
+  return matrix[a.length][b.length];
+}
+
 function detectDistrict(text) {
+  if (!text) return null;
   const lower = text.toLowerCase();
-  return districts.find(d => lower.includes(d.toLowerCase())) || null;
+
+  // 1️⃣ exact or partial match
+  const directMatch =
+    districts.find(d => lower.includes(d.district.toLowerCase())) ||
+    districts.find(d => d.district.toLowerCase().includes(lower));
+  if (directMatch) return directMatch;
+
+  // 2️⃣ fuzzy match based on similarity score
+  let bestMatch = null;
+  let bestScore = Infinity;
+  for (const d of districts) {
+    const distance = levenshtein(lower, d.district.toLowerCase());
+    if (distance < bestScore) {
+      bestScore = distance;
+      bestMatch = d;
+    }
+  }
+
+  // consider it a match if it’s reasonably close (≤3 edit distance)
+  return bestScore <= 3 ? bestMatch : null;
 }
 
 
@@ -106,12 +145,12 @@ if (needsAgent) {
           // Save detected district to user
           await dbConnect("users").updateOne(
             { _id: user._id },
-            { $set: { district: detected } }
+            { $set: { district: detected.district, districtId: detected.districtId } }
           );
 
           // Find agent for that district
           const agent = await dbConnect("users").findOne({
-            district: detected,
+            districtId: detected.districtId,
             role: "district_admin"
           });
 
@@ -120,7 +159,8 @@ if (needsAgent) {
               userId: user._id,
               conversationId: new ObjectId(conversationId),
               ticketId,
-              district: detected,
+              district: detected.district,
+              districtId: detected.districtId,
               assignedAgentEmail: agent.email,
               assignedAgentId: agent._id,
               status: "Open",
@@ -197,8 +237,8 @@ if (!reply && session) {
 
 
     // ---------------- Parcel Tracking ----------------
-    if (!reply) {
-      const parcelId = extractParcelId(lower);
+    if (!reply && session) {
+      const parcelId = extractParcelId(message);
       if (parcelId) {
         const order = await dbConnect("parcels").findOne({ trackingId: parcelId });
         if (order) {

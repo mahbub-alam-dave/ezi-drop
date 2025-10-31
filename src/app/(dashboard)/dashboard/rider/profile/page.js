@@ -1,5 +1,6 @@
 import ManageProfile from '@/components/ManageProfile/ManageProfile';
 import { getCurrentUser } from '@/lib/api';
+import { districtsData } from '@/lib/getDistrictData';
 
 const RiderProfile = async() => {
       const user = await getCurrentUser()
@@ -8,9 +9,12 @@ const RiderProfile = async() => {
       ...userData,
       createdAt: new Date(userData.createdAt).toLocaleString(),
     };
+
+          const districtsInfo = await districtsData()
+          const districts = JSON.parse(JSON.stringify(districtsInfo));
     return (
         <div>
-            <ManageProfile userData={formattedUserData} />
+            <ManageProfile allDistricts={districts} userData={formattedUserData} />
         </div>
     );
 };

@@ -642,13 +642,13 @@ console.log(userDetails)
             onChange={handleInputChange}
             className="input-style"
           >
-            {/* <option value="">Select {field.label}</option>
-            {field.options.map((option) => (
+            <option value="">Select {field.label}</option>
+            {/* {field.options.map((option) => (
               <option key={option.districtId} value={option.districtId}>
                 {option.district}
               </option>
-            ))} */}
-            <option value="">Select {field.label}</option>
+            ))}
+            <option value="">Select {field.label}</option> */}
 
       {/* ✅ Handle both object-based and string-based options */}
       {field.options.map((option, index) => {
@@ -791,24 +791,24 @@ console.log(userDetails)
                   {
                     userDetails?.image ?
                     <img src={userDetails?.image} alt="" className="w-full h-full rounded-full" />
-                    : <span>{userDetails.name.charAt(0)}</span>
+                    : <span>{userDetails?.name.charAt(0)}</span>
                   }
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-color">{userDetails.name}</h2>
-                  <p className="text-color-soft">{userDetails.role}</p>
-                  <p className="text-color-soft text-sm mt-1">{userDetails.company || ""}</p>
+                  <h2 className="text-xl font-bold text-color">{userDetails?.name}</h2>
+                  <p className="text-color-soft">{userDetails?.role}</p>
+                  <p className="text-color-soft text-sm mt-1">{userDetails?.company || ""}</p>
                 </div>
               </div>
 
               <div className="space-y-3">
                 <div className="flex justify-between items-start gap-1 py-2 border-b border-color-border dark:border-gray-700">
                   <span className="text-color-soft">Email:</span>
-                  <span className="text-color font-medium break-all"> {userDetails.email}</span>
+                  <span className="text-color font-medium break-all"> {userDetails?.email}</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-color-border dark:border-gray-700">
                   <span className="text-color-soft">Phone:</span>
-                  <span className="text-color font-medium">{userDetails.phone}</span>
+                  <span className="text-color font-medium">{userDetails?.phone}</span>
                 </div>
                 <div className="flex justify-between items-center py-2">
                   <span className="text-color-soft">Join Date:</span>

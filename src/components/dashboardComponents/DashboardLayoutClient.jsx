@@ -120,9 +120,17 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaClipboardList className="inline-block mr-2" />
           Manage Order
         </Link>
-        <Link href="/dashboard/admin/chat" className={linkClass("/dashboard/admin/chat")}>
+{/*         <Link href="/dashboard/admin/chat" className={linkClass("/dashboard/admin/chat")}>
           <FaComment className="inline-block mr-2" />
           Chat
+        </Link> */}
+
+        <Link
+          href="/dashboard/admin/resulation-center"
+          className={linkClass("/dashboard/admin/resulation-center")}
+        >
+          <VscCommentUnresolved className="inline-block mr-2" />
+          Resulation Center
         </Link>
 
       </>
@@ -162,8 +170,8 @@ const DashboardLayoutClient = ({ userData, children }) => {
           Delivery History
         </Link> */}
         <Link
-          href="/dashboard/profile"
-          className={linkClass("/dashboard/profile")}
+          href="/dashboard/rider/profile"
+          className={linkClass("/dashboard/rider/profile")}
         >
           <FaUser className="inline-block mr-2" />
           Profile
@@ -180,7 +188,7 @@ const DashboardLayoutClient = ({ userData, children }) => {
       href="/dashboard/rider/status"
       className={linkClass("/dashboard/rider/status")}
     >
-      <WiDaySunny className="inline-block mr-2 text-yellow-400 text-xl" />
+      <WiDaySunny className="inline-block mr-2" />
       Weather Status
     </Link>
       </>

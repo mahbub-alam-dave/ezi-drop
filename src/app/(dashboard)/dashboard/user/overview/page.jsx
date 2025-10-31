@@ -1,12 +1,16 @@
 "use client"
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+
 
 export default function UserOverview() {
   // States
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const router = useRouter()
 
   useEffect(() => {
     fetchOverviewData();
@@ -273,7 +277,7 @@ export default function UserOverview() {
             <h2 className="text-xl font-bold text-slate-800 dark:text-white">
               My Support Tickets
             </h2>
-            <button className="text-blue-600 dark:text-blue-400 text-sm hover:underline">
+            <button onClick={() => router.push(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/dashboard/user/resulation-center`)} className="text-blue-600 dark:text-blue-400 text-sm hover:underline">
               New Ticket
             </button>
           </div>

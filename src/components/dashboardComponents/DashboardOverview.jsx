@@ -15,18 +15,17 @@ import ServiceAreas from "./adminOverview/ServiceAreas";
 import TopCouriers from "./adminOverview/TopCouriers";
 import SupportsTicket from "./supportAgent(admin)/SupportsTicket";
 import TopPerformers from "./adminOverview/TopPerformers";
+import { useEffect, useState } from "react";
+import { SkeletonLoader } from "@/Hooks/dashboardLoader";
 
 
 function DashboardContent() {
-  const { loading, error } = useDashboard();
-  
-/*   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <LoadingSpinner />
-      </div>
-    );
-  } */
+  const { loading, error, selectedDistrict } = useDashboard();
+
+  // ========== SKELETON LOADER ==========
+
+
+  if (loading) return <SkeletonLoader />;
   
   if (error) {
     return <ErrorDisplay message={error} />;
@@ -48,12 +47,12 @@ function DashboardContent() {
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
-        <RecentActivities />
+        <RecentActivities districtId={selectedDistrict} />
         {/* <TopCouriers /> */}
         <TopPerformers />
       </div>
       
-      <ActionToolbar />
+      {/* <ActionToolbar /> */}
     </div>
   );
 }

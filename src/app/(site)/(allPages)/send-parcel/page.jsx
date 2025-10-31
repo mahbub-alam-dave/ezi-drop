@@ -13,7 +13,6 @@ const SendParcelPage = async () => {
   const session = await getServerSession(authOptions)
 
   const districtsInfo = await districtsData()
-  // console.log(districts)
   const districts = JSON.parse(JSON.stringify(districtsInfo));
 
   let userData = {}
