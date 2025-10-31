@@ -162,8 +162,8 @@ const DashboardLayoutClient = ({ userData, children }) => {
           Delivery History
         </Link> */}
         <Link
-          href="/dashboard/profile"
-          className={linkClass("/dashboard/profile")}
+          href="/dashboard/rider/profile"
+          className={linkClass("/dashboard/rider/profile")}
         >
           <FaUser className="inline-block mr-2" />
           Profile
