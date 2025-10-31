@@ -120,10 +120,10 @@ const DashboardLayoutClient = ({ userData, children }) => {
           <FaClipboardList className="inline-block mr-2" />
           Manage Order
         </Link>
-        <Link href="/dashboard/admin/chat" className={linkClass("/dashboard/admin/chat")}>
+{/*         <Link href="/dashboard/admin/chat" className={linkClass("/dashboard/admin/chat")}>
           <FaComment className="inline-block mr-2" />
           Chat
-        </Link>
+        </Link> */}
 
         <Link
           href="/dashboard/admin/resulation-center"

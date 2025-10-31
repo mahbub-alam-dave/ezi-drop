@@ -19,9 +19,10 @@ const agentKeywords = ["complaint", "damaged", "refund", "cancel", "lose", "lost
 
 // Detect parcel query like "check my parcel ezi-drop-001"
 function extractParcelId(message) {
-  const regex = /(ezi-drop-\d+)/i;
+  // Allow underscore or dash, letters and numbers after it
+  const regex = /@ezi[-_]drop-[A-Z0-9]+/i;
   const match = message.match(regex);
-  return match ? match[1] : null;
+  return match ? match[0] : null;
 }
 
 const districts = [
@@ -236,8 +237,8 @@ if (!reply && session) {
 
 
     // ---------------- Parcel Tracking ----------------
-    if (!reply) {
-      const parcelId = extractParcelId(lower);
+    if (!reply && session) {
+      const parcelId = extractParcelId(message);
       if (parcelId) {
         const order = await dbConnect("parcels").findOne({ trackingId: parcelId });
         if (order) {
