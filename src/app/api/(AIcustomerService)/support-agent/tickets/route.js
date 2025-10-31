@@ -33,7 +33,7 @@ export async function GET(req) {
     }
 
     // Check role authorization
-    const allowedRoles = ['district_admin', 'main_admin', 'admin'];
+    const allowedRoles = ['district_admin','admin'];
     if (!allowedRoles.includes(user.role)) {
       return new Response(
         JSON.stringify({ error: "You don't have permission to view tickets" }),
@@ -53,14 +53,14 @@ export async function GET(req) {
         { assignedAgentId: { $exists: false } },
         { assignedAgentId: null }
       ];
-    } else if (user.role === 'main_admin' || user.role === 'admin') {
+    } else if ( user.role === 'admin') {
       // Main admin: All tickets or filter by district
       if (districtId && districtId !== 'all') {
         query.district = districtId;
       }
       // If mentionedAdmin=true, only show tickets where admin is mentioned
       if (mentionedAdmin === 'true') {
-        query.mentionedRoles = 'main_admin';
+        query.mentionedRoles = 'admin';
       }
     }
 
@@ -113,9 +113,9 @@ export async function GET(req) {
 
     // Count tickets mentioning admin (only for main admin)
     let mentionedCount = 0;
-    if (user.role === 'main_admin' || user.role === 'admin') {
+    if ( user.role === 'admin') {
       mentionedCount = await dbConnect("supportTickets").countDocuments({
-        mentionedRoles: 'main_admin',
+        mentionedRoles: 'admin',
         status: { $ne: 'resolved' }
       });
     }

@@ -24,7 +24,7 @@ export async function GET(req, { params }) {
     // Authorization based on role
     let isAuthorized = false;
 
-    if (user.role === 'main_admin' || user.role === 'admin') {
+    if ( user.role === 'admin') {
       // Main admin can access all tickets
       isAuthorized = true;
     } else if (user.role === 'district_admin') {
@@ -86,7 +86,7 @@ export async function PATCH(req, { params }) {
     // Authorization check
     let canUpdate = false;
 
-    if (user.role === 'main_admin' || user.role === 'admin') {
+    if (user.role === 'admin') {
       canUpdate = true;
     } else if (user.role === 'district_admin') {
       canUpdate = user.district === ticket.district ||
@@ -106,17 +106,17 @@ export async function PATCH(req, { params }) {
     }
 
     // Update priority if provided (only admins can change priority)
-    if (priority && (user.role === 'main_admin' || user.role === 'admin' || user.role === 'district_admin')) {
+    if (priority && (user.role === 'admin' || user.role === 'district_admin')) {
       updateObj.priority = priority;
     }
 
     // Assign to main admin
     if (assignToAdmin === true && user.role === 'district_admin') {
       // Find main admin
-      const mainAdmin = await dbConnect("users").findOne({ role: 'main_admin' });
+      const mainAdmin = await dbConnect("users").findOne({ role: 'admin' });
       if (mainAdmin) {
         updateObj.assignedAgentId = new ObjectId(mainAdmin._id);
-        updateObj.mentionedRoles = 'main_admin';
+        updateObj.mentionedRoles = 'admin';
         
         // Add system message about escalation
         await ticketsCol.updateOne(
@@ -137,8 +137,8 @@ export async function PATCH(req, { params }) {
 
     // Mention admin (without assigning)
     if (mentionAdmin === true && user.role === 'district_admin') {
-      if (!ticket.mentionedRoles || !ticket.mentionedRoles.includes('main_admin')) {
-        updateObj.mentionedRoles = 'main_admin';
+      if (!ticket.mentionedRoles || !ticket.mentionedRoles.includes('admin')) {
+        updateObj.mentionedRoles = 'admin';
         
         // Add system message
         await ticketsCol.updateOne(

@@ -28,9 +28,9 @@ export async function POST(req, { params }) {
     // Authorization rules
     let isAuthorized = false;
 
-    if (senderRole === "main_admin" || senderRole === "admin") {
+    if ( senderRole === "admin") {
       // Main admin can reply to any ticket
-      isAuthorized = (user.role === 'main_admin' || user.role === 'admin');
+      isAuthorized = ( user.role === 'admin');
     } else if (senderRole === "district_admin") {
       // District admin can reply if:
       // 1. It's their district
@@ -39,7 +39,7 @@ export async function POST(req, { params }) {
       isAuthorized = user.role === 'district_admin' && (
         user.district === ticket.district ||
         (ticket.assignedAgentId && ticket.assignedAgentId.toString() === user._id.toString()) ||
-        ticket.mentionedRoles === 'main_admin' // Can participate if admin is mentioned
+        ticket.mentionedRoles === 'admin' // Can participate if admin is mentioned
       );
     } else if (senderRole === "user" || senderRole === "rider") {
       // User/Rider can only reply to their own tickets
@@ -68,14 +68,14 @@ export async function POST(req, { params }) {
     };
 
     // Status management
-    if (senderRole === "district_admin" || senderRole === "main_admin" || senderRole === "admin") {
+    if (senderRole === "district_admin" || senderRole === "admin") {
       // Agent/Admin replies → set status to in_progress (only if currently open)
       if (ticket.status === "open") {
         updateMessage.$set.status = "in_progress";
       }
       
       // If main admin replies, mark as handled by admin
-      if (senderRole === "main_admin" || senderRole === "admin") {
+      if ( senderRole === "admin") {
         updateMessage.$set.handledByAdmin = true;
         updateMessage.$set.adminId = new ObjectId(user._id);
       }
