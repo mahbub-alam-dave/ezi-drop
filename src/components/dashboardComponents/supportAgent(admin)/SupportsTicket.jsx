@@ -1,3 +1,4 @@
+"use client"
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AlertCircle, MessageSquare, Users, Filter } from "lucide-react";
@@ -169,7 +170,7 @@ const SupportsTicket = ({ displayArea }) => {
       className={`${
         displayArea
           ? "bg-white dark:bg-gray-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm"
-          : "pt-8"
+          : "p-6"
       }`}
     >
       {/* Header */}
@@ -191,7 +192,13 @@ const SupportsTicket = ({ displayArea }) => {
         </div>
         {displayArea && (
           <button
-            onClick={() => router.push("/dashboard/agent-resulation-center")}
+            onClick={() => {
+              if(role=== "admin"){
+              router.push("/dashboard/admin/resulation-center")
+            } else {
+            router.push("/dashboard/district-agent/resulation-center")
+            }
+          }}
             className="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
           >
             View All
